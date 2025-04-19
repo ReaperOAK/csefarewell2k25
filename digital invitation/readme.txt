@@ -13,6 +13,7 @@ last line -> font & size: beth ellen;12
 
 back:-
 all-> font & size: Copperplate Gothic;14.5
+h1-> letter space: 0.27
 
 envelope:
 style : felt, colour : black
