@@ -6,7 +6,10 @@ Heather Schertzer Art + Design
 
 front:-
 bg1-> transparency 0.77
+
 h1-> font & size: mole;36
+Gothic Masquerade Farewell
+
 h2-> font & size: caveat brush;18
 p -> font & size: borel ;14
 last line -> font & size: beth ellen;12
