@@ -7,7 +7,7 @@ from string import Template
 FACE_PICS_DIR = "digital invitation/face pic"
 EMAIL_TEMPLATE_FILE = "amp/email_template.txt"
 EMAIL_OUTPUT_FILE = "docs/email_list.csv"
-GITHUB_REPO_URL = "https://YOUR_GITHUB_USERNAME.github.io/csefarewell2k25"  # Update this with your actual GitHub Pages URL
+GITHUB_REPO_URL = "https://ReaperOAK.github.io/csefarewell2k25"  # Update this with your actual GitHub Pages URL
 
 # Read the email template
 with open(EMAIL_TEMPLATE_FILE, 'r', encoding='utf-8') as file:
