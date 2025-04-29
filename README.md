@@ -1,77 +1,46 @@
-# OBLIVION – CSE Farewell 2025
+# Getting Started with Create React App
 
-A collection of personalized AMP Story invitations for the OBLIVION CSE Farewell event.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Setup and Deployment Guide
+## Available Scripts
 
-### Prerequisites
+In the project directory, you can run:
 
-- [Git](https://git-scm.com/downloads)
-- [Python 3.x](https://www.python.org/downloads/)
-- GitHub account
+### `npm start`
 
-### Step 1: Generate the Invitations
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-1. Clone this repository or download it to your local machine
-2. Run the batch script to generate all personalized invitations:
-   ```
-   amp\generate_invitations.bat
-   ```
-3. This will create a `docs` folder with all the personalized AMP stories
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-### Step 2: Push to GitHub
+### `npm test`
 
-1. Create a new GitHub repository (if you haven't already)
-2. Initialize Git in your local folder:
-   ```
-   git init
-   git add .
-   git commit -m "Initial commit with personalized invitations"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/csefarewell2k25.git
-   git push -u origin main
-   ```
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### Step 3: Enable GitHub Pages
+### `npm run build`
 
-1. Go to your repository on GitHub
-2. Click on "Settings" tab
-3. Scroll down to "GitHub Pages" section
-4. Select the Source as "main" branch and "/docs" folder
-5. Click "Save"
-6. Wait a few minutes for your site to be published
-7. Your site will be available at `https://YOUR_USERNAME.github.io/csefarewell2k25/`
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### Step 4: Send Email Invitations
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-1. Update the GitHub Pages URL in the `prepare_emails.py` script
-2. Run the email preparation script:
-   ```
-   python amp/prepare_emails.py
-   ```
-3. Open the generated `docs/email_list.csv` file
-4. Add actual email addresses for each invitee
-5. Use a mail merge tool or email marketing service to send personalized emails
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-## Folder Structure
+### `npm run eject`
 
-- `amp/` - Contains the template and generation scripts
-- `digital invitation/face pic/` - Contains profile pictures for each invitee
-- `docs/` - Generated output ready for GitHub Pages
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-## Customization
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-- Update `RSVP_LINK` in `generate_invitations.py` with your actual form link
-- Update `EVENT_DETAILS_URL` in `generate_invitations.py` with your event details page
-- Modify `email_template.txt` to change the email content
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-## Resources
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-The AMP stories use the following resources:
-- Video backgrounds for various pages
-- Face pictures in summoning circle design
-- Custom CSS animations and effects
+## Learn More
 
-## Credits
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-Created by STCET CSE Farewell Committee 2025
+To learn React, check out the [React documentation](https://reactjs.org/).
