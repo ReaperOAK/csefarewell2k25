@@ -14,7 +14,7 @@ const StoryContainer = styled(motion.div)`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #000;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
   z-index: 9999;
   display: flex;
   flex-direction: column;
@@ -27,25 +27,46 @@ const BackgroundLayer = styled(motion.div)`
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/resources/background.png');
-  background-size: cover;
-  background-position: center;
+  background: radial-gradient(circle at center, #1e1e1e 0%, #0a0a0a 100%);
   z-index: 1;
 `;
 
-const ForegroundLayer = styled(motion.div)`
+const CathedralOverlay = styled(motion.div)`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 2;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at center,
-    rgba(0, 0, 0, 0.3) 0%,
-    rgba(0, 0, 0, 0.7) 100%
+  opacity: 0.15;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 20px,
+    rgba(255, 255, 255, 0.03) 20px,
+    rgba(255, 255, 255, 0.03) 25px
+  ),
+  repeating-linear-gradient(
+    180deg,
+    transparent,
+    transparent 20px,
+    rgba(255, 255, 255, 0.03) 20px,
+    rgba(255, 255, 255, 0.03) 25px
   );
+`;
+
+const StainedGlassEffect = styled(motion.div)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  opacity: 0.3;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(128, 0, 0, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 70% 20%, rgba(0, 0, 128, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.2) 0%, transparent 50%);
 `;
 
 const CobwebsLayer = styled(motion.div)`
@@ -54,9 +75,27 @@ const CobwebsLayer = styled(motion.div)`
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 3;
-  opacity: 0.3;
-  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuXzAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgcGF0dGVyblRyYW5zZm9ybT0icm90YXRlKDQ1KSI+PGxpbmUgeDE9IjAiIHkxPSIwIiB4Mj0iMTAiIHkyPSIwIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMC41IiBvcGFjaXR5PSIwLjIiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybl8wKSIvPjwvc3ZnPg==');
+  z-index: 4;
+  opacity: 0.15;
+  background-image: 
+    linear-gradient(45deg, transparent 45%, rgba(255, 255, 255, 0.1) 50%, transparent 55%),
+    linear-gradient(-45deg, transparent 45%, rgba(255, 255, 255, 0.1) 50%, transparent 55%);
+  background-size: 30px 30px;
+`;
+
+const VignetteOverlay = styled(motion.div)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  pointer-events: none;
 `;
 
 const ContentContainer = styled(motion.div)`
@@ -68,70 +107,159 @@ const ContentContainer = styled(motion.div)`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+`;
+
+const NavigationButton = styled(motion.button)`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.9rem;
+  z-index: 100;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: rgba(10, 10, 10, 0.8);
+  }
 `;
 
 const PortraitFrame = styled(motion.div)`
   position: relative;
-  width: 250px;
-  height: 250px;
-  margin-bottom: 20px;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 1.5rem;
+  
+  @media (min-width: 768px) {
+    width: 250px;
+    height: 250px;
+  }
 `;
 
-const FrameImage = styled(motion.img)`
+const HexagonFrame = styled(motion.div)`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 12;
-`;
-
-const PhotoContainer = styled(motion.div)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 65%;
-  height: 65%;
-  border-radius: 50%;
-  overflow: hidden;
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  background: linear-gradient(45deg, #d4af37, #a38a28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 11;
 `;
 
-const Photo = styled(motion.img)`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+const InnerHexagon = styled(motion.div)`
+  width: 95%;
+  height: 95%;
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
-const MaskOverlay = styled(motion.img)`
+const PhotoContainer = styled(motion.div)<{ photoUrl: string }>`
+  width: 90%;
+  height: 90%;
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  background-image: ${props => `url(${props.photoUrl})`};
+  background-size: cover;
+  background-position: center;
+  z-index: 12;
+`;
+
+const HexagonFrameGlow = styled(motion.div)`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 85%;
-  height: 85%;
+  top: -5px;
+  left: -5px;
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  background: transparent;
+  border: 2px solid rgba(212, 175, 55, 0.5);
+  filter: blur(5px);
+  z-index: 10;
+`;
+
+const MaskOverlay = styled(motion.div)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 13;
   opacity: 0.4;
+  
+  &:before, &:after {
+    content: '';
+    position: absolute;
+    width: 60%;
+    height: 40%;
+    top: 30%;
+    border-radius: 50%;
+    border: 1px solid rgba(212, 175, 55, 0.5);
+  }
+  
+  &:before {
+    left: 10%;
+  }
+  
+  &:after {
+    right: 10%;
+  }
 `;
 
 const WaxSeal = styled(motion.div)`
   position: relative;
   width: 120px;
   height: 120px;
-  margin: 10px 0;
+  margin: 10px 0 20px;
 `;
 
-const SealImage = styled(motion.img)`
+const SealCircle = styled(motion.div)`
   width: 100%;
   height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, #8b0000 0%, #600 100%);
+  border: 2px solid #d4af37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    border: 1px dashed rgba(212, 175, 55, 0.7);
+  }
+  
+  &:after {
+    content: '';
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    border-radius: 50%;
+    background: 
+      repeating-conic-gradient(
+        rgba(212, 175, 55, 0.3) 0deg 10deg,
+        transparent 10deg 20deg
+      );
+  }
 `;
 
 const NameText = styled(motion.h2)`
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 24px;
+  font-family: 'Cinzel Decorative', 'Times New Roman', serif;
+  font-size: 1.1rem;
   font-weight: bold;
-  color: var(--accent-color);
+  color: #d4af37;
   text-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
   letter-spacing: 0.1em;
   position: absolute;
@@ -141,67 +269,126 @@ const NameText = styled(motion.h2)`
   width: 100%;
   text-align: center;
   z-index: 14;
+  
+  @media (min-width: 768px) {
+    font-size: 1.4rem;
+  }
 `;
 
 const ScrollContainer = styled(motion.div)`
   position: relative;
-  width: 80%;
-  max-width: 500px;
+  width: 85%;
+  max-width: 400px;
   margin-top: 20px;
-`;
-
-const ScrollImage = styled(motion.img)`
-  width: 100%;
+  background-color: rgba(20, 20, 20, 0.7);
+  border-top: 1px solid #d4af37;
+  border-bottom: 1px solid #d4af37;
+  padding: 2rem 1rem;
+  
+  &:before, &:after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #1a1a1a;
+    border: 1px solid #d4af37;
+    border-radius: 50%;
+  }
+  
+  &:before {
+    top: -10px;
+    left: calc(50% - 10px);
+  }
+  
+  &:after {
+    bottom: -10px;
+    left: calc(50% - 10px);
+  }
 `;
 
 const ScrollContent = styled(motion.div)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
   text-align: center;
 `;
 
 const ScrollHeading = styled(motion.h3)`
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 16px;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 0.8rem;
   color: #8B0000;
   letter-spacing: 0.2em;
   margin-bottom: 10px;
+  
+  @media (min-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const ScrollTitle = styled(motion.h1)`
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 36px;
-  color: var(--accent-color);
+  font-family: 'Cinzel Decorative', 'Times New Roman', serif;
+  font-size: 2.2rem;
+  background: linear-gradient(to right, #d4af37 0%, #f5e7a3 50%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin: 10px 0;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  
+  @media (min-width: 768px) {
+    font-size: 3rem;
+  }
 `;
 
 const ScrollSubtitle = styled(motion.h3)`
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 18px;
-  color: var(--text-color);
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 1.1rem;
+  color: #f5f5f5;
   margin-top: 10px;
+  letter-spacing: 0.1em;
+  
+  @media (min-width: 768px) {
+    font-size: 1.3rem;
+  }
 `;
 
 const RSVPButton = styled(motion.button)`
-  background-color: transparent;
-  border: 1px solid var(--accent-color);
-  color: var(--accent-color);
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 16px;
-  padding: 12px 25px;
-  margin-top: 30px;
+  background: linear-gradient(to bottom, #3d3113 0%, #1a1507 100%);
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  padding: 0.8rem 1.5rem;
+  margin: 1.5rem auto 0;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
   cursor: pointer;
+  position: relative;
   transition: all 0.3s ease;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
   
   &:hover {
-    background-color: rgba(212, 175, 55, 0.2);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+    background: linear-gradient(to bottom, #524119 0%, #2a220c 100%);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  }
+  
+  &:before, &:after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: #d4af37;
+    opacity: 0.7;
+  }
+  
+  &:before {
+    top: -4px;
+    left: -4px;
+  }
+  
+  &:after {
+    bottom: -4px;
+    right: -4px;
+  }
+  
+  @media (min-width: 768px) {
+    font-size: 1rem;
+    padding: 1rem 2rem;
   }
 `;
 
@@ -209,21 +396,18 @@ const AudioControl = styled(motion.button)`
   position: absolute;
   top: 20px;
   right: 20px;
-  background-color: transparent;
-  border: none;
-  color: var(--accent-color);
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 100;
   width: 40px;
   height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  &:hover {
-    opacity: 0.8;
-  }
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  font-size: 1.2rem;
+  z-index: 100;
+  cursor: pointer;
 `;
 
 const ThankYouOverlay = styled(motion.div)`
@@ -232,7 +416,7 @@ const ThankYouOverlay = styled(motion.div)`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.9);
   z-index: 50;
   display: flex;
   flex-direction: column;
@@ -243,16 +427,20 @@ const ThankYouOverlay = styled(motion.div)`
 `;
 
 const ThankYouText = styled(motion.h2)`
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 32px;
-  color: var(--accent-color);
+  font-family: 'Cinzel Decorative', 'Times New Roman', serif;
+  font-size: 1.8rem;
+  color: #d4af37;
   margin-bottom: 20px;
   text-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
+  
+  @media (min-width: 768px) {
+    font-size: 2.2rem;
+  }
 `;
 
 const SocialIcons = styled(motion.div)`
   display: flex;
-  gap: 20px;
+  gap: 30px;
   margin-top: 30px;
 `;
 
@@ -260,9 +448,18 @@ const SocialIcon = styled(motion.a)`
   color: rgba(255, 255, 255, 0.7);
   font-size: 24px;
   text-decoration: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   &:hover {
-    color: var(--accent-color);
+    color: #d4af37;
+    border-color: #d4af37;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
   }
 `;
 
@@ -279,22 +476,44 @@ const ParticleContainer = styled.div`
 
 const Particle = styled(motion.div)`
   position: absolute;
-  width: 4px;
-  height: 4px;
+  background-color: transparent;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+  color: #d4af37;
+`;
+
+const LoadingSpinner = styled(motion.div)`
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(212, 175, 55, 0.3);
   border-radius: 50%;
-  background-color: var(--accent-color);
-  box-shadow: 0 0 5px var(--accent-color);
+  border-top-color: #d4af37;
+  margin-bottom: 1rem;
+`;
+
+const LoadingText = styled(motion.p)`
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-size: 1.2rem;
 `;
 
 // Ember particles component
 const EmberParticles: React.FC = () => {
   return (
     <ParticleContainer>
-      {Array.from({ length: 30 }).map((_, i) => {
+      {Array.from({ length: 20 }).map((_, i) => {
         const startX = 20 + Math.random() * 60;
         const duration = 3 + Math.random() * 4;
         const delay = Math.random() * 5;
-        const size = 2 + Math.random() * 3;
+        const size = 5 + Math.random() * 8;
         
         return (
           <Particle
@@ -304,13 +523,14 @@ const EmberParticles: React.FC = () => {
               left: `${startX}%`,
               width: `${size}px`,
               height: `${size}px`,
-              opacity: 0.7 + Math.random() * 0.3
+              opacity: 0.5 + Math.random() * 0.3
             }}
             animate={{
               y: [0, -200 - Math.random() * 300],
               x: [0, (Math.random() - 0.5) * 100],
-              opacity: [1, 0],
-              scale: [1, 0.2]
+              opacity: [0.8, 0],
+              scale: [1, 0.2],
+              rotate: [0, 360]
             }}
             transition={{
               duration: duration,
@@ -333,7 +553,7 @@ const AmpStory: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showThankYou, setShowThankYou] = useState(false);
-  const [muted, setMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -368,9 +588,9 @@ const AmpStory: React.FC = () => {
   // Initialize sound
   useEffect(() => {
     soundRef.current = new Howl({
-      src: ['/resources/music.mp3'],
+      src: ['https://freesound.org/data/previews/463/463088_7874600-lq.mp3'], // Gothic ambience from freesound.org
       loop: true,
-      volume: 0.5,
+      volume: 0,
       autoplay: true
     });
     
@@ -383,10 +603,10 @@ const AmpStory: React.FC = () => {
   
   // Toggle mute
   const toggleMute = () => {
-    setMuted(!muted);
+    setIsMuted(!isMuted);
     if (soundRef.current) {
-      if (muted) {
-        soundRef.current.volume(0.5);
+      if (isMuted) {
+        soundRef.current.volume(0.3);
       } else {
         soundRef.current.volume(0);
       }
@@ -405,7 +625,6 @@ const AmpStory: React.FC = () => {
       
       // Photo reveal
       await photoControls.start({
-        scale: [0.8, 1],
         opacity: [0, 1],
         transition: { duration: 0.8, ease: "easeOut" }
       });
@@ -413,7 +632,6 @@ const AmpStory: React.FC = () => {
       // Mask overlay
       await maskControls.start({
         opacity: [0, 0.4],
-        rotate: [-5, 0],
         transition: { duration: 0.8, ease: "easeOut" }
       });
       
@@ -425,7 +643,7 @@ const AmpStory: React.FC = () => {
         transition: { duration: 0.5, type: "spring", stiffness: 300, damping: 15 }
       });
       
-      // Name reveal letter by letter
+      // Name reveal
       await nameControls.start({
         opacity: 1,
         transition: { duration: 0.5 }
@@ -533,21 +751,19 @@ const AmpStory: React.FC = () => {
   
   if (loading) {
     return (
-      <StoryContainer
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        <ContentContainer>
-          <motion.h1
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-          >
-            Summoning your invitation...
-          </motion.h1>
-        </ContentContainer>
-      </StoryContainer>
+      <LoadingContainer>
+        <LoadingSpinner
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        />
+        <LoadingText
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+        >
+          Summoning your invitation...
+        </LoadingText>
+      </LoadingContainer>
     );
   }
   
@@ -562,6 +778,8 @@ const AmpStory: React.FC = () => {
     );
   }
   
+  const defaultPhoto = '/fp/skull.png';
+  
   return (
     <StoryContainer
       initial={{ opacity: 0 }}
@@ -571,8 +789,10 @@ const AmpStory: React.FC = () => {
     >
       {/* Background layers for parallax effect */}
       <BackgroundLayer style={{ x: backgroundX, y: backgroundY }} />
-      <ForegroundLayer style={{ x: foregroundX, y: foregroundY }} />
+      <CathedralOverlay style={{ x: midgroundX, y: midgroundY }} />
+      <StainedGlassEffect style={{ x: foregroundX, y: foregroundY }} />
       <CobwebsLayer style={{ x: midgroundX, y: midgroundY }} />
+      <VignetteOverlay />
       
       {/* Audio control */}
       <AudioControl 
@@ -580,47 +800,58 @@ const AmpStory: React.FC = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
-        {muted ? '🔇' : '🔊'}
+        {isMuted ? '🔇' : '🔊'}
       </AudioControl>
+      
+      {/* Navigation */}
+      <NavigationButton 
+        onClick={goBack}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        ← Back
+      </NavigationButton>
       
       {/* Main content */}
       <ContentContainer>
         {/* Portrait frame */}
         <PortraitFrame>
-          <FrameImage 
-            src="/resources/frame.png" 
-            alt="Ornate frame"
-            initial={{ opacity: 0, scale: 0 }}
-            animate={frameControls}
+          <HexagonFrameGlow 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ 
+              repeat: Infinity, 
+              duration: 3, 
+              ease: "easeInOut" 
+            }}
           />
           
-          <PhotoContainer
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={photoControls}
+          <HexagonFrame
+            initial={{ opacity: 0, scale: 0 }}
+            animate={frameControls}
           >
-            <Photo 
-              src={invitee?.photoUrl || "/face pic/skull.png"} 
-              alt={invitee?.name || "Guest"}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "/face pic/skull.png"; // Default to skull if image fails
-              }}
-            />
-          </PhotoContainer>
+            <InnerHexagon>
+              <PhotoContainer
+                photoUrl={invitee?.photoUrl || defaultPhoto}
+                initial={{ opacity: 0 }}
+                animate={photoControls}
+                onError={(e: React.SyntheticEvent<HTMLDivElement>) => {
+                  const target = e.target as HTMLDivElement;
+                  target.style.backgroundImage = `url(${defaultPhoto})`;
+                }}
+              />
+            </InnerHexagon>
+          </HexagonFrame>
           
           <MaskOverlay
-            src="/resources/mask.png"
-            alt="Mask overlay"
-            initial={{ opacity: 0, rotate: -5 }}
+            initial={{ opacity: 0 }}
             animate={maskControls}
           />
         </PortraitFrame>
         
         {/* Wax seal with name */}
         <WaxSeal>
-          <SealImage
-            src="/resources/seal.png"
-            alt="Wax seal"
+          <SealCircle
             initial={{ y: -50, opacity: 0, scale: 1.5 }}
             animate={sealControls}
           />
@@ -638,8 +869,6 @@ const AmpStory: React.FC = () => {
           initial={{ scaleY: 0, opacity: 0, originY: 0 }}
           animate={scrollControls}
         >
-          <ScrollImage src="/resources/scroll.png" alt="Scroll" />
-          
           <ScrollContent
             initial={{ opacity: 0, y: 20 }}
             animate={scrollContentControls}
@@ -654,14 +883,11 @@ const AmpStory: React.FC = () => {
         <RSVPButton
           initial={{ opacity: 0 }}
           animate={buttonControls}
-          whileHover={{ 
-            backgroundColor: "rgba(212, 175, 55, 0.2)", 
-            boxShadow: "0 0 15px rgba(212, 175, 55, 0.5)",
-            color: "#8B0000"
-          }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
           onClick={acceptInvitation}
         >
-          ACCEPT YOUR FATE
+          Accept Your Fate
         </RSVPButton>
         
         {/* Ember particles effect */}
@@ -688,6 +914,7 @@ const AmpStory: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
+              style={{ color: '#f5f5f5' }}
             >
               Share your summons with others
             </motion.p>
@@ -700,21 +927,21 @@ const AmpStory: React.FC = () => {
               <SocialIcon 
                 href="#" 
                 target="_blank"
-                whileHover={{ scale: 1.2, color: "#d4af37" }}
+                whileHover={{ scale: 1.2 }}
               >
                 📱
               </SocialIcon>
               <SocialIcon 
                 href="#" 
                 target="_blank"
-                whileHover={{ scale: 1.2, color: "#d4af37" }}
+                whileHover={{ scale: 1.2 }}
               >
                 ✉️
               </SocialIcon>
               <SocialIcon 
                 href="#" 
                 target="_blank"
-                whileHover={{ scale: 1.2, color: "#d4af37" }}
+                whileHover={{ scale: 1.2 }}
               >
                 📸
               </SocialIcon>
@@ -722,13 +949,11 @@ const AmpStory: React.FC = () => {
             
             <RSVPButton
               onClick={closeThankYou}
-              whileHover={{ 
-                backgroundColor: "rgba(212, 175, 55, 0.2)", 
-                boxShadow: "0 0 15px rgba(212, 175, 55, 0.5)" 
-              }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               style={{ marginTop: "40px" }}
             >
-              CONTINUE
+              Continue
             </RSVPButton>
           </ThankYouOverlay>
         )}

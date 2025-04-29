@@ -6,6 +6,8 @@ export interface Invitee {
   photoUrl: string;
   attending: boolean | null;
   response?: string;
+  additionalGuests?: number;
+  notes?: string;
   timestamp?: number;
 }
 

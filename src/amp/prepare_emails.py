@@ -4,7 +4,7 @@ import csv
 from string import Template
 
 # Configuration
-FACE_PICS_DIR = "digital invitation/face pic"
+FACE_PICS_DIR = "digital invitation/fp"
 EMAIL_TEMPLATE_FILE = "amp/email_template.txt"
 EMAIL_OUTPUT_FILE = "docs/email_list.csv"
 GITHUB_REPO_URL = "https://ReaperOAK.github.io/csefarewell2k25"  # Update this with your actual GitHub Pages URL

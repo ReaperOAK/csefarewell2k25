@@ -1,91 +1,139 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
+import ShapeCanvas from './common/ShapeCanvas';
+import AudioPlayer from './common/AudioPlayer';
+import RSVPModal from './modals/RSVPModal';
 
+// Styled components for the home page
 const HomeContainer = styled.div`
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  text-align: center;
+  align-items: center;
   padding: 2rem;
+  background-color: var(--bg);
   position: relative;
+  overflow: hidden;
 `;
 
-const Title = styled.h1`
-  margin-bottom: 2rem;
-  font-size: 3rem;
-  text-transform: uppercase;
-  animation: fadeIn 2s ease-in-out;
+const ContentWrapper = styled(motion.div)`
+  z-index: 10;
+  text-align: center;
+  max-width: 800px;
+  padding: 2rem;
 `;
 
-const Subtitle = styled.h2`
-  margin-bottom: 3rem;
-  font-size: 1.5rem;
-  animation: fadeIn 2.5s ease-in-out;
-`;
+const Title = styled(motion.h1)`
+  font-family: 'Unbounded', sans-serif;
+  font-size: 48px;
+  font-weight: bold;
+  color: var(--gold);
+  letter-spacing: 4px;
+  margin-bottom: 1.5rem;
 
-const Button = styled(Link)`
-  background-color: var(--secondary-color);
-  color: var(--text-color);
-  text-decoration: none;
-  padding: 15px 30px;
-  margin: 20px 0;
-  border: 1px solid var(--accent-color);
-  font-family: 'Copperplate Gothic', serif;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  animation: fadeIn 3s ease-in-out;
-  
-  &:hover {
-    background-color: var(--accent-color);
-    color: var(--primary-color);
-    transform: scale(1.05);
+  @media (max-width: 768px) {
+    font-size: 36px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 28px;
   }
 `;
 
-const VideoBackground = styled.video`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
-  opacity: 0.7;
+const Subtitle = styled(motion.p)`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 3rem;
+  max-width: 600px;
+  line-height: 1.6;
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
+`;
+
+const Button = styled(motion.button)`
+  padding: 1rem 2.5rem;
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-top: 1rem;
 `;
 
 const Home: React.FC = () => {
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  
-  const videos = [
-    '/black_with_drifting_golden_ember_particles_looped.mp4',
-    '/looping_3_second_vaporous_smoke_swirling_into_a.mp4',
-    '/full_screen_looped_video_of_gently_swirling_silver.mp4',
-    '/pan_loop_of_a_dimly_lit_gothic_ballroom.mp4'
-  ];
+  const [showRSVPModal, setShowRSVPModal] = useState(false);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
-    }, 30000); // Change video every 30 seconds
+  const openRSVPModal = () => {
+    setShowRSVPModal(true);
+  };
 
-    return () => clearInterval(interval);
-  }, [videos.length]);
+  const closeRSVPModal = () => {
+    setShowRSVPModal(false);
+  };
+
+  const handleRSVPSubmit = (data: any) => {
+    console.log('RSVP Data:', data);
+    setShowRSVPModal(false);
+    // Add logic to save the RSVP data to Firebase
+  };
 
   return (
     <HomeContainer>
-      <VideoBackground autoPlay muted loop key={currentVideoIndex}>
-        <source src={videos[currentVideoIndex]} type="video/mp4" />
-        Your browser does not support the video tag.
-      </VideoBackground>
+      {/* Background 3D Shapes */}
+      <ShapeCanvas shapeCount={15} />
       
-      <Title>OBLIVION</Title>
-      <Subtitle>Presented by CSE Juniors</Subtitle>
+      {/* Main Content */}
+      <ContentWrapper
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <Title
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+        >
+          OBLIVION: Final Masquerade Awaits
+        </Title>
+        
+        <Subtitle
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
+          For invited guests, please use your unique link. Otherwise, join us in spirit.
+        </Subtitle>
+        
+        <Button
+          onClick={openRSVPModal}
+          whileHover={{ scale: 1.05, backgroundColor: 'rgba(212, 175, 55, 0.2)' }}
+          whileTap={{ scale: 0.98 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.3 }}
+        >
+          General RSVP
+        </Button>
+      </ContentWrapper>
       
-      <Button to="/invitation">Enter If You Dare</Button>
+      {/* Audio Player */}
+      <AudioPlayer src="/music.mp3" />
+      
+      {/* RSVP Modal */}
+      {showRSVPModal && (
+        <RSVPModal
+          onClose={closeRSVPModal}
+          onSubmit={handleRSVPSubmit}
+        />
+      )}
     </HomeContainer>
   );
 };

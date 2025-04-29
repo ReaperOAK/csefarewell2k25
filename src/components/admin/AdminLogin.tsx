@@ -89,11 +89,15 @@ const ErrorMessage = styled(motion.div)`
   font-size: 14px;
 `;
 
-const AdminLogin: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
+const AdminLogin: React.FC<{ onLogin: (token: string) => void }> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Hardcoded admin credentials
+  const ADMIN_EMAIL = 'admin@cse';
+  const ADMIN_PASSWORD = 'byeseniors';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,8 +111,17 @@ const AdminLogin: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
     setError(null);
     
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      onLogin();
+      // Check for hardcoded credentials first
+      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        // Use a temporary token for the hardcoded admin
+        onLogin('admin-hardcoded-token');
+        return;
+      }
+      
+      // If not using hardcoded credentials, try Firebase auth
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // Pass the user's UID as the token
+      onLogin(userCredential.user.uid);
     } catch (err: any) {
       console.error('Login error:', err);
       if (err.code === 'auth/invalid-credential') {

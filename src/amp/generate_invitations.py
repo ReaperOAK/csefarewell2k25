@@ -6,7 +6,7 @@ import re
 # Configuration
 TEMPLATE_FILE = "amp/index.html"
 OUTPUT_DIR = "docs"  # GitHub Pages will serve from the 'docs' folder
-FACE_PICS_DIR = "digital invitation/face pic"
+FACE_PICS_DIR = "digital invitation/fp"
 RESOURCES_DIR = "amp/resources"
 RSVP_LINK = "https://forms.gle/PLACEHOLDER_FORM_LINK"  # Replace with your actual form link
 EVENT_DETAILS_URL = "https://PLACEHOLDER_EVENT_DETAILS" # Replace with your event details page
@@ -23,17 +23,17 @@ for resource_file in os.listdir(RESOURCES_DIR):
         shutil.copy2(source, destination)
         print(f"Copied resource: {resource_file}")
 
-# Create a face pics directory in the output
+# Create a fps directory in the output
 os.makedirs(os.path.join(OUTPUT_DIR, "faces"), exist_ok=True)
 
-# Copy all face pics to the output
+# Copy all fps to the output
 for face_pic in os.listdir(FACE_PICS_DIR):
     if face_pic.endswith('.png'):
         source = os.path.join(FACE_PICS_DIR, face_pic)
         destination = os.path.join(OUTPUT_DIR, "faces", face_pic)
         if os.path.isfile(source):
             shutil.copy2(source, destination)
-            print(f"Copied face pic: {face_pic}")
+            print(f"Copied fp: {face_pic}")
 
 # Read the HTML template
 with open(TEMPLATE_FILE, 'r', encoding='utf-8') as file:
