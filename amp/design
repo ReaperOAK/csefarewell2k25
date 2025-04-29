@@ -1,0 +1,106 @@
+Below is a suggested **8-page AMP Story** for your **“OBLIVION – CSE Farewell 2025”**. Each page is laid out for a 9:16 mobile canvas. You can build these in MakeStories or hand-code them; the descriptions include every layer, animation, and audio cue to make it truly immersive.
+
+---
+
+## **Page 1: Prologue – Whispers in the Dark**  
+- **Background**: Full-screen looped video of gently swirling silver mist over black stone.  
+- **Layer 1 (Top)**: Semi-transparent overlay (RGBA 0,0,0,0.3) to deepen the shadows.  
+- **Text 1** (Centered vertically/top third):  
+  - “When shadows whisper…”  
+  - Font: Cinzel Decorative, 48px, #E0D7B0 (antique parchment tone)  
+  - **Animation**: Fade in letter by letter over 1.5s.  
+- **Audio**: Begin with a low, droning ambient hum (–12 dB), rising gently for 3s.  
+
+---
+
+## **Page 2: The Summoning**  
+- **Background**: Looping 3-second vaporous smoke swirling into a faint shape of a summoning circle.  
+- **Layer 2**: Centered SVG of a glowing gold-lined summoning circle (transparent PNG).  
+- **Animation**: Circle outline “draws on” over 2s, then pulses glow twice.  
+- **Text 2** (Center/below circle):  
+  - “OBLIVION”  
+  - Font: Cinzel, 72px, #FFD700, letter-spacing +8px  
+  - Animation: Pop-scale from 0.5× to 1× over 0.8s with ease-out bounce.  
+- **Audio**: Soft crackling of magical energy (sync to circle draw), then a single deep chime at the end of the draw.  
+
+---
+
+## **Page 3: Masked Specters**  
+- **Background**: Pan loop of a dimly-lit Gothic ballroom interior (slow pan right).  
+- **Layer 3**: Three semi-transparent apparitions in masquerade masks fade into view (left, center, right).  
+- **Animation**: Each apparition fades in sequentially (0.5s stagger), then drifts upward by 20px over 4s.  
+- **Text 3** (Bottom third):  
+  - “A final masquerade awaits…”  
+  - Font: Lora Italic, 32px, #F5F5F5, line-height 1.3  
+  - Animation: Fade up from +30px offset.  
+- **Audio**: Add distant, echoed waltz strings (–15 dB), looped quietly.  
+
+---
+
+## **Page 4: The Invitation**  
+- **Background**: Black with drifting golden ember particles (looped GIF).  
+- **Layer 4**: Central parchment scroll PNG, slightly curled, glowing edges.  
+- **Text 4** (On the scroll’s blank center):  
+  - “CSE Farewell 2025” (top line)  
+  - “May 17 | STCET Dias (second line)  
+  - Font: Montserrat Semi-Bold, 28px, #EFE8D8, line-height 1.4  
+  - Animation: Scroll “unrolls” from top over 1.5s, text types on over the next 1.5s.  
+- **Audio**: Soft pen-on-parchment writing sfx during type, then a soft wind gust as scroll unrolls.  
+
+---
+
+## **Page 5: The Gathering Storm**  
+- **Background**: Video of a blood-red full moon breaking through storm clouds (loop).  
+- **Layer 5**: Lightning flash effect: full-screen white flash (0.1s) every 3s.  
+- **Text 5** (Center overlay):  
+  - “Under the blood moon…”  
+  - Font: Unbounded, 40px, #D44F4F (deep crimson), letter-spacing +4px  
+  - Animation: Brief red glow bloom on each lightning flash.  
+- **Audio**: Add distant thunder rumbles (–10 dB) timed with the flashes.  
+
+---
+
+## **Page 6: RSVP Call-to-Action**  
+- **Background**: Semi-blurred still of the ballroom from Page 3.  
+- **Layer 6-Button**: Large tappable button centered:  
+  - Label “RSVP NOW”  
+  - Font: Montserrat Bold, 24px, #000000 on #FFD700 button  
+  - Button shape: Rounded rectangle, drop shadow (20px blur, #000000, 30% opacity).  
+  - Animation: Button pulses (scale 1→1.05→1) every 2s.  
+- **Text 6** (Above button):  
+  - “Will you join our last dance?”  
+  - Font: Lora, 24px, #FFFFFF  
+  - Animation: Fade in at 1s.  
+- **Audio**: Add a soft heartbeat thump (–8 dB) synced to button pulses.  
+
+---
+
+## **Page 7: Share the Legend**  
+- **Background**: Static frame of swirling smoke and embers.  
+- **Layer 7-Icons**:  
+  - Instagram & WhatsApp icons in a row at bottom (free PNGs), each with #FFFFFF color.  
+  - Each icon fades in one after the other.  
+- **Text 7** (Center):  
+  - “Share your fate”  
+  - Font: Cinzel Decorative, 30px, #E0D7B0  
+  - Animation: Text flickers like a candle flame (tiny scale and opacity jitter).  
+- **Audio**: Whispered chorus: “Share… Share… Share…” faint and looping.  
+
+---
+
+## **Page 8: Epilogue – Into Oblivion**  
+- **Background**: Full-screen slowly zooming-out shot of the summoning circle from Page 2.  
+- **Layer 8 (Top)**: Heavy vignette darkening edges by 40%.  
+- **Text 8** (Center):  
+  - “See you in Oblivion.”  
+  - Font: Cinzel, 56px, #FFD700, letter-spacing +6px  
+  - Animation: Text appears with a soft golden “sprinkle” particle effect.  
+- **End Animation**: Circle’s glow fades out to black over 3s.  
+- **Audio**: Single haunting piano note, reverberating into silence.  
+
+---
+
+**Total Pages:** 8  
+**Estimated Duration:** ~30 seconds total if each page advances automatically after ~4 seconds (set `auto-advance-after` on each `<amp-story-page>`).  
+
+This structure balances **cinematic visuals, layered animations, and thematic audio cues** to deliver an unforgettable interactive invitation. Mix and match elements, tweak timings, and you’ll have a truly **beautiful AMP Story** for your “OBLIVION” farewell.
