@@ -8,6 +8,7 @@ import GlobalStyle from './styles/GlobalStyles';
 import { ThemeProvider } from './context/ThemeContext';
 import './App.css';
 import ScrollHelper from './components/common/ScrollHelper';
+import Footer from './components/common/Footer';
 
 // Fix mobile height issue
 // This helps browsers correctly calculate viewport height on mobile
@@ -34,16 +35,19 @@ function App() {
     <ThemeProvider>
       <BrowserRouter>
         <GlobalStyle />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/invitation" element={<Invitation />} />
-          <Route path="/invitation/:id" element={<Invitation />} />
-          <Route path="/amp-story/:id" element={<AmpStory />} />
-          <Route path="/amp-story" element={<AmpStory />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-        <ScrollHelper />
+        <div className="app-container">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/invitation" element={<Invitation />} />
+            <Route path="/invitation/:id" element={<Invitation />} />
+            <Route path="/amp-story/:id" element={<AmpStory />} />
+            <Route path="/amp-story" element={<AmpStory />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+          <Footer />
+          <ScrollHelper />
+        </div>
       </BrowserRouter>
     </ThemeProvider>
   );

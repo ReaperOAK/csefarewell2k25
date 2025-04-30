@@ -439,32 +439,6 @@ const RSVPButton = styled(motion.button)`
   }
 `;
 
-const AudioControl = styled(motion.button)`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.6);
-  border: 1px solid #d4af37;
-  color: #d4af37;
-  font-size: 1rem;
-  z-index: 100;
-  cursor: pointer;
-  
-  @media (min-width: 768px) {
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
-  }
-`;
-
 const ThankYouOverlay = styled(motion.div)`
   position: absolute;
   top: 0;
@@ -618,7 +592,6 @@ const AmpStory: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showThankYou, setShowThankYou] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -653,33 +626,40 @@ const AmpStory: React.FC = () => {
     }
   };
   
-  // Initialize sound
+  // Audio initialization - always plays sound without mute option
   useEffect(() => {
     soundRef.current = new Howl({
       src: ['https://freesound.org/data/previews/463/463088_7874600-lq.mp3'], // Gothic ambience from freesound.org
       loop: true,
-      volume: 0,
+      volume: 0.5, // Start with sound on
       autoplay: true
     });
+    
+    // Try playing again on first user interaction to handle browser autoplay restrictions
+    const playAudioOnUserAction = () => {
+      if (soundRef.current) {
+        soundRef.current.volume(0.5);
+        // Remove event listeners after successful play
+        document.removeEventListener('click', playAudioOnUserAction);
+        document.removeEventListener('touchstart', playAudioOnUserAction);
+        document.removeEventListener('keydown', playAudioOnUserAction);
+      }
+    };
+    
+    // Add event listeners for user interaction to trigger audio
+    document.addEventListener('click', playAudioOnUserAction, { once: true });
+    document.addEventListener('touchstart', playAudioOnUserAction, { once: true });
+    document.addEventListener('keydown', playAudioOnUserAction, { once: true });
     
     return () => {
       if (soundRef.current) {
         soundRef.current.stop();
       }
+      document.removeEventListener('click', playAudioOnUserAction);
+      document.removeEventListener('touchstart', playAudioOnUserAction);
+      document.removeEventListener('keydown', playAudioOnUserAction);
     };
   }, []);
-  
-  // Toggle mute
-  const toggleMute = () => {
-    setIsMuted(!isMuted);
-    if (soundRef.current) {
-      if (isMuted) {
-        soundRef.current.volume(0.3);
-      } else {
-        soundRef.current.volume(0);
-      }
-    }
-  };
   
   // Animation sequence
   useEffect(() => {
@@ -862,15 +842,6 @@ const AmpStory: React.FC = () => {
       <StainedGlassEffect style={{ x: foregroundX, y: foregroundY }} />
       <CobwebsLayer style={{ x: midgroundX, y: midgroundY }} />
       <VignetteOverlay />
-      
-      {/* Audio control */}
-      <AudioControl 
-        onClick={toggleMute}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-      >
-        {isMuted ? '🔇' : '🔊'}
-      </AudioControl>
       
       {/* Navigation */}
       <NavigationButton 
