@@ -6,6 +6,7 @@ import AmpStory from './components/AmpStory';
 import AdminPage from './components/admin/AdminPage';
 import GlobalStyle from './styles/GlobalStyles';
 import { ThemeProvider } from './context/ThemeContext';
+import { AudioProvider } from './context/AudioContext';
 import './App.css';
 import ScrollHelper from './components/common/ScrollHelper';
 import Footer from './components/common/Footer';
@@ -33,22 +34,24 @@ function App() {
   
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <GlobalStyle />
-        <div className="app-container">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/invitation" element={<Invitation />} />
-            <Route path="/invitation/:id" element={<Invitation />} />
-            <Route path="/amp-story/:id" element={<AmpStory />} />
-            <Route path="/amp-story" element={<AmpStory />} />
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-          <Footer />
-          <ScrollHelper />
-        </div>
-      </BrowserRouter>
+      <AudioProvider>
+        <BrowserRouter>
+          <GlobalStyle />
+          <div className="app-container">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/invitation" element={<Invitation />} />
+              <Route path="/invitation/:id" element={<Invitation />} />
+              <Route path="/amp-story/:id" element={<AmpStory />} />
+              <Route path="/amp-story" element={<AmpStory />} />
+              <Route path="/admin" element={<AdminPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+            <Footer />
+            <ScrollHelper />
+          </div>
+        </BrowserRouter>
+      </AudioProvider>
     </ThemeProvider>
   );
 }

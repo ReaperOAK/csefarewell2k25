@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { Invitee } from '../types';
-import AudioPlayer from './common/AudioPlayer';
 import ShapeCanvas from './common/ShapeCanvas';
 import { encodeImageUrl } from '../utils/imageUtils';
 
@@ -549,8 +548,6 @@ const Invitation: React.FC = () => {
   return (
     <PageWrapper>
       <ShapeCanvas shapeCount={8} />
-      
-      <AudioPlayer src="/music.mp3" />
       
       <BackButton
         onClick={goBack}

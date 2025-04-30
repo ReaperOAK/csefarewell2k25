@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import ShapeCanvas from './common/ShapeCanvas';
-import AudioPlayer from './common/AudioPlayer';
 import RSVPModal from './modals/RSVPModal';
 
 // Styled components for the home page
@@ -414,9 +413,6 @@ const Home: React.FC = () => {
           GENERAL RSVP
         </Button>
       </ContentWrapper>
-      
-      {/* Audio Player */}
-      <AudioPlayer src="/music.mp3" />
       
       {/* RSVP Modal */}
       <AnimatePresence>

@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion, useAnimation, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
-import { Howl } from 'howler';
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { Invitee } from '../types';
@@ -614,9 +613,6 @@ const AmpStory: React.FC = () => {
   const scrollContentControls = useAnimation();
   const buttonControls = useAnimation();
   
-  // Audio ref
-  const soundRef = useRef<Howl | null>(null);
-  
   // Handle mouse movement for parallax - but only on desktop
   const handleMouseMove = (e: React.MouseEvent) => {
     // Skip parallax on mobile devices for better scrolling
@@ -625,41 +621,6 @@ const AmpStory: React.FC = () => {
       mouseY.set(e.clientY);
     }
   };
-  
-  // Audio initialization - always plays sound without mute option
-  useEffect(() => {
-    soundRef.current = new Howl({
-      src: ['https://freesound.org/data/previews/463/463088_7874600-lq.mp3'], // Gothic ambience from freesound.org
-      loop: true,
-      volume: 0.5, // Start with sound on
-      autoplay: true
-    });
-    
-    // Try playing again on first user interaction to handle browser autoplay restrictions
-    const playAudioOnUserAction = () => {
-      if (soundRef.current) {
-        soundRef.current.volume(0.5);
-        // Remove event listeners after successful play
-        document.removeEventListener('click', playAudioOnUserAction);
-        document.removeEventListener('touchstart', playAudioOnUserAction);
-        document.removeEventListener('keydown', playAudioOnUserAction);
-      }
-    };
-    
-    // Add event listeners for user interaction to trigger audio
-    document.addEventListener('click', playAudioOnUserAction, { once: true });
-    document.addEventListener('touchstart', playAudioOnUserAction, { once: true });
-    document.addEventListener('keydown', playAudioOnUserAction, { once: true });
-    
-    return () => {
-      if (soundRef.current) {
-        soundRef.current.stop();
-      }
-      document.removeEventListener('click', playAudioOnUserAction);
-      document.removeEventListener('touchstart', playAudioOnUserAction);
-      document.removeEventListener('keydown', playAudioOnUserAction);
-    };
-  }, []);
   
   // Animation sequence
   useEffect(() => {
