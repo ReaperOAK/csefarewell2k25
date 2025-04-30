@@ -1,13 +1,72 @@
-body {
+html, body {
+  height: 100%;
+  width: 100%;
   margin: 0;
+  padding: 0;
+  position: relative;
+  overscroll-behavior: none;
+}
+
+/* Critical mobile scrolling fixes */
+html {
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll !important;
+  height: -webkit-fill-available;
+  position: relative;
+}
+
+body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: scroll !important;
+  -webkit-overflow-scrolling: touch;
+  position: static !important;
+  touch-action: manipulation;
+  overscroll-behavior-y: none;
+}
+
+#root {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto !important;
+  display: block;
+  position: relative;
+  position: static !important;
+  min-height: 100vh;
+  overflow-y: visible !important;
+  contain: none;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Mobile-only fixes */
+@media (max-width: 768px) {
+  body, #root, .scroll-container {
+    touch-action: pan-y !important;
+    -webkit-overflow-scrolling: touch !important;
+    overflow-y: auto !important;
+    position: static !important;
+    transform: none !important;
+  }
+  
+  /* Use CSS variable for mobile viewport height */
+  .full-height {
+    height: calc(var(--vh, 1vh) * 100);
+  }
 }

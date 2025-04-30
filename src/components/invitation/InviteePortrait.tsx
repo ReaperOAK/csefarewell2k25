@@ -1,5 +1,6 @@
 import React from 'react';
 import { PortraitContainer, HexagonMask, Portrait } from '../../styles/InvitationStyles';
+import { encodeImageUrl } from '../../utils/imageUtils';
 
 interface InviteePortraitProps {
   photoUrl: string;
@@ -7,6 +8,10 @@ interface InviteePortraitProps {
 }
 
 const InviteePortrait: React.FC<InviteePortraitProps> = ({ photoUrl, defaultPhoto }) => {
+  // Encode the URLs to properly handle spaces in filenames
+  const encodedPhotoUrl = encodeImageUrl(photoUrl);
+  const encodedDefaultPhoto = encodeImageUrl(defaultPhoto);
+  
   return (
     <PortraitContainer
       initial={{ scale: 0 }}
@@ -15,10 +20,10 @@ const InviteePortrait: React.FC<InviteePortraitProps> = ({ photoUrl, defaultPhot
     >
       <HexagonMask />
       <Portrait 
-        photoUrl={photoUrl || defaultPhoto}
+        photoUrl={encodedPhotoUrl || encodedDefaultPhoto}
         onError={(e: React.SyntheticEvent<HTMLDivElement>) => {
           const target = e.target as HTMLDivElement;
-          target.style.backgroundImage = `url(${defaultPhoto})`;
+          target.style.backgroundImage = `url(${encodedDefaultPhoto})`;
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

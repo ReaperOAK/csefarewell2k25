@@ -1,5 +1,41 @@
+/* Reset basic styles with scrolling focus */
+:root {
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto !important;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  touch-action: manipulation;
+}
+
+/* Force scrollable content */
+body {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto !important;
+  height: 100%;
+  position: static !important;
+}
+
+#root {
+  overflow-y: auto !important;
+  position: static !important;
+  min-height: 100%;
+}
+
+/* Clear all height constraints */
 .App {
   text-align: center;
+  min-height: 100vh;
+  overflow-y: auto !important;
+  position: static !important;
 }
 
 .App-logo {
@@ -35,4 +71,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Remove any fixed positioning that might block scrolling */
+.fixed-element {
+  position: absolute;
+}
+
+/* Override any fixed position elements used in components */
+.fixed-position-override {
+  position: absolute !important;
 }

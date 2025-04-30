@@ -1,6 +1,6 @@
 // filepath: c:\Owais\farewell 2025\csefarewell2k25\src\components\admin\AdminPage.tsx
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Invitee } from '../../types';
 import AdminLogin from './AdminLogin';
@@ -10,6 +10,7 @@ import InviteeList from './InviteeList';
 import InviteeModal from './InviteeModal';
 import BulkEmailSender from './BulkEmailSender';
 import Toast from '../common/Toast';
+import { sendInvitationEmail } from '../../utils/emailUtils';
 
 const AdminPage: React.FC = () => {
   // Authentication state
@@ -204,24 +205,56 @@ const AdminPage: React.FC = () => {
   
   // Handle send email
   const handleSendEmail = async (inviteeId: string) => {
-    // This would typically call your backend email service
-    // For this demo, we'll just show a success message
-    setToast({
-      message: 'Email sent successfully',
-      type: 'success'
-    });
+    try {
+      // Get the invitee data
+      const inviteeDoc = await getDoc(doc(db, 'invitees', inviteeId));
+      
+      if (!inviteeDoc.exists()) {
+        throw new Error('Invitee not found');
+      }
+      
+      const inviteeData = { id: inviteeDoc.id, ...inviteeDoc.data() } as Invitee;
+      
+      if (!inviteeData.email) {
+        throw new Error('Invitee does not have an email address');
+      }
+      
+      // Send the email
+      await sendInvitationEmail(inviteeData);
+      
+      setToast({
+        message: `Email sent successfully to ${inviteeData.name}`,
+        type: 'success'
+      });
+    } catch (error: any) {
+      console.error('Failed to send email:', error);
+      setToast({
+        message: error.message || 'Failed to send email',
+        type: 'error'
+      });
+    }
   };
   
   // Handle bulk email sending
-  const handleBulkEmailSend = async (inviteeIds: string[]) => {
-    // This would typically call your backend email service
-    // For this demo, we'll just show a success message after a delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setToast({
-      message: `${inviteeIds.length} emails sent successfully`,
-      type: 'success'
-    });
+  const handleBulkEmailSend = async (inviteeIds: string[]): Promise<void> => {
+    try {
+      // Record that emails were sent
+      for (const inviteeId of inviteeIds) {
+        // Update the invitee document to record that an email was sent
+        await updateDoc(doc(db, 'invitees', inviteeId), {
+          emailSent: true,
+          emailSentTimestamp: serverTimestamp()
+        });
+      }
+      
+      // Refresh the invitees list to update UI
+      await fetchInvitees();
+      
+      // Return void instead of boolean
+    } catch (error) {
+      console.error('Error recording email status:', error);
+      throw new Error('Failed to update email records');
+    }
   };
   
   // Calculate stats

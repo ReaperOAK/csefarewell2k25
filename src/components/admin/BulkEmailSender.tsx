@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Invitee } from '../../types';
 import Toast from '../common/Toast';
+import { encodeImageUrl } from '../../utils/imageUtils';
+import { sendBulkInvitationEmails, isValidEmail } from '../../utils/emailUtils';
+import EmailTemplateTest from './EmailTemplateTest';
 
 // Styled components
 const Container = styled.div`
@@ -24,6 +27,17 @@ const Title = styled.h2`
   font-size: 1.2rem;
   color: var(--gold);
   margin: 0;
+`;
+
+const TestButton = styled(motion.button)`
+  padding: 0.4rem 0.8rem;
+  background-color: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: var(--text);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
 `;
 
 const SelectionHeader = styled.div`
@@ -233,9 +247,10 @@ const BulkEmailSender: React.FC<BulkEmailSenderProps> = ({
   const [sent, setSent] = useState(0);
   const [total, setTotal] = useState(0);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [showTestTool, setShowTestTool] = useState(false);
   
-  // Filter invitees to only show those with emails
-  const inviteesWithEmail = invitees.filter(invitee => invitee.email);
+  // Filter invitees to only show those with valid emails
+  const inviteesWithEmail = invitees.filter(invitee => isValidEmail(invitee.email));
   
   // Toggle selection for a single invitee
   const toggleSelection = (inviteeId: string) => {
@@ -282,24 +297,19 @@ const BulkEmailSender: React.FC<BulkEmailSenderProps> = ({
       
       const selectedIds = Array.from(selectedInvitees);
       
-      // Set up progress tracking
-      let completedCount = 0;
-      const updateProgress = () => {
-        completedCount++;
-        setSent(completedCount);
-        setProgress((completedCount / selectedIds.length) * 100);
-      };
+      // Get the full invitee objects for the selected IDs
+      const selectedInviteesData = inviteesWithEmail.filter(invitee => 
+        selectedIds.includes(invitee.id)
+      );
       
       // Send emails with progress tracking
-      await onSendEmails(selectedIds);
+      await sendBulkInvitationEmails(selectedInviteesData, (sentCount) => {
+        setSent(sentCount);
+        setProgress((sentCount / selectedIds.length) * 100);
+      });
       
-      // Simulate progress for the demo (remove in production)
-      const progressInterval = setInterval(() => {
-        updateProgress();
-        if (completedCount >= selectedIds.length) {
-          clearInterval(progressInterval);
-        }
-      }, 500);
+      // Notify parent component (for any additional tracking or actions)
+      await onSendEmails(selectedIds);
       
       // Show success message
       setToast({
@@ -310,6 +320,7 @@ const BulkEmailSender: React.FC<BulkEmailSenderProps> = ({
       // Clear selection after sending
       deselectAll();
     } catch (error) {
+      console.error('Error sending emails:', error);
       setToast({
         message: 'Failed to send emails. Please try again.',
         type: 'error'
@@ -321,12 +332,26 @@ const BulkEmailSender: React.FC<BulkEmailSenderProps> = ({
       }, 1000);
     }
   };
+
+  // Toggle email test tool
+  const toggleTestTool = () => {
+    setShowTestTool(!showTestTool);
+  };
   
   return (
     <Container>
       <Header>
         <Title>Send Invitation Emails</Title>
+        <TestButton 
+          onClick={toggleTestTool}
+          whileHover={{ scale: 1.05, backgroundColor: 'rgba(212, 175, 55, 0.1)' }}
+          whileTap={{ scale: 0.98 }}
+        >
+          {showTestTool ? 'Hide Test Tool' : 'Test Email Template'}
+        </TestButton>
       </Header>
+      
+      {showTestTool && <EmailTemplateTest />}
       
       {inviteesWithEmail.length === 0 ? (
         <EmptyMessage>
@@ -369,22 +394,27 @@ const BulkEmailSender: React.FC<BulkEmailSenderProps> = ({
           </SendButton>
           
           <InviteeList>
-            {inviteesWithEmail.map(invitee => (
-              <InviteeCard
-                key={invitee.id}
-                $selected={selectedInvitees.has(invitee.id)}
-                onClick={() => toggleSelection(invitee.id)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <InviteePhoto photoUrl={invitee.photoUrl} />
-                <InviteeInfo>
-                  <InviteeName>{invitee.name}</InviteeName>
-                  <InviteeEmail>{invitee.email}</InviteeEmail>
-                </InviteeInfo>
-                <Checkbox $checked={selectedInvitees.has(invitee.id)} />
-              </InviteeCard>
-            ))}
+            {inviteesWithEmail.map(invitee => {
+              // Encode photo URL to handle spaces in filenames
+              const encodedPhotoUrl = encodeImageUrl(invitee.photoUrl);
+              
+              return (
+                <InviteeCard
+                  key={invitee.id}
+                  $selected={selectedInvitees.has(invitee.id)}
+                  onClick={() => toggleSelection(invitee.id)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <InviteePhoto photoUrl={encodedPhotoUrl} />
+                  <InviteeInfo>
+                    <InviteeName>{invitee.name}</InviteeName>
+                    <InviteeEmail>{invitee.email}</InviteeEmail>
+                  </InviteeInfo>
+                  <Checkbox $checked={selectedInvitees.has(invitee.id)} />
+                </InviteeCard>
+              );
+            })}
           </InviteeList>
         </>
       )}

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Invitee } from '../../types';
+import { encodeImageUrl, fetchAvailableProfilePictures } from '../../utils/imageUtils';
 
 // Styled components
 const ModalOverlay = styled(motion.div)`
@@ -138,8 +139,13 @@ const ErrorMessage = styled(motion.div)`
   text-align: center;
 `;
 
-// Add PhotoSelect styled component
-const PhotoSelect = styled.select`
+const SearchableSelect = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--gold);
@@ -151,11 +157,49 @@ const PhotoSelect = styled.select`
     border-color: var(--gold);
     box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
   }
+`;
+
+const DropdownContainer = styled.div<{ $isOpen: boolean }>`
+  display: ${props => props.$isOpen ? 'block' : 'none'};
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: rgba(10, 10, 10, 0.95);
+  border: 1px solid var(--gold);
+  border-top: none;
+  z-index: 10;
+`;
+
+const DropdownItem = styled.div<{ $isSelected: boolean }>`
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  cursor: pointer;
+  background-color: ${props => props.$isSelected ? 'rgba(212, 175, 55, 0.2)' : 'transparent'};
   
-  option {
-    background-color: #111;
-    color: var(--text);
+  &:hover {
+    background-color: rgba(212, 175, 55, 0.1);
   }
+`;
+
+const DropdownItemImage = styled.div<{ photoUrl: string }>`
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+  background-image: ${props => `url(${props.photoUrl})`};
+  background-size: cover;
+  background-position: center;
+  border: 1px solid var(--gold);
+`;
+
+const DropdownItemText = styled.div`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text);
 `;
 
 interface InviteeModalProps {
@@ -178,96 +222,83 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [availablePhotos, setAvailablePhotos] = useState<string[]>([]);
+  const [photoSearchTerm, setPhotoSearchTerm] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [loadingPhotos, setLoadingPhotos] = useState(false);
   
   const isEditMode = !!invitee;
   
-  // Fetch available photos
-  const fetchAvailablePhotos = async () => {
-    try {
-      // This would ideally be an API call to get photos from your server
-      // For now, we'll use a static list based on your directory structure
-      const photos = [
-        '/fp/skull.png',
-        '/fp/default.png',
-        '/fp/Abir Chakraborty.png',
-        '/fp/Agnibha Chakraborty.png',
-        '/fp/Aindrila Chakraborty.png',
-        '/fp/Aman Kumar Shah.png',
-        '/fp/Anik Chakraborti.png',
-        '/fp/ANKITA GHOSH.png',
-        '/fp/Aranya Adhikary.png',
-        '/fp/Aritra Ganguly.png',
-        '/fp/Arka Prava De.png',
-        '/fp/ARUNIMA KUNDU.png',
-        '/fp/ashutosh dubey.png',
-        '/fp/Azhan Shadique.png',
-        '/fp/Bishal Ghosh.png',
-        '/fp/BISWAJIT PATRA.png',
-        '/fp/Debika Ray.png',
-        '/fp/Dipan Dutta.png',
-        '/fp/Dyutiprovo Sarkar.png',
-        '/fp/Gitiparna Paul.png',
-        '/fp/Ishita Kar.png',
-        '/fp/Junaid Islam.png',
-        '/fp/Koyena Chakrabarti.png',
-        '/fp/KUMAR SAURAV.png',
-        '/fp/Manash Das.png',
-        '/fp/MD ASAD REYAZ.png',
-        '/fp/Md Masoodur Rahman.png',
-        '/fp/MEHULI CHATTERJEE.png',
-        '/fp/Mousumi Dey.png',
-        '/fp/Mriganka Manna.png',
-        '/fp/NILABHA MONDAL.png',
-        '/fp/Niloy Roy.png',
-        '/fp/Poulomi Santra.png',
-        '/fp/Raunak Dey.png',
-        '/fp/Ritu Prasad.png',
-        '/fp/Riya Behera.png',
-        '/fp/S Zakya Naseem.png',
-        '/fp/Samip Sen.png',
-        '/fp/Sampriyo Guin.png',
-        '/fp/Sandip Ban.png',
-        '/fp/Sandipan Roy.png',
-        '/fp/Sankha Sengupta.png',
-        '/fp/Sankha Subhra Moitra.png',
-        '/fp/Satadipta Dutta.png',
-        '/fp/Sayak Hajra.png',
-        '/fp/Shambhavi Savarna.png',
-        '/fp/Shounak Dey.png',
-        '/fp/Shreeja Sarkar.png',
-        '/fp/Sk Danish Ali.png',
-        '/fp/Sk Mizan Humaid.png',
-        '/fp/Sneha Basak.png',
-        '/fp/Sneha Singh.png',
-        '/fp/Souhit Paul.png',
-        '/fp/Soumyadeep Roy.png',
-        '/fp/Soumyadeep Samanta.png',
-        '/fp/SOUMYAJIT CHAKRABORTY.png',
-        '/fp/Souvik Bose.png',
-        '/fp/Sreshtha Das.png',
-        '/fp/SUBHADIP BAG.png',
-        '/fp/Subham Pathak.png',
-        '/fp/Subhankar Ray.png',
-        '/fp/Subhayan Das.png',
-        '/fp/Subhojit Ghosh.png',
-        '/fp/Subhon Sanyal.png',
-        '/fp/Suchismita Das.png',
-        '/fp/Sukanya Manna.png',
-        '/fp/Susmita Kumari.png',
-        '/fp/Swastika Kayal.png',
-        '/fp/Tamojit Ghosh.png',
-        '/fp/Tanir Sahoo.png',
-        '/fp/Tathagata Das.png',
-        '/fp/Titli Saha.png'
-      ];
-      
-      setAvailablePhotos(photos);
-    } catch (error) {
-      console.error('Error fetching photos:', error);
-    }
-  };
+  useEffect(() => {
+    const loadPhotos = async () => {
+      if (isOpen) {
+        try {
+          setLoadingPhotos(true);
+          
+          let photos = await fetchAvailableProfilePictures();
+          
+          if (!photos || photos.length <= 2) {
+            const res = await fetch('/fp');
+            if (res.ok) {
+              const text = await res.text();
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(text, 'text/html');
+              const links = Array.from(doc.querySelectorAll('a'));
+              
+              photos = links
+                .map(link => link.getAttribute('href'))
+                .filter(href => href && href.endsWith('.png'))
+                .map(href => `/fp/${href}`);
+                
+              photos = ['/fp/skull.png', '/fp/default.png', ...photos];
+            }
+          }
+          
+          setAvailablePhotos(photos);
+        } catch (error) {
+          console.error('Error loading photos:', error);
+          setAvailablePhotos(['/fp/skull.png', '/fp/default.png']);
+        } finally {
+          setLoadingPhotos(false);
+        }
+      }
+    };
+    
+    loadPhotos();
+  }, [isOpen]);
   
-  // Populate form when editing an existing invitee
+  const filteredPhotos = useMemo(() => {
+    if (!photoSearchTerm) return availablePhotos;
+    
+    return availablePhotos.filter(photo => {
+      const fileName = photo.split('/').pop()?.split('.')[0] || '';
+      return fileName.toLowerCase().includes(photoSearchTerm.toLowerCase());
+    });
+  }, [availablePhotos, photoSearchTerm]);
+  
+  useEffect(() => {
+    if (name && availablePhotos.length > 0 && !isEditMode) {
+      const matchingPhoto = availablePhotos.find(photo => {
+        const fileName = photo.split('/').pop()?.split('.')[0] || '';
+        return fileName.toLowerCase() === name.toLowerCase();
+      });
+      
+      if (matchingPhoto) {
+        setPhotoUrl(matchingPhoto);
+        return;
+      }
+      
+      const partialMatch = availablePhotos.find(photo => {
+        const fileName = photo.split('/').pop()?.split('.')[0] || '';
+        return fileName.toLowerCase().includes(name.toLowerCase()) || 
+               name.toLowerCase().includes(fileName.toLowerCase());
+      });
+      
+      if (partialMatch) {
+        setPhotoUrl(partialMatch);
+      }
+    }
+  }, [name, availablePhotos, isEditMode]);
+  
   useEffect(() => {
     if (invitee) {
       setName(invitee.name || '');
@@ -275,19 +306,14 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
       setPhoneNumber(invitee.phoneNumber || '');
       setPhotoUrl(invitee.photoUrl || '');
     } else {
-      // Reset form for new invitee
       setName('');
       setEmail('');
       setPhoneNumber('');
       setPhotoUrl('/fp/skull.png');
     }
     setError(null);
-    
-    // Fetch photos when modal opens
-    if (isOpen) {
-      fetchAvailablePhotos();
-    }
-  }, [invitee, isOpen]);
+    setPhotoSearchTerm('');
+  }, [invitee]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -300,23 +326,19 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
     try {
       setLoading(true);
       
-      // Prepare invitee data
       const inviteeData: Partial<Invitee> = {
         name: name.trim(),
         email: email.trim() || undefined,
         phoneNumber: phoneNumber.trim() || undefined,
-        photoUrl: photoUrl.trim() || '/fp/skull.png', // Default photo if none provided
+        photoUrl: photoUrl.trim() || '/fp/skull.png',
       };
       
-      // If editing, include the ID
       if (isEditMode && invitee?.id) {
         inviteeData.id = invitee.id;
       }
       
-      // Submit to parent component
       await onSubmit(inviteeData);
       
-      // Close modal on success
       onClose();
     } catch (err: any) {
       console.error('Error saving invitee:', err);
@@ -326,7 +348,13 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
     }
   };
   
+  const handlePhotoSelect = (photo: string) => {
+    setPhotoUrl(photo);
+    setIsDropdownOpen(false);
+  };
+  
   const defaultPhoto = '/fp/skull.png';
+  const encodedPhotoUrl = encodeImageUrl(photoUrl || defaultPhoto);
   
   return (
     <AnimatePresence>
@@ -400,27 +428,55 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
               
               <InputGroup>
                 <Label htmlFor="photoUrl">Profile Picture</Label>
-                <PhotoSelect
-                  id="photoUrl"
-                  value={photoUrl}
-                  onChange={(e) => setPhotoUrl(e.target.value)}
-                >
-                  <option value="" disabled>Select a photo</option>
-                  {availablePhotos.map((photo, index) => {
-                    const photoName = photo.split('/').pop()?.split('.')[0] || '';
-                    return (
-                      <option key={index} value={photo}>
-                        {photoName}
-                      </option>
-                    );
-                  })}
-                </PhotoSelect>
-                <HelpText>Select a profile picture from the dropdown</HelpText>
+                <SearchableSelect>
+                  <SearchInput
+                    type="text"
+                    placeholder="Search for a profile picture..."
+                    value={photoSearchTerm}
+                    onChange={(e) => setPhotoSearchTerm(e.target.value)}
+                    onFocus={() => setIsDropdownOpen(true)}
+                    onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+                  />
+                  
+                  <DropdownContainer $isOpen={isDropdownOpen}>
+                    {loadingPhotos ? (
+                      <DropdownItem $isSelected={false}>
+                        <DropdownItemText>Loading photos...</DropdownItemText>
+                      </DropdownItem>
+                    ) : filteredPhotos.length === 0 ? (
+                      <DropdownItem $isSelected={false}>
+                        <DropdownItemText>No matching photos found</DropdownItemText>
+                      </DropdownItem>
+                    ) : (
+                      filteredPhotos.map((photo, index) => {
+                        const photoName = photo.split('/').pop()?.split('.')[0] || '';
+                        const encodedUrl = encodeImageUrl(photo);
+                        return (
+                          <DropdownItem
+                            key={index}
+                            $isSelected={photo === photoUrl}
+                            onClick={() => handlePhotoSelect(photo)}
+                          >
+                            <DropdownItemImage photoUrl={encodedUrl} />
+                            <DropdownItemText>{photoName}</DropdownItemText>
+                          </DropdownItem>
+                        );
+                      })
+                    )}
+                  </DropdownContainer>
+                </SearchableSelect>
+                
+                <HelpText>Search and select a profile picture</HelpText>
                 
                 <PhotoPreviewContainer>
                   <PhotoPreview 
-                    photoUrl={photoUrl || defaultPhoto} 
+                    photoUrl={encodedPhotoUrl} 
                   />
+                  {photoUrl && (
+                    <DropdownItemText>
+                      {photoUrl.split('/').pop()?.split('.')[0] || ''}
+                    </DropdownItemText>
+                  )}
                 </PhotoPreviewContainer>
               </InputGroup>
               

@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getAnalytics } from 'firebase/analytics';
@@ -16,7 +16,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase with error handling
-let app;
+let app: FirebaseApp;
 let db: ReturnType<typeof getFirestore>;
 let auth: ReturnType<typeof getAuth>;
 let analytics: any;

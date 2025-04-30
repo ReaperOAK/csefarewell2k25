@@ -6,10 +6,17 @@ import { Howl } from 'howler';
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { Invitee } from '../types';
+import { encodeImageUrl } from '../utils/imageUtils';
+
+// Helper to detect mobile
+const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+    || (window.innerWidth <= 768);
+};
 
 // Styled components with Framer Motion
 const StoryContainer = styled(motion.div)`
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -18,7 +25,13 @@ const StoryContainer = styled(motion.div)`
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  position: static !important;
+  min-height: 100vh;
+  height: auto;
+  touch-action: pan-y;
 `;
 
 const BackgroundLayer = styled(motion.div)`
@@ -101,26 +114,44 @@ const VignetteOverlay = styled(motion.div)`
 const ContentContainer = styled(motion.div)`
   position: relative;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   z-index: 10;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  padding: 1rem;
+  padding: 3rem 1rem 5rem;
+  box-sizing: border-box;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  
+  @media (min-width: 768px) {
+    height: 100%;
+    padding: 4rem 2rem;
+    justify-content: center;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 `;
 
 const NavigationButton = styled(motion.button)`
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 10px;
+  left: 10px;
   background-color: rgba(0, 0, 0, 0.6);
   color: #d4af37;
   border: 1px solid #d4af37;
-  padding: 0.5rem 0.8rem;
-  font-size: 0.9rem;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
   z-index: 100;
   cursor: pointer;
+  
+  @media (min-width: 768px) {
+    top: 20px;
+    left: 20px;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+  }
   
   &:hover {
     background-color: rgba(10, 10, 10, 0.8);
@@ -129,11 +160,16 @@ const NavigationButton = styled(motion.button)`
 
 const PortraitFrame = styled(motion.div)`
   position: relative;
-  width: 200px;
-  height: 200px;
+  width: 160px;
+  height: 160px;
   margin-bottom: 1.5rem;
   
   @media (min-width: 768px) {
+    width: 200px;
+    height: 200px;
+  }
+  
+  @media (min-width: 992px) {
     width: 250px;
     height: 250px;
   }
@@ -216,9 +252,15 @@ const MaskOverlay = styled(motion.div)`
 
 const WaxSeal = styled(motion.div)`
   position: relative;
-  width: 120px;
-  height: 120px;
-  margin: 10px 0 20px;
+  width: 100px;
+  height: 100px;
+  margin: 5px 0 15px;
+  
+  @media (min-width: 768px) {
+    width: 120px;
+    height: 120px;
+    margin: 10px 0 20px;
+  }
 `;
 
 const SealCircle = styled(motion.div)`
@@ -277,13 +319,18 @@ const NameText = styled(motion.h2)`
 
 const ScrollContainer = styled(motion.div)`
   position: relative;
-  width: 85%;
+  width: 90%;
   max-width: 400px;
-  margin-top: 20px;
+  margin-top: 15px;
   background-color: rgba(20, 20, 20, 0.7);
   border-top: 1px solid #d4af37;
   border-bottom: 1px solid #d4af37;
-  padding: 2rem 1rem;
+  padding: 1.5rem 0.8rem;
+  
+  @media (min-width: 768px) {
+    margin-top: 20px;
+    padding: 2rem 1rem;
+  }
   
   &:before, &:after {
     content: '';
@@ -394,10 +441,10 @@ const RSVPButton = styled(motion.button)`
 
 const AudioControl = styled(motion.button)`
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -405,9 +452,17 @@ const AudioControl = styled(motion.button)`
   background-color: rgba(0, 0, 0, 0.6);
   border: 1px solid #d4af37;
   color: #d4af37;
-  font-size: 1.2rem;
+  font-size: 1rem;
   z-index: 100;
   cursor: pointer;
+  
+  @media (min-width: 768px) {
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
 `;
 
 const ThankYouOverlay = styled(motion.div)`
@@ -422,8 +477,13 @@ const ThankYouOverlay = styled(motion.div)`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 1rem;
   text-align: center;
+  overflow-y: auto;
+  
+  @media (min-width: 768px) {
+    padding: 20px;
+  }
 `;
 
 const ThankYouText = styled(motion.h2)`
@@ -440,8 +500,13 @@ const ThankYouText = styled(motion.h2)`
 
 const SocialIcons = styled(motion.div)`
   display: flex;
-  gap: 30px;
-  margin-top: 30px;
+  gap: 20px;
+  margin-top: 20px;
+  
+  @media (min-width: 768px) {
+    gap: 30px;
+    margin-top: 30px;
+  }
 `;
 
 const SocialIcon = styled(motion.a)`
@@ -579,10 +644,13 @@ const AmpStory: React.FC = () => {
   // Audio ref
   const soundRef = useRef<Howl | null>(null);
   
-  // Handle mouse movement for parallax
+  // Handle mouse movement for parallax - but only on desktop
   const handleMouseMove = (e: React.MouseEvent) => {
-    mouseX.set(e.clientX);
-    mouseY.set(e.clientY);
+    // Skip parallax on mobile devices for better scrolling
+    if (!isMobile()) {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    }
   };
   
   // Initialize sound
@@ -779,6 +847,7 @@ const AmpStory: React.FC = () => {
   }
   
   const defaultPhoto = '/fp/skull.png';
+  const encodedDefaultPhoto = encodeImageUrl(defaultPhoto);
   
   return (
     <StoryContainer
@@ -832,12 +901,12 @@ const AmpStory: React.FC = () => {
           >
             <InnerHexagon>
               <PhotoContainer
-                photoUrl={invitee?.photoUrl || defaultPhoto}
+                photoUrl={encodeImageUrl(invitee?.photoUrl || defaultPhoto)}
                 initial={{ opacity: 0 }}
                 animate={photoControls}
                 onError={(e: React.SyntheticEvent<HTMLDivElement>) => {
                   const target = e.target as HTMLDivElement;
-                  target.style.backgroundImage = `url(${defaultPhoto})`;
+                  target.style.backgroundImage = `url(${encodedDefaultPhoto})`;
                 }}
               />
             </InnerHexagon>

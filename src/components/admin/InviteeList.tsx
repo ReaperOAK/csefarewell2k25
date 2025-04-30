@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Invitee } from '../../types';
 import Toast from '../common/Toast';
+import { encodeImageUrl } from '../../utils/imageUtils';
 
 // Styled components
 const ListContainer = styled.div`
@@ -497,6 +498,7 @@ const InviteeList: React.FC<InviteeListProps> = ({
                 <AnimatePresence>
                   {currentInvitees.map((invitee) => {
                     const { text: statusText, status } = getStatusText(invitee);
+                    const encodedPhotoUrl = encodeImageUrl(invitee.photoUrl);
                     return (
                       <Tr
                         key={invitee.id}
@@ -506,7 +508,7 @@ const InviteeList: React.FC<InviteeListProps> = ({
                         transition={{ duration: 0.3 }}
                       >
                         <PhotoTd>
-                          <InviteePhoto photoUrl={invitee.photoUrl} />
+                          <InviteePhoto photoUrl={encodedPhotoUrl} />
                         </PhotoTd>
                         <Td>{invitee.name}</Td>
                         <Td>{invitee.email || '-'}</Td>
