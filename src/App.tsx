@@ -10,6 +10,8 @@ import { AudioProvider } from './context/AudioContext';
 import './App.css';
 import ScrollHelper from './components/common/ScrollHelper';
 import Footer from './components/common/Footer';
+import AudioContinuity from './components/common/AudioContinuity';
+import AudioControl from './components/common/AudioControl';
 
 // Fix mobile height issue
 // This helps browsers correctly calculate viewport height on mobile
@@ -37,6 +39,8 @@ function App() {
       <AudioProvider>
         <BrowserRouter>
           <GlobalStyle />
+          {/* Add AudioContinuity component to keep audio playing across routes */}
+          <AudioContinuity />
           <div className="app-container">
             <Routes>
               <Route path="/" element={<Home />} />
@@ -49,6 +53,8 @@ function App() {
             </Routes>
             <Footer />
             <ScrollHelper />
+            {/* Add audio control button */}
+            <AudioControl />
           </div>
         </BrowserRouter>
       </AudioProvider>
