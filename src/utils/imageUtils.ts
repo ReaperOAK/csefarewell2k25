@@ -118,6 +118,7 @@ export const fetchAvailableProfilePictures = async (): Promise<string[]> => {
     '/fp/Titli Saha.png',
     '/fp/ujaan.png',
     '/fp/jishnu.png',
+    '/fp/debjit.png',
   ];
   
   // Return a combined array with default pics first, then all other pics
