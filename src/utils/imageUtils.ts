@@ -29,7 +29,7 @@ export const encodeImageUrl = (url: string): string => {
  */
 export const fetchAvailableProfilePictures = async (): Promise<string[]> => {
   // Define default pictures that should appear first in the list
-  const defaultPics = ['/fp/skull.png', '/fp/default.png'];
+  const defaultPics = ['/fp/default.png'];
   
   // Hardcoded list of all profile pictures in the fp directory
   const profilePics = [
