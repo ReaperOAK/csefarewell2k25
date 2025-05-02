@@ -202,7 +202,15 @@ const PhotoContainer = styled(motion.div)<{ photoUrl: string }>`
   width: 90%;
   height: 90%;
   clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
-  background-image: ${props => `url(${props.photoUrl})`};
+  background-image: ${props => {
+    // Ensure the photoUrl has a leading slash
+    const url = props.photoUrl && props.photoUrl.startsWith('/')
+      ? props.photoUrl
+      : props.photoUrl && !props.photoUrl.startsWith('http')
+        ? `/${props.photoUrl}`
+        : props.photoUrl;
+    return `url(${url})`;
+  }};
   background-size: cover;
   background-position: center;
   z-index: 12;

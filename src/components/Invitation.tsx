@@ -96,7 +96,15 @@ const PortraitFrame = styled(motion.div)`
 const Portrait = styled.div<{ photoUrl: string }>`
   width: 100%;
   height: 100%;
-  background-image: ${props => `url(${props.photoUrl})`};
+  background-image: ${props => {
+    // Ensure the photoUrl has a leading slash
+    const url = props.photoUrl && props.photoUrl.startsWith('/')
+      ? props.photoUrl
+      : props.photoUrl && !props.photoUrl.startsWith('http')
+        ? `/${props.photoUrl}`
+        : props.photoUrl;
+    return `url(${url})`;
+  }};
   background-size: cover;
   background-position: center;
 `;
