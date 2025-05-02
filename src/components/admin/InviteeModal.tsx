@@ -203,10 +203,10 @@ const DropdownItemText = styled.div`
 `;
 
 interface InviteeModalProps {
-  invitee?: Invitee | null;
+  invitee: Invitee | null;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (invitee: Partial<Invitee>) => Promise<string | void>;
+  onSubmit: (invitee: Partial<Invitee>) => Promise<void>;
 }
 
 const InviteeModal: React.FC<InviteeModalProps> = ({
@@ -234,29 +234,18 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
         try {
           setLoadingPhotos(true);
           
-          let photos = await fetchAvailableProfilePictures();
+          // Use our new dynamic photo loading function
+          const photos = await fetchAvailableProfilePictures();
           
-          if (!photos || photos.length <= 2) {
-            const res = await fetch('/fp');
-            if (res.ok) {
-              const text = await res.text();
-              const parser = new DOMParser();
-              const doc = parser.parseFromString(text, 'text/html');
-              const links = Array.from(doc.querySelectorAll('a'));
-              
-              photos = links
-                .map(link => link.getAttribute('href'))
-                .filter(href => href && href.endsWith('.png'))
-                .map(href => `/fp/${href}`);
-                
-              photos = ['/fp/skull.png', '/fp/default.png', ...photos];
-            }
+          if (photos.length > 0) {
+            setAvailablePhotos(photos);
+          } else {
+            // Fallback if the manifest doesn't exist yet or is empty
+            setAvailablePhotos(['/fp/default.png']);
           }
-          
-          setAvailablePhotos(photos);
         } catch (error) {
           console.error('Error loading photos:', error);
-          setAvailablePhotos(['/fp/skull.png', '/fp/default.png']);
+          setAvailablePhotos(['/fp/default.png']);
         } finally {
           setLoadingPhotos(false);
         }
@@ -309,7 +298,7 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
       setName('');
       setEmail('');
       setPhoneNumber('');
-      setPhotoUrl('/fp/skull.png');
+      setPhotoUrl('/fp/default.png');
     }
     setError(null);
     setPhotoSearchTerm('');
@@ -330,7 +319,7 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
         name: name.trim(),
         email: email.trim() || undefined,
         phoneNumber: phoneNumber.trim() || undefined,
-        photoUrl: photoUrl.trim() || '/fp/skull.png',
+        photoUrl: photoUrl.trim() || '/fp/default.png',
       };
       
       if (isEditMode && invitee?.id) {
@@ -353,7 +342,7 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
     setIsDropdownOpen(false);
   };
   
-  const defaultPhoto = '/fp/skull.png';
+  const defaultPhoto = '/fp/default.png';
   const encodedPhotoUrl = encodeImageUrl(photoUrl || defaultPhoto);
   
   return (

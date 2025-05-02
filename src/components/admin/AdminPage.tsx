@@ -119,7 +119,7 @@ const AdminPage: React.FC = () => {
   const handleAddInvitee = async (inviteeData: Partial<Invitee>) => {
     try {
       // Create a new invitee document
-      const docRef = await addDoc(collection(db, 'invitees'), {
+      await addDoc(collection(db, 'invitees'), {
         ...inviteeData,
         attending: null,
         timestamp: serverTimestamp()
@@ -133,8 +133,6 @@ const AdminPage: React.FC = () => {
         message: `${inviteeData.name} has been added successfully`,
         type: 'success'
       });
-      
-      return docRef.id;
     } catch (err) {
       console.error('Error adding invitee:', err);
       throw new Error('Failed to add invitee');

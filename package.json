@@ -35,8 +35,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "generate-profile-manifest": "node scripts/generate-profile-pics-manifest.js",
+    "start": "npm run generate-profile-manifest && react-scripts start",
+    "build": "npm run generate-profile-manifest && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "firebase deploy --only hosting",
