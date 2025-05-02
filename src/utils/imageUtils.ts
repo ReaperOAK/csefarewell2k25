@@ -125,7 +125,7 @@ export const fetchAvailableProfilePictures = async (): Promise<string[]> => {
     '/fp/owais.png',
     '/fp/spandan.png',
     '/fp/srestha archi.png',
-    'fp/aman raj.png',
+    'fp/princess.png',
     'fp/shabbo.png',
     'fp/sangu.png',
   ];
