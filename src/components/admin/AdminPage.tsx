@@ -9,6 +9,7 @@ import Dashboard from './Dashboard';
 import InviteeList from './InviteeList';
 import InviteeModal from './InviteeModal';
 import BulkEmailSender from './BulkEmailSender';
+import CommentsPage from './CommentsPage';
 import Toast from '../common/Toast';
 import { sendInvitationEmail } from '../../utils/emailUtils';
 
@@ -17,7 +18,7 @@ const AdminPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   // Content management
-  const [currentSection, setCurrentSection] = useState<'dashboard' | 'invitees' | 'emails' | 'settings'>('dashboard');
+  const [currentSection, setCurrentSection] = useState<'dashboard' | 'invitees' | 'emails' | 'comments' | 'settings'>('dashboard');
   
   // Invitee data
   const [invitees, setInvitees] = useState<Invitee[]>([]);
@@ -302,6 +303,14 @@ const AdminPage: React.FC = () => {
             onSendEmails={handleBulkEmailSend}
           />
         );
+
+      case 'comments':
+        return (
+          <CommentsPage
+            invitees={invitees}
+            loading={loading}
+          />
+        );
         
       case 'settings':
         return (
@@ -323,6 +332,7 @@ const AdminPage: React.FC = () => {
           currentSection === 'dashboard' ? 'Dashboard' :
           currentSection === 'invitees' ? 'Manage Invitees' :
           currentSection === 'emails' ? 'Send Emails' :
+          currentSection === 'comments' ? 'Comments' :
           'Settings'
         }
         currentPage={currentSection}

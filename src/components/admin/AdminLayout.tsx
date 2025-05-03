@@ -122,8 +122,8 @@ const LogoutButton = styled(motion.button)`
 interface AdminLayoutProps {
   children: ReactNode;
   title: string;
-  currentPage: 'dashboard' | 'invitees' | 'emails' | 'settings';
-  onSectionChange: (section: 'dashboard' | 'invitees' | 'emails' | 'settings') => void;
+  currentPage: 'dashboard' | 'invitees' | 'emails' | 'comments' | 'settings';
+  onSectionChange: (section: 'dashboard' | 'invitees' | 'emails' | 'comments' | 'settings') => void;
   onLogout: () => void;
   onAddClick?: () => void;
   showAddButton?: boolean;
@@ -139,7 +139,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   showAddButton = false
 }) => {
   const navTo = (page: string) => {
-    const section = page === '' ? 'dashboard' : page as 'dashboard' | 'invitees' | 'emails' | 'settings';
+    const section = page === '' ? 'dashboard' : page as 'dashboard' | 'invitees' | 'emails' | 'comments' | 'settings';
     onSectionChange(section);
   };
 
@@ -170,6 +170,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
             onClick={() => navTo('emails')}
           >
             <NavIcon>✉️</NavIcon> Send Emails
+          </NavLink>
+          
+          <NavLink 
+            $active={currentPage === 'comments'} 
+            onClick={() => navTo('comments')}
+          >
+            <NavIcon>💬</NavIcon> Comments
           </NavLink>
           
           <NavLink 
