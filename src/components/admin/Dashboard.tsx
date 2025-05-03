@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Invitee } from '../../types';
+import { encodeImageUrl } from '../../utils/imageUtils';
 
 const DashboardContainer = styled.div`
   display: grid;
@@ -137,7 +138,109 @@ const ActivityTime = styled.div`
   opacity: 0.5;
 `;
 
-// Gauge component that renders circular progress
+const CommentsSection = styled.section`
+  margin-top: 2rem;
+`;
+
+const CommentCard = styled(motion.div)`
+  background-color: rgba(10, 10, 10, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 4px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: flex-start;
+`;
+
+const CommentPhoto = styled.div<{ photoUrl: string }>`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-image: ${props => `url(${props.photoUrl})`};
+  background-size: cover;
+  background-position: center;
+  margin-right: 1.2rem;
+  border: 1px solid var(--gold);
+  flex-shrink: 0;
+`;
+
+const CommentContent = styled.div`
+  flex: 1;
+`;
+
+const CommentHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+`;
+
+const CommentName = styled.h3`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin: 0;
+`;
+
+const CommentStatus = styled.span<{ $attending: boolean | null }>`
+  font-size: 0.85rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  color: white;
+  background-color: ${props => 
+    props.$attending === true ? '#4CAF50' : 
+    props.$attending === false ? '#F44336' : '#9E9E9E'};
+`;
+
+const CommentText = styled.div`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.5;
+  padding: 0.5rem 0;
+  border-top: 1px solid rgba(212, 175, 55, 0.1);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+`;
+
+const CommentDate = styled.div`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  color: var(--text);
+  opacity: 0.6;
+  margin-top: 0.8rem;
+  text-align: right;
+`;
+
+const EmptyCommentsMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: var(--text);
+  opacity: 0.7;
+  font-style: italic;
+  background-color: rgba(10, 10, 10, 0.4);
+  border-radius: 4px;
+`;
+
+const SectionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+`;
+
+const CommentFilterButton = styled(motion.button)<{ $active: boolean }>`
+  background-color: ${props => props.$active ? 'rgba(212, 175, 55, 0.2)' : 'transparent'};
+  border: 1px solid ${props => props.$active ? 'var(--gold)' : 'rgba(212, 175, 55, 0.3)'};
+  color: var(--text);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  margin-left: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+`;
+
 const Gauge: React.FC<{ value: number; color: string }> = ({ value, color }) => {
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
@@ -196,7 +299,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   totalDeclined,
   recentActivity
 }) => {
-  // Calculate percentages for gauges
+  const [commentsFilter, setCommentsFilter] = useState<'all' | 'attending' | 'declined'>('all');
+
   const respondedPercentage = totalInvitees > 0 
     ? Math.round((totalResponded / totalInvitees) * 100) 
     : 0;
@@ -217,6 +321,16 @@ const Dashboard: React.FC<DashboardProps> = ({
       minute: '2-digit'
     });
   };
+
+  const guestsWithComments = recentActivity
+    .filter(activity => 
+      activity.invitee.response && 
+      activity.invitee.response.trim() !== '' &&
+      (commentsFilter === 'all' || 
+       (commentsFilter === 'attending' && activity.invitee.attending === true) ||
+       (commentsFilter === 'declined' && activity.invitee.attending === false))
+    )
+    .sort((a, b) => b.timestamp - a.timestamp);
 
   return (
     <DashboardContainer>
@@ -293,6 +407,77 @@ const Dashboard: React.FC<DashboardProps> = ({
           )}
         </ActivityList>
       </ActivitySection>
+
+      <CommentsSection>
+        <SectionHeader>
+          <SectionTitle>Guest Comments</SectionTitle>
+          <div>
+            <CommentFilterButton
+              $active={commentsFilter === 'all'}
+              onClick={() => setCommentsFilter('all')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              All
+            </CommentFilterButton>
+            <CommentFilterButton
+              $active={commentsFilter === 'attending'}
+              onClick={() => setCommentsFilter('attending')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Attending
+            </CommentFilterButton>
+            <CommentFilterButton
+              $active={commentsFilter === 'declined'}
+              onClick={() => setCommentsFilter('declined')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              Declined
+            </CommentFilterButton>
+          </div>
+        </SectionHeader>
+
+        <AnimatePresence>
+          {guestsWithComments.length === 0 ? (
+            <EmptyCommentsMessage>
+              No comments to display
+            </EmptyCommentsMessage>
+          ) : (
+            guestsWithComments.map((activity, index) => {
+              const encodedPhotoUrl = encodeImageUrl(activity.invitee.photoUrl);
+              
+              return (
+                <CommentCard
+                  key={`comment-${activity.invitee.id}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                >
+                  <CommentPhoto photoUrl={encodedPhotoUrl} />
+                  <CommentContent>
+                    <CommentHeader>
+                      <CommentName>{activity.invitee.name}</CommentName>
+                      <CommentStatus $attending={activity.invitee.attending}>
+                        {activity.invitee.attending === true ? 'Attending' : 
+                          activity.invitee.attending === false ? 'Declined' : 'Pending'}
+                      </CommentStatus>
+                    </CommentHeader>
+                    <CommentText>
+                      {activity.invitee.response}
+                    </CommentText>
+                    <CommentDate>
+                      {formatDate(activity.timestamp)}
+                    </CommentDate>
+                  </CommentContent>
+                </CommentCard>
+              );
+            })
+          )}
+        </AnimatePresence>
+      </CommentsSection>
     </DashboardContainer>
   );
 };
