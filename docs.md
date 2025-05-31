@@ -16,6 +16,38 @@ The CSE Farewell 2025 project is a digital invitation and RSVP system for a fare
 
 ## Directory Structure
 
+### Project Root Structure
+
+- **build/** - Production build output directory containing optimized static files
+- **digital invitation/** - Contains invitation resources and assets
+- **functions/** - Firebase Cloud Functions source code and configuration
+- **public/** - Static assets served directly by the web server
+- **scripts/** - Utility scripts for project maintenance and automation
+- **src/** - Source code directory containing React components and application logic
+- **design/** - Design assets and mockups
+- **firebase.json** - Firebase configuration for deployment and hosting
+- **package.json** - Project dependencies and npm scripts
+- **README.md** - Project overview and setup instructions
+- **tsconfig.json** - TypeScript configuration
+- **docs.md** - This documentation file
+
+### Build Directory
+
+The `build/` directory contains the production-ready files after running `npm run build`:
+
+- **asset-manifest.json** - Manifest file mapping source files to their optimized versions
+- **index.html** - The main HTML file that loads the React application
+- **static/** - Contains optimized JavaScript and CSS bundles
+  - **css/** - Minified CSS files
+  - **js/** - Minified JavaScript files
+- **fp/** - Profile pictures and assets for invitees
+- Other static assets including:
+  - favicon.ico
+  - logo192.png and logo512.png
+  - manifest.json
+  - music.mp3
+  - robots.txt
+
 ### Root Files
 
 - **App.tsx** - The main application component that sets up routing with React Router and wraps the application with the theme provider.
