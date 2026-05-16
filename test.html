@@ -533,6 +533,7 @@
         }
 
         .memory-plane,
+        .transition-plane,
         .copy-plane,
         .fragment-field,
         .intimate-plane,
@@ -544,6 +545,110 @@
 
         .memory-plane {
             z-index: 3;
+        }
+
+        .memory-plane::before {
+            content: "";
+            position: absolute;
+            inset: -5vh -5vw;
+            background-image:
+                linear-gradient(180deg, rgba(1, 1, 2, 0.18), rgba(1, 1, 2, 0.62) 72%, rgba(1, 1, 2, 0.9)),
+                radial-gradient(ellipse at 50% 44%, transparent 0 42%, rgba(1, 1, 2, 0.58) 84%),
+                url("public/assets/hero.png");
+            background-size: cover;
+            background-position: center;
+            opacity: clamp(0.42, calc(0.94 - var(--scroll) * 1.25), 0.94);
+            filter: saturate(1.08) contrast(1.08) brightness(0.78);
+            transform: scale(calc(1.03 + var(--scroll) * 0.08));
+            transform-origin: center;
+            will-change: opacity, transform;
+        }
+
+        .transition-plane {
+            z-index: 5;
+            overflow: hidden;
+            opacity: var(--transition-opacity, 0);
+            mix-blend-mode: screen;
+            pointer-events: none;
+            transition: opacity 120ms linear;
+        }
+
+        .transition-plane::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background:
+                radial-gradient(circle at 52% 48%, rgba(248, 243, 235, 0.09), transparent 28%),
+                linear-gradient(180deg, rgba(1, 1, 2, 0.1), rgba(1, 1, 2, 0.42) 78%, rgba(1, 1, 2, 0.72)),
+                radial-gradient(ellipse at center, transparent 0 45%, rgba(1, 1, 2, 0.64) 92%);
+            mix-blend-mode: normal;
+        }
+
+        .transition-frame {
+            --x: 0%;
+            --y: 0%;
+            position: absolute;
+            inset: -5vh -5vw;
+            z-index: 1;
+            opacity: 0;
+            background-image: url("public/assets/urban nightscape through blurred glass.png");
+            background-size: 300% 300%;
+            background-position: var(--x) var(--y);
+            filter: saturate(1.18) contrast(1.18) brightness(0.72) blur(0.4px);
+            transform: scale(calc(1.06 + var(--transition-zoom, 0) * 0.06)) rotate(calc(var(--transition-tilt, 0) * 1deg));
+            transform-origin: center;
+            transition: opacity 360ms ease, filter 360ms ease, transform 360ms ease;
+            will-change: opacity, filter, transform;
+        }
+
+        .transition-frame.is-live {
+            filter: saturate(1.32) contrast(1.2) brightness(0.86) blur(0.2px);
+        }
+
+        .transition-frame:nth-child(1) {
+            --x: 0%;
+            --y: 0%;
+        }
+
+        .transition-frame:nth-child(2) {
+            --x: 50%;
+            --y: 0%;
+        }
+
+        .transition-frame:nth-child(3) {
+            --x: 100%;
+            --y: 0%;
+        }
+
+        .transition-frame:nth-child(4) {
+            --x: 0%;
+            --y: 50%;
+        }
+
+        .transition-frame:nth-child(5) {
+            --x: 50%;
+            --y: 50%;
+        }
+
+        .transition-frame:nth-child(6) {
+            --x: 100%;
+            --y: 50%;
+        }
+
+        .transition-frame:nth-child(7) {
+            --x: 0%;
+            --y: 100%;
+        }
+
+        .transition-frame:nth-child(8) {
+            --x: 50%;
+            --y: 100%;
+        }
+
+        .transition-frame:nth-child(9) {
+            --x: 100%;
+            --y: 100%;
         }
 
         .copy-plane {
@@ -702,8 +807,8 @@
             top: 22vh;
             width: 72vw;
             height: 48vh;
-            opacity: clamp(0.08, calc(var(--scroll) * 0.42), 0.36);
-            filter: blur(12px) saturate(0.78) contrast(1.28) brightness(0.54);
+            opacity: clamp(0.02, calc(var(--scroll) * 0.24), 0.24);
+            filter: blur(18px) saturate(0.86) contrast(1.2) brightness(0.48);
         }
 
         .texture-wash {
@@ -856,11 +961,44 @@
             display: grid;
             place-items: center;
             padding: 7vw;
+            overflow: hidden;
+            isolation: isolate;
             opacity: clamp(0, calc((var(--scroll) - 0.76) * 4), 1);
             transform: translateY(calc(max(0, 0.86 - var(--scroll)) * 20vh));
         }
 
+        .rsvp-plane::before,
+        .rsvp-plane::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .rsvp-plane::before {
+            z-index: -2;
+            background-image:
+                linear-gradient(180deg, rgba(1, 1, 2, 0.18), rgba(1, 1, 2, 0.42) 48%, rgba(1, 1, 2, 0.74)),
+                radial-gradient(ellipse at 50% 52%, transparent 0 38%, rgba(1, 1, 2, 0.62) 86%),
+                url("public/assets/ibiza memories.png");
+            background-size: cover;
+            background-position: center;
+            filter: saturate(0.94) contrast(1.08) brightness(0.7);
+            transform: scale(1.04);
+            transform-origin: center;
+        }
+
+        .rsvp-plane::after {
+            z-index: -1;
+            background:
+                radial-gradient(circle at 48% 42%, rgba(232, 106, 36, 0.16), transparent 32%),
+                linear-gradient(90deg, rgba(1, 1, 2, 0.68), transparent 28%, transparent 72%, rgba(1, 1, 2, 0.68));
+            mix-blend-mode: multiply;
+        }
+
         .rsvp-inner {
+            position: relative;
+            z-index: 1;
             width: min(620px, 100%);
             text-align: center;
         }
@@ -1437,6 +1575,18 @@
                 <div class="projection-image texture-wash feather-burn"></div>
             </div>
 
+            <div class="transition-plane" aria-hidden="true">
+                <span class="transition-frame"></span>
+                <span class="transition-frame"></span>
+                <span class="transition-frame"></span>
+                <span class="transition-frame"></span>
+                <span class="transition-frame"></span>
+                <span class="transition-frame"></span>
+                <span class="transition-frame"></span>
+                <span class="transition-frame"></span>
+                <span class="transition-frame"></span>
+            </div>
+
             <div class="copy-plane">
                 <section class="hero-copy" aria-labelledby="ibiza-title">
                     <p class="meta hero-kicker">02:17 AM // Final summer signal</p>
@@ -1516,6 +1666,7 @@
         const cursorDot = document.getElementById('cursorDot');
         const cursorAura = document.getElementById('cursorAura');
         const fragments = Array.from(document.querySelectorAll('.projection-image'));
+        const transitionFrames = Array.from(document.querySelectorAll('.transition-frame'));
         const phaseWords = Array.from(document.querySelectorAll('.phase-word'));
         const phaseNames = ['Silence', 'Emergence', 'Euphoria', 'Fragmentation', 'Intimacy', 'Afterglow', 'Disappearance'];
 
@@ -1554,11 +1705,32 @@
             const light = clamp(Math.sin(progress * Math.PI) * 1.18, 0, 1);
             const quiet = clamp((progress - 0.72) / 0.22, 0, 1);
             const phase = Math.min(phaseNames.length - 1, Math.floor(progress * phaseNames.length));
+            const transitionProgress = clamp((progress - 0.18) / 0.54, 0, 1);
+            const transitionFadeIn = clamp((progress - 0.16) / 0.1, 0, 1);
+            const transitionFadeOut = clamp((0.78 - progress) / 0.12, 0, 1);
+            const transitionOpacity = Math.min(transitionFadeIn, transitionFadeOut) * 0.82;
+            const transitionPosition = transitionProgress * Math.max(transitionFrames.length - 1, 1);
+            const transitionIndex = Math.min(transitionFrames.length - 1, Math.floor(transitionPosition));
+            const transitionMix = transitionPosition - transitionIndex;
 
             root.style.setProperty('--scroll', progress.toFixed(4));
             root.style.setProperty('--phase-light', light.toFixed(4));
             root.style.setProperty('--phase-quiet', quiet.toFixed(4));
+            root.style.setProperty('--transition-opacity', transitionOpacity.toFixed(4));
+            root.style.setProperty('--transition-zoom', transitionProgress.toFixed(4));
+            root.style.setProperty('--transition-tilt', ((transitionProgress - 0.5) * 2).toFixed(4));
             body.classList.toggle('rsvp-quiet', progress > 0.74);
+
+            transitionFrames.forEach((frame, index) => {
+                const isCurrent = index === transitionIndex;
+                const isNext = index === transitionIndex + 1;
+                const currentOpacity = isCurrent ? 1 - transitionMix * 0.52 : 0;
+                const nextOpacity = isNext ? transitionMix * 0.92 : 0;
+                const frameOpacity = transitionOpacity > 0 ? Math.max(currentOpacity, nextOpacity) : 0;
+
+                frame.style.opacity = frameOpacity.toFixed(4);
+                frame.classList.toggle('is-live', frameOpacity > 0.08);
+            });
 
             if (phase !== lastPhase) {
                 lastPhase = phase;
