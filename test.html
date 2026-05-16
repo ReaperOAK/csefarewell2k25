@@ -558,7 +558,7 @@
                 url("public/assets/hero.png");
             background-size: cover;
             background-position: center;
-            opacity: clamp(0.42, calc(0.94 - var(--scroll) * 1.25), 0.94);
+            opacity: calc(var(--hero-bg-opacity, 1) * 0.94);
             filter: saturate(1.08) contrast(1.08) brightness(0.78);
             transform: scale(calc(1.03 + var(--scroll) * 0.08));
             transform-origin: center;
@@ -966,34 +966,48 @@
 
         .memory-beat {
             position: absolute;
-            display: grid;
-            grid-template-columns: minmax(180px, 34vw) minmax(240px, 520px);
-            gap: clamp(1.4rem, 4vw, 4.5rem);
-            align-items: center;
-            width: min(980px, 88vw);
+            inset: 0;
             opacity: var(--beat-opacity, 0);
             transform: translate3d(0, calc((1 - var(--beat-opacity, 0)) * 4vh), 0);
             will-change: opacity, transform;
         }
 
         .memory-beat.alt {
-            grid-template-columns: minmax(260px, 560px) minmax(180px, 30vw);
+            display: block;
         }
 
         .beat-frame {
-            --img: url("public/assets/memory fragments.png");
-            min-height: clamp(210px, 36vh, 380px);
+            --img: url("public/assets/nightlife leaks.png");
+            --frame-x: 0%;
+            --frame-y: 0%;
+            position: absolute;
+            inset: -7vh -7vw;
+            z-index: 0;
+            overflow: hidden;
             background-image: var(--img);
-            background-size: cover;
-            background-position: center;
-            border: 1px solid rgba(248, 243, 235, 0.12);
-            filter: saturate(0.72) contrast(1.08) brightness(0.58) blur(0.4px);
+            background-size: 200% 200%;
+            background-position: var(--frame-x) var(--frame-y);
+            opacity: 0.42;
+            filter: saturate(1.08) contrast(1.18) brightness(0.7) blur(0.2px);
+            mix-blend-mode: color-dodge;
+            transform: rotate(var(--beat-rotate, -2deg)) scale(1.06);
+            transition: filter 520ms ease, opacity 520ms ease, transform 520ms ease;
+        }
+
+        .beat-frame::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 48% 46%, rgba(248, 243, 235, 0.18), transparent 32%),
+                linear-gradient(120deg, transparent, rgba(232, 106, 36, 0.2), transparent 64%);
             mix-blend-mode: screen;
-            transform: rotate(var(--beat-rotate, -2deg));
-            box-shadow: 0 0 46px rgba(1, 1, 2, 0.38);
         }
 
         .beat-copy {
+            position: absolute;
+            z-index: 1;
+            width: min(640px, 78vw);
             color: rgba(248, 243, 235, 0.56);
             text-shadow: 0 0 36px rgba(1, 1, 2, 0.7);
         }
@@ -1010,45 +1024,61 @@
         .memory-beat.one {
             --beat-opacity: var(--beat-one, 0);
             --beat-rotate: -2deg;
-            left: 8vw;
-            top: 21vh;
         }
 
         .memory-beat.two {
             --beat-opacity: var(--beat-two, 0);
             --beat-rotate: 2.4deg;
-            right: 6vw;
-            top: 18vh;
         }
 
         .memory-beat.three {
             --beat-opacity: var(--beat-three, 0);
             --beat-rotate: -1.4deg;
-            left: 10vw;
-            bottom: 13vh;
         }
 
         .memory-beat.four {
             --beat-opacity: var(--beat-four, 0);
             --beat-rotate: 2deg;
+        }
+
+        .memory-beat.one .beat-copy {
+            left: 8vw;
+            top: 22vh;
+        }
+
+        .memory-beat.two .beat-copy {
+            left: 14vw;
+            top: 29vh;
+        }
+
+        .memory-beat.three .beat-copy {
+            right: 9vw;
+            bottom: 16vh;
+        }
+
+        .memory-beat.four .beat-copy {
             right: 8vw;
             top: 24vh;
         }
 
         .memory-beat.one .beat-frame {
-            --img: url("public/assets/memory fragments.png");
+            --frame-x: 0%;
+            --frame-y: 0%;
         }
 
         .memory-beat.two .beat-frame {
-            --img: url("public/assets/nightlife leaks.png");
+            --frame-x: 100%;
+            --frame-y: 0%;
         }
 
         .memory-beat.three .beat-frame {
-            --img: url("public/assets/urban nightscape through blurred glass.png");
+            --frame-x: 0%;
+            --frame-y: 100%;
         }
 
         .memory-beat.four .beat-frame {
-            --img: url("public/assets/ibiza memories.png");
+            --frame-x: 100%;
+            --frame-y: 100%;
         }
 
         .rsvp-plane {
@@ -1717,10 +1747,7 @@
                 <div class="projection-image fragment two feather-soft"></div>
                 <div class="projection-image fragment three feather-torn"></div>
                 <div class="projection-image fragment four feather-burn"></div>
-                <div class="chaos-type">
-                    <p class="mass-type">Euphoria</p>
-                    <p class="whisper-type">with salt in its mouth.</p>
-                </div>
+                
             </div>
 
             <div class="story-plane" aria-hidden="true">
@@ -1868,6 +1895,7 @@
             const transitionIndex = Math.min(transitionFrames.length - 1, Math.floor(transitionPosition));
             const transitionMix = transitionPosition - transitionIndex;
             const heroOpacity = opacityWindow(progress, -0.02, 0, 0.1, 0.17);
+            const heroBgOpacity = opacityWindow(progress, -0.02, 0, 0.14, 0.24);
             const beatOne = opacityWindow(progress, 0.18, 0.23, 0.29, 0.35);
             const beatTwo = opacityWindow(progress, 0.37, 0.42, 0.48, 0.54);
             const beatThree = opacityWindow(progress, 0.56, 0.61, 0.67, 0.73);
@@ -1883,6 +1911,7 @@
             root.style.setProperty('--transition-zoom', transitionProgress.toFixed(4));
             root.style.setProperty('--transition-tilt', ((transitionProgress - 0.5) * 2).toFixed(4));
             root.style.setProperty('--hero-opacity', heroOpacity.toFixed(4));
+            root.style.setProperty('--hero-bg-opacity', heroBgOpacity.toFixed(4));
             root.style.setProperty('--beat-one', beatOne.toFixed(4));
             root.style.setProperty('--beat-two', beatTwo.toFixed(4));
             root.style.setProperty('--beat-three', beatThree.toFixed(4));
