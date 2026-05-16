@@ -513,7 +513,7 @@
         #memory-space {
             position: relative;
             z-index: 20;
-            min-height: 720vh;
+            min-height: 1320vh;
             opacity: 0;
             visibility: hidden;
             transition: opacity 1400ms cubic-bezier(.16, 1, .3, 1);
@@ -536,6 +536,7 @@
         .transition-plane,
         .copy-plane,
         .fragment-field,
+        .story-plane,
         .intimate-plane,
         .rsvp-plane,
         .phase-words {
@@ -657,7 +658,12 @@
         }
 
         .phase-words {
-            z-index: 17;
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        .story-plane {
+            z-index: 16;
             pointer-events: none;
         }
 
@@ -688,7 +694,9 @@
             left: clamp(1.25rem, 6vw, 5rem);
             top: 12vh;
             width: min(92vw, 980px);
+            opacity: var(--hero-opacity, 1);
             transform: translate3d(0, calc(var(--scroll) * -22vh), 0);
+            will-change: opacity, transform;
         }
 
         .hero-kicker {
@@ -736,14 +744,14 @@
         .note-a {
             right: 8vw;
             top: 18vh;
-            opacity: clamp(0, calc((var(--scroll) - 0.1) * 3), 0.65);
+            opacity: calc(var(--beat-one, 0) * 0.65);
             transform: translateY(calc((var(--scroll) - 0.15) * -14vh)) rotate(-2deg);
         }
 
         .note-b {
             left: 12vw;
             bottom: 16vh;
-            opacity: clamp(0, calc((var(--scroll) - 0.48) * 2.5), 0.56);
+            opacity: calc(var(--beat-three, 0) * 0.56);
             transform: translateY(calc((var(--scroll) - 0.5) * -9vh)) rotate(2deg);
         }
 
@@ -826,7 +834,7 @@
 
         .fragment-field {
             z-index: 9;
-            opacity: clamp(0, calc((var(--scroll) - 0.15) * 2.2), 1);
+            opacity: var(--fragment-opacity, 0);
             transform: translate3d(0, calc((var(--scroll) - 0.24) * -32vh), 0);
         }
 
@@ -887,7 +895,7 @@
             top: 49vh;
             width: min(760px, 74vw);
             color: rgba(248, 243, 235, 0.62);
-            opacity: clamp(0, calc((var(--scroll) - 0.22) * 2), 0.82);
+            opacity: calc(var(--beat-two, 0) * 0.82);
             filter: blur(calc(max(0, 0.55 - var(--scroll)) * 12px));
             transform: translate(-18%, -50%) rotate(-2deg);
             mix-blend-mode: overlay;
@@ -906,7 +914,7 @@
 
         .intimate-plane {
             z-index: 12;
-            opacity: clamp(0, calc((var(--scroll) - 0.56) * 3.2), 1);
+            opacity: var(--intimate-opacity, 0);
             transform: translateY(calc((var(--scroll) - 0.64) * -22vh));
         }
 
@@ -949,11 +957,98 @@
             position: absolute;
             inset: 0;
             z-index: 13;
-            opacity: clamp(0, calc((var(--scroll) - 0.72) * 2.4), 0.7);
+            opacity: calc(var(--rsvp-opacity, 0) * 0.7);
             background:
                 radial-gradient(ellipse at 50% 80%, rgba(232, 106, 36, 0.18), transparent 46%),
                 linear-gradient(180deg, transparent, rgba(1, 1, 2, 0.55));
             mix-blend-mode: screen;
+        }
+
+        .memory-beat {
+            position: absolute;
+            display: grid;
+            grid-template-columns: minmax(180px, 34vw) minmax(240px, 520px);
+            gap: clamp(1.4rem, 4vw, 4.5rem);
+            align-items: center;
+            width: min(980px, 88vw);
+            opacity: var(--beat-opacity, 0);
+            transform: translate3d(0, calc((1 - var(--beat-opacity, 0)) * 4vh), 0);
+            will-change: opacity, transform;
+        }
+
+        .memory-beat.alt {
+            grid-template-columns: minmax(260px, 560px) minmax(180px, 30vw);
+        }
+
+        .beat-frame {
+            --img: url("public/assets/memory fragments.png");
+            min-height: clamp(210px, 36vh, 380px);
+            background-image: var(--img);
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(248, 243, 235, 0.12);
+            filter: saturate(0.72) contrast(1.08) brightness(0.58) blur(0.4px);
+            mix-blend-mode: screen;
+            transform: rotate(var(--beat-rotate, -2deg));
+            box-shadow: 0 0 46px rgba(1, 1, 2, 0.38);
+        }
+
+        .beat-copy {
+            color: rgba(248, 243, 235, 0.56);
+            text-shadow: 0 0 36px rgba(1, 1, 2, 0.7);
+        }
+
+        .beat-copy .meta {
+            margin-bottom: 1rem;
+            color: rgba(232, 106, 36, 0.44);
+        }
+
+        .beat-copy .whisper-type {
+            font-size: clamp(2.4rem, 6vw, 6.2rem);
+        }
+
+        .memory-beat.one {
+            --beat-opacity: var(--beat-one, 0);
+            --beat-rotate: -2deg;
+            left: 8vw;
+            top: 21vh;
+        }
+
+        .memory-beat.two {
+            --beat-opacity: var(--beat-two, 0);
+            --beat-rotate: 2.4deg;
+            right: 6vw;
+            top: 18vh;
+        }
+
+        .memory-beat.three {
+            --beat-opacity: var(--beat-three, 0);
+            --beat-rotate: -1.4deg;
+            left: 10vw;
+            bottom: 13vh;
+        }
+
+        .memory-beat.four {
+            --beat-opacity: var(--beat-four, 0);
+            --beat-rotate: 2deg;
+            right: 8vw;
+            top: 24vh;
+        }
+
+        .memory-beat.one .beat-frame {
+            --img: url("public/assets/memory fragments.png");
+        }
+
+        .memory-beat.two .beat-frame {
+            --img: url("public/assets/nightlife leaks.png");
+        }
+
+        .memory-beat.three .beat-frame {
+            --img: url("public/assets/urban nightscape through blurred glass.png");
+        }
+
+        .memory-beat.four .beat-frame {
+            --img: url("public/assets/ibiza memories.png");
         }
 
         .rsvp-plane {
@@ -963,8 +1058,8 @@
             padding: 7vw;
             overflow: hidden;
             isolation: isolate;
-            opacity: clamp(0, calc((var(--scroll) - 0.76) * 4), 1);
-            transform: translateY(calc(max(0, 0.86 - var(--scroll)) * 20vh));
+            opacity: var(--rsvp-opacity, 0);
+            transform: translateY(calc((1 - var(--rsvp-opacity, 0)) * 20vh));
         }
 
         .rsvp-plane::before,
@@ -1409,7 +1504,7 @@
             }
 
             #memory-space {
-                min-height: 760vh;
+                min-height: 1380vh;
             }
 
             .hero-copy {
@@ -1471,6 +1566,25 @@
                 left: 9vw;
                 top: 42vh;
                 transform: none;
+            }
+
+            .memory-beat,
+            .memory-beat.alt {
+                grid-template-columns: 1fr;
+                width: calc(100vw - 2.4rem);
+                left: 1.2rem;
+                right: auto;
+                top: 16vh;
+                bottom: auto;
+                gap: 1.25rem;
+            }
+
+            .beat-frame {
+                min-height: 30vh;
+            }
+
+            .beat-copy .whisper-type {
+                font-size: clamp(2.1rem, 12vw, 4.4rem);
             }
 
             .intimate-line {
@@ -1609,6 +1723,40 @@
                 </div>
             </div>
 
+            <div class="story-plane" aria-hidden="true">
+                <div class="memory-beat one">
+                    <div class="beat-frame"></div>
+                    <div class="beat-copy">
+                        <p class="meta">02:41 AM // Proof</p>
+                        <p class="whisper-type">A photograph only hurts after everyone goes home.</p>
+                    </div>
+                </div>
+
+                <div class="memory-beat two alt">
+                    <div class="beat-copy">
+                        <p class="meta">03:03 AM // Noise</p>
+                        <p class="whisper-type">The night kept making new versions of us.</p>
+                    </div>
+                    <div class="beat-frame"></div>
+                </div>
+
+                <div class="memory-beat three">
+                    <div class="beat-frame"></div>
+                    <div class="beat-copy">
+                        <p class="meta">03:27 AM // Shoreline</p>
+                        <p class="whisper-type">We stayed because leaving was already happening.</p>
+                    </div>
+                </div>
+
+                <div class="memory-beat four alt">
+                    <div class="beat-copy">
+                        <p class="meta">04:12 AM // Trace</p>
+                        <p class="whisper-type">Some faces become light before they become memory.</p>
+                    </div>
+                    <div class="beat-frame"></div>
+                </div>
+            </div>
+
             <div class="intimate-plane" aria-hidden="true">
                 <div class="intimate-line">
                     <p class="meta">03:46 AM // Intimacy</p>
@@ -1680,6 +1828,13 @@
             return Math.max(min, Math.min(max, value));
         }
 
+        function opacityWindow(progress, fadeInStart, fullInAt, fadeOutStart, goneAt) {
+            return Math.min(
+                clamp((progress - fadeInStart) / Math.max(0.001, fullInAt - fadeInStart), 0, 1),
+                clamp((goneAt - progress) / Math.max(0.001, goneAt - fadeOutStart), 0, 1)
+            );
+        }
+
         function setCursor(x, y) {
             root.style.setProperty('--cursor-x', `${x}px`);
             root.style.setProperty('--cursor-y', `${y}px`);
@@ -1705,13 +1860,21 @@
             const light = clamp(Math.sin(progress * Math.PI) * 1.18, 0, 1);
             const quiet = clamp((progress - 0.72) / 0.22, 0, 1);
             const phase = Math.min(phaseNames.length - 1, Math.floor(progress * phaseNames.length));
-            const transitionProgress = clamp((progress - 0.18) / 0.54, 0, 1);
-            const transitionFadeIn = clamp((progress - 0.16) / 0.1, 0, 1);
-            const transitionFadeOut = clamp((0.78 - progress) / 0.12, 0, 1);
-            const transitionOpacity = Math.min(transitionFadeIn, transitionFadeOut) * 0.82;
+            const transitionProgress = clamp((progress - 0.16) / 0.78, 0, 1);
+            const transitionFadeIn = clamp((progress - 0.12) / 0.1, 0, 1);
+            const transitionFadeOut = clamp((0.985 - progress) / 0.035, 0, 1);
+            const transitionOpacity = Math.min(transitionFadeIn, transitionFadeOut) * 0.86;
             const transitionPosition = transitionProgress * Math.max(transitionFrames.length - 1, 1);
             const transitionIndex = Math.min(transitionFrames.length - 1, Math.floor(transitionPosition));
             const transitionMix = transitionPosition - transitionIndex;
+            const heroOpacity = opacityWindow(progress, -0.02, 0, 0.1, 0.17);
+            const beatOne = opacityWindow(progress, 0.18, 0.23, 0.29, 0.35);
+            const beatTwo = opacityWindow(progress, 0.37, 0.42, 0.48, 0.54);
+            const beatThree = opacityWindow(progress, 0.56, 0.61, 0.67, 0.73);
+            const beatFour = opacityWindow(progress, 0.75, 0.8, 0.86, 0.9);
+            const intimateOpacity = opacityWindow(progress, 0.91, 0.925, 0.94, 0.955);
+            const rsvpOpacity = clamp((progress - 0.965) / 0.035, 0, 1);
+            const fragmentOpacity = Math.max(beatOne * 0.38, beatTwo * 0.82, beatThree * 0.42);
 
             root.style.setProperty('--scroll', progress.toFixed(4));
             root.style.setProperty('--phase-light', light.toFixed(4));
@@ -1719,7 +1882,15 @@
             root.style.setProperty('--transition-opacity', transitionOpacity.toFixed(4));
             root.style.setProperty('--transition-zoom', transitionProgress.toFixed(4));
             root.style.setProperty('--transition-tilt', ((transitionProgress - 0.5) * 2).toFixed(4));
-            body.classList.toggle('rsvp-quiet', progress > 0.74);
+            root.style.setProperty('--hero-opacity', heroOpacity.toFixed(4));
+            root.style.setProperty('--beat-one', beatOne.toFixed(4));
+            root.style.setProperty('--beat-two', beatTwo.toFixed(4));
+            root.style.setProperty('--beat-three', beatThree.toFixed(4));
+            root.style.setProperty('--beat-four', beatFour.toFixed(4));
+            root.style.setProperty('--fragment-opacity', fragmentOpacity.toFixed(4));
+            root.style.setProperty('--intimate-opacity', intimateOpacity.toFixed(4));
+            root.style.setProperty('--rsvp-opacity', rsvpOpacity.toFixed(4));
+            body.classList.toggle('rsvp-quiet', progress > 0.9);
 
             transitionFrames.forEach((frame, index) => {
                 const isCurrent = index === transitionIndex;
