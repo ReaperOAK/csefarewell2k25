@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBIZA | The Final Memory</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Oswald:wght@300;400;500;700&family=Inter:wght@200;300;400;500&display=swap');
+
+        :root {
+            --black: #010102;
+            --black-blue: #04050a;
+            --amber: #e86a24;
+            --amber-soft: rgba(232, 106, 36, 0.38);
+            --indigo: #160b2b;
+            --cyan: #2a6872;
+            --cyan-soft: rgba(42, 104, 114, 0.24);
+            --white: #f8f3eb;
+            --ghost: rgba(248, 243, 235, 0.42);
+            --low: rgba(248, 243, 235, 0.14);
+            --phase-light: 0;
+            --phase-quiet: 1;
+            --cursor-x: 50vw;
+            --cursor-y: 50vh;
+            --scroll: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background: var(--black);
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(232, 106, 36, 0.08), transparent 38vh),
+                linear-gradient(180deg, var(--black) 0%, var(--black-blue) 48%, var(--black) 100%);
+            color: var(--white);
+            cursor: none;
+            font-family: Inter, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overscroll-behavior: none;
+        }
+
+        body.locked {
+            overflow: hidden;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            cursor: none;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Fixed atmosphere */
+        .grain,
+        .halation,
+        .light-engine,
+        .depth-fog,
+        .film-burn,
+        .vignette,
+        .projected-crowd,
+        .air-texture,
+        .cursor-dot,
+        .cursor-aura,
+        .occlusion-haze,
+        .exposure-wash,
+        .humidity-veil {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .grain {
+            z-index: 90;
+            opacity: 0.14;
+            mix-blend-mode: screen;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            animation: grainShift 900ms steps(2) infinite, exposurePulseGrain 8.3s ease-in-out infinite;
+        }
+
+        .occlusion-haze {
+            z-index: 16;
+            mix-blend-mode: screen;
+            opacity: 0;
+            background:
+                radial-gradient(ellipse at 20% 40%, rgba(248,243,235,0.06), transparent 50%),
+                radial-gradient(ellipse at 75% 60%, rgba(42,104,114,0.04), transparent 45%);
+            filter: blur(40px);
+            animation: occlusionDrift 19s ease-in-out infinite alternate;
+        }
+
+        .exposure-wash {
+            z-index: 85;
+            mix-blend-mode: screen;
+            opacity: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(248,243,235,0.12), transparent 60%);
+            filter: blur(60px);
+            animation: exposureSurge 11.7s ease-in-out infinite;
+        }
+
+        .humidity-veil {
+            z-index: 15;
+            mix-blend-mode: screen;
+            opacity: 0.04;
+            background-image: url("public/assets/nightlife leaks.png");
+            background-size: 200% 200%;
+            filter: blur(50px) saturate(0.6) brightness(0.3);
+            animation: humidityShift 37s ease-in-out infinite alternate, exposurePulseHumid 13.1s ease-in-out infinite;
+        }
+
+        .halation {
+            z-index: 84;
+            opacity: calc(0.34 + var(--phase-light) * 0.2);
+            mix-blend-mode: screen;
+            background:
+                radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(248, 243, 235, 0.08), transparent 28vw),
+                radial-gradient(ellipse at 8% 24%, rgba(42, 104, 114, 0.16), transparent 38vw),
+                radial-gradient(ellipse at 82% 68%, rgba(232, 106, 36, 0.12), transparent 34vw);
+            filter: blur(1px);
+        }
+
+        .vignette {
+            z-index: 88;
+            background:
+                linear-gradient(90deg, rgba(0,0,0,0.72), transparent 18%, transparent 82%, rgba(0,0,0,0.72)),
+                radial-gradient(ellipse at center, transparent 18%, rgba(0,0,0,0.28) 58%, rgba(0,0,0,0.88) 100%);
+        }
+
+        .projected-crowd {
+            z-index: 1;
+            opacity: calc(0.18 + var(--phase-light) * 0.34);
+            background-image: url("public/assets/hero.png");
+            background-size: cover;
+            background-position: center;
+            filter: blur(22px) saturate(0.86) contrast(1.2) brightness(0.62);
+            transform: scale(1.14);
+            mix-blend-mode: screen;
+            mask-image:
+                radial-gradient(ellipse at 46% 44%, black 0 34%, rgba(0,0,0,0.58) 52%, transparent 76%),
+                linear-gradient(180deg, transparent 0%, black 18%, black 74%, transparent 100%);
+            animation: crowdBreath 24s ease-in-out infinite alternate;
+        }
+
+        .air-texture {
+            z-index: 2;
+            opacity: calc(0.1 + var(--phase-light) * 0.3);
+            background-image: url("public/assets/urban nightscape through blurred glass.png");
+            background-size: cover;
+            background-position: center;
+            filter: blur(18px) saturate(1.25);
+            transform: scale(1.18);
+            mix-blend-mode: color-dodge;
+            mask-image: radial-gradient(ellipse at 52% 52%, black 0 46%, transparent 78%);
+            animation: airProjection 32s ease-in-out infinite alternate;
+        }
+
+        .light-engine {
+            z-index: 4;
+            overflow: hidden;
+            opacity: calc(0.62 - var(--phase-quiet) * 0.18);
+            mix-blend-mode: screen;
+        }
+
+        .projection {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(42px);
+            opacity: 0.42;
+            transform: translate3d(0,0,0);
+        }
+
+        .projection.shore {
+            left: -22vw;
+            bottom: -10vh;
+            width: 82vw;
+            height: 34vh;
+            background: linear-gradient(90deg, transparent, rgba(232,106,36,0.38), rgba(42,104,114,0.18), transparent);
+            animation: shoreSweep 18s ease-in-out infinite alternate;
+        }
+
+        .projection.sodium {
+            right: -18vw;
+            top: 7vh;
+            width: 56vw;
+            height: 42vh;
+            background: radial-gradient(circle, rgba(232,106,36,0.62), transparent 64%);
+            animation: sodiumDrift 15s ease-in-out infinite alternate;
+        }
+
+        .projection.indigo {
+            left: 12vw;
+            top: 34vh;
+            width: 54vw;
+            height: 54vh;
+            background: radial-gradient(circle, rgba(68,35,121,0.36), transparent 66%);
+            animation: indigoPulse 21s ease-in-out infinite alternate;
+        }
+
+        .practical-lights {
+            position: absolute;
+            inset: 0;
+            opacity: calc(0.18 + var(--phase-light) * 0.38);
+            background:
+                radial-gradient(circle at 18% 30%, rgba(248,243,235,0.85) 0 1px, transparent 3px),
+                radial-gradient(circle at 61% 18%, rgba(232,106,36,0.82) 0 1px, transparent 4px),
+                radial-gradient(circle at 80% 54%, rgba(42,104,114,0.7) 0 1px, transparent 5px),
+                radial-gradient(circle at 40% 74%, rgba(248,243,235,0.5) 0 1px, transparent 3px);
+            animation: practicalFlicker 7s steps(1) infinite;
+        }
+
+        .lens-streak {
+            position: absolute;
+            left: -20vw;
+            top: 26vh;
+            width: 150vw;
+            height: 2px;
+            opacity: calc(0.08 + var(--phase-light) * 0.18);
+            background: linear-gradient(90deg, transparent, rgba(248,243,235,0.18), rgba(232,106,36,0.28), transparent);
+            filter: blur(1px);
+            transform: rotate(-6deg);
+            animation: streakFloat 12s ease-in-out infinite alternate;
+        }
+
+        .depth-fog {
+            z-index: 12;
+            overflow: hidden;
+            mix-blend-mode: screen;
+        }
+
+        .fog {
+            position: absolute;
+            inset: -30vh -30vw;
+            opacity: var(--o);
+            filter: blur(var(--b));
+            background: var(--g);
+            transform: translate3d(0,0,0);
+        }
+
+        .fog.distant {
+            --o: calc(0.28 + var(--phase-light) * 0.1);
+            --b: 80px;
+            --g: radial-gradient(ellipse at 35% 34%, rgba(42,104,114,0.23), transparent 54%), radial-gradient(ellipse at 68% 56%, rgba(232,106,36,0.12), transparent 58%);
+            animation: fogDistant 44s linear infinite alternate;
+        }
+
+        .fog.ambient {
+            --o: calc(0.22 + var(--phase-light) * 0.16);
+            --b: 58px;
+            --g: radial-gradient(ellipse at 50% 50%, rgba(90,52,118,0.2), transparent 60%);
+            animation: fogAmbient 32s ease-in-out infinite alternate;
+        }
+
+        .fog.humidity {
+            --o: calc(0.2 + var(--phase-light) * 0.12);
+            --b: 28px;
+            --g: linear-gradient(116deg, transparent 0%, rgba(248,243,235,0.06) 36%, transparent 58%), radial-gradient(ellipse at 80% 20%, rgba(42,104,114,0.16), transparent 48%);
+            animation: fogHumidity 23s ease-in-out infinite alternate;
+        }
+
+        .fog.foreground {
+            --o: calc(0.12 + var(--phase-light) * 0.08);
+            --b: 18px;
+            --g: radial-gradient(ellipse at 10% 88%, rgba(248,243,235,0.1), transparent 38%), radial-gradient(ellipse at 92% 78%, rgba(232,106,36,0.1), transparent 42%);
+            animation: fogForeground 17s ease-in-out infinite alternate;
+        }
+
+        .film-burn {
+            z-index: 82;
+            opacity: 0;
+            mix-blend-mode: screen;
+            background:
+                linear-gradient(90deg, transparent, rgba(255, 242, 212, 0.88) 48%, rgba(232,106,36,0.58) 58%, transparent 72%),
+                radial-gradient(circle at 8% 50%, rgba(232,106,36,0.74), transparent 38%);
+            filter: blur(12px);
+            transform: translateX(-120%) scaleX(1.2);
+        }
+
+        .film-burn.bleed {
+            animation: burnWipe 1600ms cubic-bezier(.16,1,.3,1);
+        }
+
+        .cursor-dot {
+            left: var(--cursor-x);
+            top: var(--cursor-y);
+            z-index: 100;
+            width: 6px;
+            height: 6px;
+            inset: auto;
+            border-radius: 999px;
+            background: rgba(248,243,235,0.6);
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+            box-shadow: 0 0 8px 2px rgba(248,243,235,0.15), 0 0 24px 6px rgba(232,106,36,0.08);
+            animation: cursorFlicker 3.7s ease-in-out infinite;
+        }
+
+        .cursor-aura {
+            left: var(--cursor-x);
+            top: var(--cursor-y);
+            z-index: 83;
+            width: 38vw;
+            height: 38vw;
+            inset: auto;
+            border-radius: 999px;
+            background:
+                radial-gradient(circle, rgba(248,243,235,0.04), transparent 30%),
+                radial-gradient(circle at 45% 48%, rgba(232,106,36,0.02), transparent 40%),
+                radial-gradient(circle at 55% 52%, rgba(42,104,114,0.018), transparent 35%);
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+            filter: blur(8px);
+            animation: auraBreath 7.3s ease-in-out infinite;
+        }
+
+        .cursor-ghost {
+            position: fixed;
+            z-index: 82;
+            width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(232,106,36,0.12), rgba(42,104,114,0.06) 50%, transparent 70%);
+            mix-blend-mode: screen;
+            filter: blur(3px);
+            pointer-events: none;
+            opacity: 0.5;
+            transition: left 0.4s cubic-bezier(.16,1,.3,1), top 0.4s cubic-bezier(.16,1,.3,1), opacity 2s ease;
+        }
+
+        #gate {
+            position: fixed;
+            inset: 0;
+            z-index: 70;
+            display: grid;
+            place-items: center;
+            padding: 8vw;
+            background:
+                radial-gradient(ellipse at 52% 50%, rgba(42,104,114,0.08), transparent 38%),
+                var(--black);
+            transition: opacity 1100ms cubic-bezier(.16,1,.3,1), filter 1100ms cubic-bezier(.16,1,.3,1);
+        }
+
+        #gate.leaving {
+            opacity: 0;
+            filter: blur(16px) brightness(2.4);
+        }
+
+        .gate-inner {
+            width: min(720px, 92vw);
+            text-align: center;
+        }
+
+        .ritual-text {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(1.25rem, 4vw, 3rem);
+            font-style: italic;
+            font-weight: 400;
+            line-height: 1.05;
+            color: var(--ghost);
+            text-shadow: 0 0 38px rgba(248,243,235,0.1);
+            animation: gateText 4s cubic-bezier(.16,1,.3,1) both 500ms;
+        }
+
+        .trigger-btn {
+            position: relative;
+            min-width: 210px;
+            min-height: 48px;
+            margin-top: 2.8rem;
+            border: 0;
+            background: transparent;
+            color: rgba(248,243,235,0.72);
+            font-size: 0.69rem;
+            font-weight: 300;
+            letter-spacing: 0.38em;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: gateText 4s cubic-bezier(.16,1,.3,1) both 2100ms;
+        }
+
+        .trigger-btn::before,
+        .trigger-btn::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 38px;
+            height: 1px;
+            background: rgba(232,106,36,0.55);
+            transform: translateY(-50%);
+            transition: transform 600ms ease, opacity 600ms ease;
+        }
+
+        .trigger-btn::before {
+            left: -28px;
+        }
+
+        .trigger-btn::after {
+            right: -20px;
+            opacity: 0.2;
+        }
+
+        .trigger-btn:hover::before,
+        .trigger-btn:focus-visible::before {
+            transform: translate(16px, -50%);
+        }
+
+        .trigger-btn:focus-visible,
+        .memory-submit:focus-visible,
+        .memory-input:focus-visible {
+            outline: 1px solid rgba(248,243,235,0.58);
+            outline-offset: 8px;
+        }
+
+        #memory-space {
+            position: relative;
+            z-index: 20;
+            min-height: 720vh;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1400ms cubic-bezier(.16,1,.3,1);
+        }
+
+        body.live #memory-space {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sticky-stage {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .memory-plane,
+        .copy-plane,
+        .fragment-field,
+        .intimate-plane,
+        .rsvp-plane,
+        .phase-words {
+            position: absolute;
+            inset: 0;
+        }
+
+        .memory-plane {
+            z-index: 3;
+        }
+
+        .copy-plane {
+            z-index: 14;
+            pointer-events: none;
+        }
+
+        .phase-words {
+            z-index: 17;
+            pointer-events: none;
+        }
+
+        .mass-type {
+            font-family: Oswald, sans-serif;
+            font-weight: 500;
+            line-height: 0.78;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .whisper-type {
+            font-family: "Playfair Display", serif;
+            font-style: italic;
+            font-weight: 400;
+            line-height: 1.08;
+        }
+
+        .meta {
+            font-size: 0.68rem;
+            font-weight: 300;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+        }
+
+        .hero-copy {
+            position: absolute;
+            left: clamp(1.25rem, 6vw, 5rem);
+            top: 12vh;
+            width: min(92vw, 980px);
+            transform: translate3d(0, calc(var(--scroll) * -22vh), 0);
+        }
+
+        .hero-kicker {
+            margin-bottom: clamp(1.25rem, 3vw, 2.2rem);
+            color: rgba(42, 190, 202, 0.48);
+            text-shadow: 0 0 28px rgba(42,104,114,0.36);
+            opacity: calc(0.95 - var(--scroll) * 1.1);
+        }
+
+        .hero-title {
+            font-size: clamp(6rem, 26vw, 23rem);
+            color: rgba(248,243,235,0.9);
+            text-shadow:
+                0 0 34px rgba(248,243,235,0.12),
+                0 0 80px rgba(232,106,36,0.18);
+            transform: scaleY(1.12);
+            mix-blend-mode: screen;
+            opacity: calc(1 - var(--scroll) * 0.72);
+            filter: blur(calc(var(--scroll) * 7px));
+        }
+
+        .hero-sub {
+            max-width: 620px;
+            margin-top: clamp(-2.8rem, -3vw, -1rem);
+            margin-left: clamp(0rem, 16vw, 12rem);
+            color: rgba(232,106,36,0.82);
+            font-size: clamp(2rem, 7vw, 5.6rem);
+            text-shadow: 0 0 48px rgba(232,106,36,0.32);
+            opacity: calc(0.82 - var(--scroll) * 0.7);
+        }
+
+        .projected-note {
+            position: absolute;
+            width: min(420px, 78vw);
+            color: rgba(248,243,235,0.38);
+            font-family: "Playfair Display", serif;
+            font-size: clamp(1.15rem, 2.6vw, 2.2rem);
+            font-style: italic;
+            line-height: 1.2;
+            text-shadow: 0 0 22px rgba(248,243,235,0.08);
+            filter: blur(0.2px);
+            mix-blend-mode: screen;
+        }
+
+        .note-a {
+            right: 8vw;
+            top: 18vh;
+            opacity: clamp(0, calc((var(--scroll) - 0.1) * 3), 0.65);
+            transform: translateY(calc((var(--scroll) - 0.15) * -14vh)) rotate(-2deg);
+        }
+
+        .note-b {
+            left: 12vw;
+            bottom: 16vh;
+            opacity: clamp(0, calc((var(--scroll) - 0.48) * 2.5), 0.56);
+            transform: translateY(calc((var(--scroll) - 0.5) * -9vh)) rotate(2deg);
+        }
+
+        .projection-image {
+            position: absolute;
+            overflow: hidden;
+            will-change: transform, opacity, filter;
+            filter: saturate(0.86) contrast(1.18) brightness(0.7) blur(2px);
+            mix-blend-mode: screen;
+            opacity: 0.58;
+            transform:
+                translate3d(calc(var(--mx, 0) * 1px), calc(var(--my, 0) * 1px), 0)
+                rotate(var(--r, 0deg))
+                scale(var(--s, 1));
+            animation: memoryDrift var(--d, 18s) ease-in-out infinite alternate;
+        }
+
+        .projection-image::before {
+            content: "";
+            position: absolute;
+            inset: -12%;
+            background-image: var(--img);
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.12);
+            filter: blur(var(--img-blur, 0px));
+            opacity: 0.98;
+        }
+
+        .projection-image::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 28% 24%, rgba(248,243,235,0.2), transparent 26%),
+                linear-gradient(120deg, transparent, rgba(232,106,36,0.16), transparent 62%);
+            mix-blend-mode: screen;
+        }
+
+        .feather-soft {
+            mask-image:
+                radial-gradient(ellipse at 48% 48%, black 0 38%, rgba(0,0,0,0.62) 54%, transparent 75%),
+                linear-gradient(110deg, transparent 0%, black 22%, black 72%, transparent 100%);
+        }
+
+        .feather-torn {
+            mask-image:
+                radial-gradient(ellipse at 32% 44%, black 0 34%, transparent 65%),
+                radial-gradient(ellipse at 70% 58%, rgba(0,0,0,0.8) 0 30%, transparent 58%);
+        }
+
+        .feather-burn {
+            mask-image:
+                radial-gradient(ellipse at 52% 48%, black 0 28%, rgba(0,0,0,0.55) 44%, transparent 68%);
+        }
+
+        .crowd-wash {
+            --img: url("public/assets/hero.png");
+            --r: -1deg;
+            --s: 1.05;
+            --d: 28s;
+            left: -12vw;
+            top: 22vh;
+            width: 72vw;
+            height: 48vh;
+            opacity: clamp(0.08, calc(var(--scroll) * 0.42), 0.36);
+            filter: blur(12px) saturate(0.78) contrast(1.28) brightness(0.54);
+        }
+
+        .texture-wash {
+            --img: url("public/assets/nightlife leaks.png");
+            --r: 3deg;
+            --s: 1.1;
+            --d: 24s;
+            right: -10vw;
+            top: 6vh;
+            width: 58vw;
+            height: 54vh;
+            opacity: clamp(0.04, calc((var(--scroll) - 0.08) * 0.55), 0.34);
+            filter: blur(10px) saturate(1.25) brightness(0.7);
+        }
+
+        .fragment-field {
+            z-index: 9;
+            opacity: clamp(0, calc((var(--scroll) - 0.15) * 2.2), 1);
+            transform: translate3d(0, calc((var(--scroll) - 0.24) * -32vh), 0);
+        }
+
+        .fragment {
+            --img: url("public/assets/ibiza memories.png");
+            --d: 18s;
+            --s: 1;
+            opacity: 0.52;
+            border-radius: 44% 56% 52% 48% / 42% 46% 54% 58%;
+        }
+
+        .fragment.one {
+            --r: -4deg;
+            left: 7vw;
+            top: 38vh;
+            width: min(520px, 54vw);
+            height: 45vh;
+            opacity: clamp(0.04, calc((var(--scroll) - 0.16) * 1.3), 0.48);
+            filter: blur(5px) grayscale(0.55) contrast(1.25) brightness(0.5);
+            animation: memoryDrift 28s ease-in-out infinite alternate, fragmentTremble 4.7s ease-in-out infinite, fragmentOverexpose 23s ease-in-out infinite;
+        }
+
+        .fragment.two {
+            --r: 2.5deg;
+            right: 5vw;
+            top: 26vh;
+            width: min(610px, 60vw);
+            height: 42vh;
+            opacity: clamp(0.02, calc((var(--scroll) - 0.26) * 1.4), 0.5);
+            filter: blur(7px) saturate(1.1) brightness(0.46);
+            mix-blend-mode: lighten;
+            animation: memoryDrift 22s ease-in-out infinite alternate-reverse, fragmentTremble 6.3s ease-in-out infinite;
+        }
+
+        .fragment.three {
+            --img: url("public/assets/memory fragments.png");
+            --r: -1deg;
+            left: 32vw;
+            top: 76vh;
+            width: min(560px, 56vw);
+            height: 40vh;
+            opacity: clamp(0.02, calc((var(--scroll) - 0.34) * 1.7), 0.54);
+            filter: blur(5px) saturate(0.9) brightness(0.48);
+            animation: memoryDrift 31s ease-in-out infinite alternate, fragmentTremble 5.1s ease-in-out infinite;
+        }
+
+        .fragment.four {
+            --img: url("public/assets/nightlife leaks.png");
+            --r: 5deg;
+            right: 22vw;
+            top: 104vh;
+            width: min(470px, 52vw);
+            height: 38vh;
+            opacity: clamp(0.02, calc((var(--scroll) - 0.45) * 1.6), 0.46);
+            filter: blur(8px) saturate(1.4) brightness(0.52);
+            animation: memoryDrift 26s ease-in-out infinite alternate-reverse, fragmentTremble 7.9s ease-in-out infinite;
+        }
+
+        .chaos-type {
+            position: absolute;
+            left: 36vw;
+            top: 49vh;
+            width: min(760px, 74vw);
+            color: rgba(248,243,235,0.62);
+            opacity: clamp(0, calc((var(--scroll) - 0.22) * 2), 0.82);
+            filter: blur(calc(max(0, 0.55 - var(--scroll)) * 12px));
+            transform: translate(-18%, -50%) rotate(-2deg);
+            mix-blend-mode: overlay;
+        }
+
+        .chaos-type .mass-type {
+            font-size: clamp(4.6rem, 15vw, 14rem);
+        }
+
+        .chaos-type .whisper-type {
+            margin-left: clamp(2rem, 12vw, 10rem);
+            margin-top: -0.5rem;
+            color: rgba(232,106,36,0.6);
+            font-size: clamp(2rem, 6vw, 5rem);
+        }
+
+        .intimate-plane {
+            z-index: 12;
+            opacity: clamp(0, calc((var(--scroll) - 0.56) * 3.2), 1);
+            transform: translateY(calc((var(--scroll) - 0.64) * -22vh));
+        }
+
+        .polaroid-memory {
+            --img: url("public/assets/ibiza memories.png");
+            --r: -3deg;
+            --d: 22s;
+            left: 50%;
+            top: 47vh;
+            width: min(560px, 82vw);
+            height: min(460px, 62vh);
+            opacity: clamp(0, calc((var(--scroll) - 0.58) * 2.6), 0.82);
+            filter: blur(2px) saturate(0.72) brightness(0.7) contrast(1.08);
+            transform:
+                translate3d(calc(-50% + var(--mx, 0) * 0.7px), calc(-50% + var(--my, 0) * 0.7px), 0)
+                rotate(var(--r))
+                scale(1);
+            mix-blend-mode: screen;
+            animation: fragmentTremble 5.8s ease-in-out infinite;
+        }
+
+        .polaroid-memory::before {
+            background-position: center;
+            filter: blur(1px);
+        }
+
+        .intimate-line {
+            position: absolute;
+            left: 10vw;
+            top: 20vh;
+            width: min(560px, 78vw);
+            color: rgba(248,243,235,0.68);
+            opacity: clamp(0, calc((var(--scroll) - 0.61) * 2), 0.72);
+            filter: blur(calc(max(0, 0.82 - var(--scroll)) * 7px));
+            text-shadow: 0 0 42px rgba(248,243,235,0.13);
+        }
+
+        .intimate-line .whisper-type {
+            font-size: clamp(2.5rem, 7vw, 6rem);
+        }
+
+        .afterglow {
+            position: absolute;
+            inset: 0;
+            z-index: 13;
+            opacity: clamp(0, calc((var(--scroll) - 0.72) * 2.4), 0.7);
+            background:
+                radial-gradient(ellipse at 50% 80%, rgba(232,106,36,0.18), transparent 46%),
+                linear-gradient(180deg, transparent, rgba(1,1,2,0.55));
+            mix-blend-mode: screen;
+        }
+
+        .rsvp-plane {
+            z-index: 30;
+            display: grid;
+            place-items: center;
+            padding: 7vw;
+            opacity: clamp(0, calc((var(--scroll) - 0.76) * 4), 1);
+            transform: translateY(calc(max(0, 0.86 - var(--scroll)) * 20vh));
+        }
+
+        .rsvp-inner {
+            width: min(620px, 100%);
+            text-align: center;
+        }
+
+        .rsvp-plane .meta {
+            margin-bottom: 1.6rem;
+            color: rgba(232,106,36,0.7);
+            text-shadow: 0 0 24px rgba(232,106,36,0.24);
+        }
+
+        .rsvp-title {
+            color: rgba(248,243,235,0.78);
+            font-size: clamp(2.5rem, 7vw, 5.8rem);
+            text-shadow: 0 0 42px rgba(248,243,235,0.1);
+        }
+
+        .memory-form {
+            margin-top: clamp(2.8rem, 8vh, 5rem);
+        }
+
+        .field {
+            position: relative;
+            margin-bottom: clamp(2rem, 7vh, 4.5rem);
+        }
+
+        .memory-input {
+            width: 100%;
+            min-height: 74px;
+            border: 0;
+            border-bottom: 1px solid rgba(248,243,235,0.18);
+            background: transparent;
+            color: var(--white);
+            font-family: "Playfair Display", serif;
+            font-size: clamp(2rem, 5vw, 4.2rem);
+            font-style: italic;
+            text-align: center;
+            outline: none;
+            opacity: 0.54;
+            transition: color 900ms ease, opacity 900ms ease, border-color 900ms ease, text-shadow 900ms ease;
+        }
+
+        .memory-input::placeholder {
+            color: rgba(248,243,235,0.3);
+        }
+
+        .memory-input:focus {
+            border-color: rgba(232,106,36,0.58);
+            color: rgba(232,106,36,0.92);
+            opacity: 1;
+            text-shadow: 0 0 34px rgba(232,106,36,0.28);
+        }
+
+        .memory-submit {
+            position: relative;
+            width: min(420px, 100%);
+            min-height: 64px;
+            border: 1px solid rgba(248,243,235,0.2);
+            background: transparent;
+            color: rgba(248,243,235,0.62);
+            font-size: 0.72rem;
+            letter-spacing: 0.34em;
+            text-transform: uppercase;
+            overflow: hidden;
+            transition: border-color 700ms ease, color 700ms ease;
+        }
+
+        .memory-submit::before {
+            content: "";
+            position: absolute;
+            inset: -30%;
+            background: linear-gradient(90deg, transparent, rgba(248,243,235,0.88), rgba(232,106,36,0.62), transparent);
+            opacity: 0;
+            transform: translateX(-85%);
+            filter: blur(10px);
+            transition: opacity 700ms ease, transform 1100ms cubic-bezier(.16,1,.3,1);
+        }
+
+        .memory-submit:hover,
+        .memory-submit:focus-visible {
+            border-color: rgba(248,243,235,0.66);
+            color: var(--black);
+        }
+
+        .memory-submit:hover::before,
+        .memory-submit:focus-visible::before {
+            opacity: 1;
+            transform: translateX(20%);
+        }
+
+        .memory-submit span {
+            position: relative;
+            z-index: 1;
+            mix-blend-mode: difference;
+        }
+
+        .closing-line {
+            margin-top: clamp(4rem, 12vh, 8rem);
+            color: rgba(248,243,235,0.25);
+            line-height: 1.8;
+        }
+
+        .phase-word {
+            position: absolute;
+            right: 5vw;
+            bottom: 9vh;
+            color: rgba(248,243,235,0.12);
+            font-family: Oswald, sans-serif;
+            font-size: clamp(3rem, 10vw, 9rem);
+            font-weight: 300;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            opacity: 0;
+            filter: blur(9px);
+            transform: translateY(16px);
+            transition: opacity 1400ms ease, filter 1400ms ease, transform 1400ms ease;
+        }
+
+        .phase-word.active {
+            opacity: 1;
+            filter: blur(2px);
+            transform: translateY(0);
+        }
+
+        body.rsvp-quiet .fragment-field,
+        body.rsvp-quiet .chaos-type,
+        body.rsvp-quiet .crowd-wash,
+        body.rsvp-quiet .texture-wash {
+            opacity: 0.08;
+            filter: blur(18px) saturate(0.5) brightness(0.42);
+        }
+
+        body.rsvp-quiet .projected-crowd,
+        body.rsvp-quiet .air-texture {
+            opacity: 0.08;
+        }
+
+        body.rsvp-quiet .depth-fog {
+            opacity: 0.56;
+        }
+
+        @keyframes grainShift {
+            0% { transform: translate3d(0,0,0); }
+            50% { transform: translate3d(-1.5%, 1%, 0); }
+            100% { transform: translate3d(1%, -1%, 0); }
+        }
+
+        @keyframes crowdBreath {
+            from { transform: scale(1.14) translate3d(-1vw, -1vh, 0); filter: brightness(0.58) blur(22px); }
+            to { transform: scale(1.22) translate3d(1.5vw, 1vh, 0); filter: brightness(0.68) blur(24px); }
+        }
+
+        @keyframes airProjection {
+            from { transform: scale(1.18) rotate(-1deg); opacity: 0.08; }
+            to { transform: scale(1.28) rotate(1.2deg); opacity: 0.16; }
+        }
+
+        @keyframes shoreSweep {
+            from { transform: translate3d(-8vw, 2vh, 0) rotate(-5deg); opacity: 0.24; }
+            to { transform: translate3d(18vw, -2vh, 0) rotate(2deg); opacity: 0.48; }
+        }
+
+        @keyframes sodiumDrift {
+            from { transform: translate3d(0, 0, 0) scale(0.9); }
+            to { transform: translate3d(-24vw, 18vh, 0) scale(1.18); }
+        }
+
+        @keyframes indigoPulse {
+            from { transform: translate3d(-8vw, 8vh, 0) scale(0.96); opacity: 0.18; }
+            to { transform: translate3d(8vw, -8vh, 0) scale(1.12); opacity: 0.42; }
+        }
+
+        @keyframes practicalFlicker {
+            0%, 12%, 23%, 54%, 78%, 100% { filter: brightness(0.7); }
+            13%, 55% { filter: brightness(2.2); }
+            24% { filter: brightness(1.8); }
+            79% { filter: brightness(0.3); }
+        }
+
+        @keyframes streakFloat {
+            from { transform: translateY(-5vh) rotate(-6deg); }
+            to { transform: translateY(8vh) rotate(-4deg); }
+        }
+
+        @keyframes fogDistant {
+            from { transform: translate3d(-4vw, -2vh, 0) scale(1); }
+            to { transform: translate3d(6vw, 3vh, 0) scale(1.08); }
+        }
+
+        @keyframes fogAmbient {
+            from { transform: translate3d(3vw, 4vh, 0) rotate(-2deg); }
+            to { transform: translate3d(-5vw, -3vh, 0) rotate(2deg); }
+        }
+
+        @keyframes fogHumidity {
+            from { transform: translate3d(-7vw, 0, 0) skewX(-5deg); }
+            to { transform: translate3d(7vw, 3vh, 0) skewX(4deg); }
+        }
+
+        @keyframes fogForeground {
+            from { transform: translate3d(0, 2vh, 0) scale(1.04); }
+            to { transform: translate3d(-9vw, -1vh, 0) scale(1.13); }
+        }
+
+        @keyframes memoryDrift {
+            from { translate: -1vw -1vh; }
+            to { translate: 1.5vw 1vh; }
+        }
+
+        @keyframes burnWipe {
+            0% { opacity: 0; transform: translateX(-120%) scaleX(1.3); }
+            24% { opacity: 0.9; }
+            100% { opacity: 0; transform: translateX(120%) scaleX(1.1); }
+        }
+
+        @keyframes gateText {
+            from { opacity: 0; transform: translateY(16px); filter: blur(12px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        @keyframes exposurePulseGrain {
+            0%, 100% { opacity: 0.14; }
+            38% { opacity: 0.08; }
+            67% { opacity: 0.19; }
+            82% { opacity: 0.11; }
+        }
+
+        @keyframes exposurePulseHumid {
+            0%, 100% { opacity: 0.04; }
+            42% { opacity: 0.09; }
+            71% { opacity: 0.02; }
+        }
+
+        @keyframes exposureSurge {
+            0%, 100% { opacity: 0; transform: scale(1); }
+            15% { opacity: 0; }
+            18% { opacity: 0.06; transform: scale(1.02); }
+            22% { opacity: 0; }
+            50% { opacity: 0; }
+            78% { opacity: 0.04; transform: scale(0.98); }
+            82% { opacity: 0; }
+        }
+
+        @keyframes occlusionDrift {
+            from { transform: translate3d(-15vw, -8vh, 0) scale(1.2); opacity: 0.15; }
+            to { transform: translate3d(12vw, 6vh, 0) scale(1.4); opacity: 0.25; }
+        }
+
+        @keyframes humidityShift {
+            from { background-position: 0% 0%; transform: scale(1.1); }
+            to { background-position: 100% 100%; transform: scale(1.3) rotate(2deg); }
+        }
+
+        @keyframes cursorFlicker {
+            0%, 100% { opacity: 0.6; box-shadow: 0 0 8px 2px rgba(248,243,235,0.15), 0 0 24px 6px rgba(232,106,36,0.08); }
+            31% { opacity: 0.8; }
+            48% { opacity: 0.4; box-shadow: 0 0 12px 3px rgba(248,243,235,0.2), 0 0 32px 8px rgba(232,106,36,0.12); }
+            73% { opacity: 0.55; }
+        }
+
+        @keyframes auraBreath {
+            0%, 100% { opacity: 1; filter: blur(8px); }
+            44% { opacity: 0.7; filter: blur(12px); }
+            78% { opacity: 1.1; filter: blur(6px); }
+        }
+
+        @keyframes fragmentTremble {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            17% { transform: translate(0.3px, -0.5px) rotate(0.1deg); }
+            34% { transform: translate(-0.4px, 0.2px) rotate(-0.15deg); }
+            51% { transform: translate(0.2px, 0.4px) rotate(0.08deg); }
+            68% { transform: translate(-0.3px, -0.3px) rotate(-0.1deg); }
+            85% { transform: translate(0.1px, 0.3px) rotate(0.05deg); }
+        }
+
+        @keyframes fragmentOverexpose {
+            0%, 100% { filter: blur(5px) grayscale(0.55) contrast(1.25) brightness(0.5); }
+            14% { filter: blur(4px) grayscale(0.45) contrast(1.15) brightness(0.58); }
+            28% { filter: blur(6px) grayscale(0.6) contrast(1.3) brightness(0.46); }
+            42% { filter: blur(5px) grayscale(0.5) contrast(1.2) brightness(0.72); }
+            44% { filter: blur(3px) grayscale(0.3) contrast(1.1) brightness(0.54); }
+            60% { filter: blur(5px) grayscale(0.55) contrast(1.25) brightness(0.48); }
+            85% { filter: blur(7px) grayscale(0.62) contrast(1.28) brightness(0.44); }
+        }
+
+        @keyframes visualSilence {
+            0%, 100% { opacity: 0; }
+            40% { opacity: 0; }
+            50% { opacity: 0.3; }
+            60% { opacity: 0; }
+        }
+
+        @media (max-width: 780px) {
+            body,
+            button {
+                cursor: auto;
+            }
+
+            .cursor-dot,
+            .cursor-aura,
+            .cursor-ghost {
+                display: none;
+            }
+
+            #memory-space {
+                min-height: 760vh;
+            }
+
+            .hero-copy {
+                top: 14vh;
+                left: 1.1rem;
+            }
+
+            .hero-title {
+                font-size: clamp(5rem, 28vw, 9rem);
+                transform: scaleY(1);
+            }
+
+            .hero-sub {
+                margin-top: 1rem;
+                margin-left: 0;
+            }
+
+            .crowd-wash {
+                left: -25vw;
+                top: 26vh;
+                width: 120vw;
+                height: 42vh;
+            }
+
+            .texture-wash {
+                right: -34vw;
+                width: 110vw;
+            }
+
+            .fragment.one,
+            .fragment.two,
+            .fragment.three,
+            .fragment.four {
+                width: 86vw;
+                height: 38vh;
+            }
+
+            .fragment.one { left: 7vw; top: 34vh; }
+            .fragment.two { right: 3vw; top: 72vh; }
+            .fragment.three { left: 8vw; top: 112vh; }
+            .fragment.four { right: 6vw; top: 148vh; }
+
+            .chaos-type {
+                left: 9vw;
+                top: 42vh;
+                transform: none;
+            }
+
+            .intimate-line {
+                left: 1.3rem;
+                top: 17vh;
+            }
+
+            .polaroid-memory {
+                width: 86vw;
+                height: 46vh;
+            }
+
+            .rsvp-plane {
+                padding: 1.2rem;
+            }
+
+            .phase-word {
+                left: 1rem;
+                right: auto;
+                bottom: 5vh;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 1ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 1ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="locked">
+    <div class="projected-crowd" aria-hidden="true"></div>
+    <div class="air-texture" aria-hidden="true"></div>
+
+    <div class="light-engine" aria-hidden="true">
+        <div class="projection shore"></div>
+        <div class="projection sodium"></div>
+        <div class="projection indigo"></div>
+        <div class="practical-lights"></div>
+        <div class="lens-streak"></div>
+    </div>
+
+    <div class="depth-fog" aria-hidden="true">
+        <div class="fog distant"></div>
+        <div class="fog ambient"></div>
+        <div class="fog humidity"></div>
+        <div class="fog foreground"></div>
+    </div>
+
+    <div class="occlusion-haze" aria-hidden="true"></div>
+    <div class="humidity-veil" aria-hidden="true"></div>
+    <div class="halation" aria-hidden="true"></div>
+    <div class="film-burn" id="filmBurn" aria-hidden="true"></div>
+    <div class="exposure-wash" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="cursor-aura" id="cursorAura" aria-hidden="true"></div>
+    <div class="cursor-ghost" id="cursorGhost" aria-hidden="true"></div>
+    <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+    <div id="gate">
+        <div class="gate-inner">
+            <p class="ritual-text">Some nights refuse to finish. They just keep projecting somewhere.</p>
+            <button class="trigger-btn interactable" type="button" id="openMemory">Open the archive</button>
+        </div>
+    </div>
+
+    <main id="memory-space" aria-label="IBIZA farewell memory experience">
+        <div class="sticky-stage">
+            <div class="memory-plane" aria-hidden="true">
+                <div class="projection-image crowd-wash feather-soft"></div>
+                <div class="projection-image texture-wash feather-burn"></div>
+            </div>
+
+            <div class="copy-plane">
+                <section class="hero-copy" aria-labelledby="ibiza-title">
+                    <p class="meta hero-kicker">02:17 AM // the signal never stopped</p>
+                    <h1 class="mass-type hero-title" id="ibiza-title">IBIZA</h1>
+                    <p class="whisper-type hero-sub">before we disappear entirely.</p>
+                </section>
+
+                <p class="projected-note note-a">i dont remember taking this</p>
+                <p class="projected-note note-b">no one wanted to leave. not really.</p>
+            </div>
+
+            <div class="fragment-field" aria-hidden="true">
+                <div class="projection-image fragment one feather-torn"></div>
+                <div class="projection-image fragment two feather-soft"></div>
+                <div class="projection-image fragment three feather-torn"></div>
+                <div class="projection-image fragment four feather-burn"></div>
+                <div class="chaos-type">
+                    <p class="mass-type">Euphoria</p>
+                    <p class="whisper-type">the shoreline was louder than us.</p>
+                </div>
+            </div>
+
+            <div class="intimate-plane" aria-hidden="true">
+                <div class="intimate-line">
+                    <p class="meta">03:46 AM // wish we stayed longer</p>
+                    <p class="whisper-type">2:17 AM felt permanent.</p>
+                </div>
+                <div class="projection-image polaroid-memory feather-soft"></div>
+            </div>
+
+            <div class="afterglow" aria-hidden="true"></div>
+
+            <section class="rsvp-plane" aria-labelledby="rsvp-title">
+                <div class="rsvp-inner">
+                    <p class="meta">the last thing left</p>
+                    <h2 class="whisper-type rsvp-title" id="rsvp-title">confirm you were here. leave something behind.</h2>
+
+                    <form class="memory-form" id="rsvpForm">
+                        <div class="field interactable">
+                            <label class="sr-only" for="guestName">Your name</label>
+                            <input class="memory-input" id="guestName" name="guestName" type="text" placeholder="Your Name" autocomplete="name" required>
+                        </div>
+
+                        <div class="field interactable">
+                            <label class="sr-only" for="studentId">Student ID</label>
+                            <input class="memory-input" id="studentId" name="studentId" type="text" placeholder="Student ID" required>
+                        </div>
+
+                        <button class="memory-submit interactable" type="submit"><span>Seal the Memory</span></button>
+                    </form>
+
+                    <p class="meta closing-line">nothing lasts forever.<br>that is why it still glows.</p>
+                </div>
+            </section>
+
+            <div class="phase-words" aria-hidden="true">
+                <p class="phase-word active">Silence</p>
+                <p class="phase-word">Emergence</p>
+                <p class="phase-word">Euphoria</p>
+                <p class="phase-word">Fragmentation</p>
+                <p class="phase-word">Intimacy</p>
+                <p class="phase-word">Afterglow</p>
+                <p class="phase-word">Disappearance</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const root = document.documentElement;
+        const body = document.body;
+        const gate = document.getElementById('gate');
+        const openMemory = document.getElementById('openMemory');
+        const filmBurn = document.getElementById('filmBurn');
+        const cursorDot = document.getElementById('cursorDot');
+        const cursorAura = document.getElementById('cursorAura');
+        const cursorGhost = document.getElementById('cursorGhost');
+        const fragments = Array.from(document.querySelectorAll('.projection-image'));
+        const phaseWords = Array.from(document.querySelectorAll('.phase-word'));
+        const phaseNames = ['Silence', 'Emergence', 'Euphoria', 'Fragmentation', 'Intimacy', 'Afterglow', 'Disappearance'];
+
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let auraX = mouseX;
+        let auraY = mouseY;
+        let ghostX = mouseX;
+        let ghostY = mouseY;
+        let lastPhase = 0;
+
+        // Depth layer velocities - near layers react faster
+        const depthLayers = {
+            '.fog.distant': { speed: 0.004, x: 0, y: 0 },
+            '.fog.ambient': { speed: 0.008, x: 0, y: 0 },
+            '.fog.humidity': { speed: 0.016, x: 0, y: 0 },
+            '.fog.foreground': { speed: 0.035, x: 0, y: 0 },
+            '.occlusion-haze': { speed: 0.012, x: 0, y: 0 },
+        };
+
+        // Fragment inertia state
+        const fragmentStates = fragments.map(() => ({ mx: 0, my: 0, targetMx: 0, targetMy: 0 }));
+
+        function clamp(v, min, max) {
+            return Math.max(min, Math.min(max, v));
+        }
+
+        function setCursor(x, y) {
+            root.style.setProperty('--cursor-x', `${x}px`);
+            root.style.setProperty('--cursor-y', `${y}px`);
+        }
+
+        function igniteMemory() {
+            gate.classList.add('leaving');
+            filmBurn.classList.remove('bleed');
+            void filmBurn.offsetWidth;
+            filmBurn.classList.add('bleed');
+
+            setTimeout(() => {
+                gate.hidden = true;
+                body.classList.remove('locked');
+                body.classList.add('live');
+                updateScrollState();
+            }, 780);
+        }
+
+        function updateScrollState() {
+            const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+            const progress = clamp(window.scrollY / maxScroll, 0, 1);
+            const light = clamp(Math.sin(progress * Math.PI) * 1.18, 0, 1);
+            const quiet = clamp((progress - 0.72) / 0.22, 0, 1);
+            const phase = Math.min(phaseNames.length - 1, Math.floor(progress * phaseNames.length));
+
+            root.style.setProperty('--scroll', progress.toFixed(4));
+            root.style.setProperty('--phase-light', light.toFixed(4));
+            root.style.setProperty('--phase-quiet', quiet.toFixed(4));
+            body.classList.toggle('rsvp-quiet', progress > 0.74);
+
+            if (phase !== lastPhase) {
+                lastPhase = phase;
+                phaseWords.forEach((word, index) => word.classList.toggle('active', index === phase));
+                filmBurn.classList.remove('bleed');
+                void filmBurn.offsetWidth;
+                filmBurn.classList.add('bleed');
+            }
+        }
+
+        // True depth: parallax with inertia per depth layer
+        function updateDepthParallax() {
+            const cx = (mouseX / window.innerWidth - 0.5) * 2;
+            const cy = (mouseY / window.innerHeight - 0.5) * 2;
+
+            Object.entries(depthLayers).forEach(([selector, layer]) => {
+                const el = document.querySelector(selector);
+                if (!el) return;
+                const targetX = cx * layer.speed * 100;
+                const targetY = cy * layer.speed * 100;
+                layer.x += (targetX - layer.x) * (layer.speed * 8);
+                layer.y += (targetY - layer.y) * (layer.speed * 8);
+                el.style.marginLeft = `${layer.x}vw`;
+                el.style.marginTop = `${layer.y}vh`;
+            });
+        }
+
+        function updateFragmentMagnetism() {
+            fragments.forEach((fragment, index) => {
+                const rect = fragment.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const dx = mouseX - cx;
+                const dy = mouseY - cy;
+                const distance = Math.hypot(dx, dy);
+                const pull = clamp(1 - distance / 520, 0, 1);
+                const direction = index % 2 === 0 ? 1 : -1;
+
+                // Inertia-based movement - delayed, organic
+                const state = fragmentStates[index];
+                state.targetMx = dx * pull * 0.028 * direction;
+                state.targetMy = dy * pull * 0.022;
+                const inertia = 0.04 + (index * 0.008); // each fragment has different lag
+                state.mx += (state.targetMx - state.mx) * inertia;
+                state.my += (state.targetMy - state.my) * inertia;
+
+                fragment.style.setProperty('--mx', state.mx.toFixed(2));
+                fragment.style.setProperty('--my', state.my.toFixed(2));
+                fragment.style.setProperty('--s', (1 + pull * 0.018).toFixed(3));
+            });
+        }
+
+        function render() {
+            // Cursor aura with heavy lag
+            auraX += (mouseX - auraX) * 0.045;
+            auraY += (mouseY - auraY) * 0.045;
+
+            // Ghost cursor - even more delayed, chromatic residue
+            ghostX += (mouseX - ghostX) * 0.02;
+            ghostY += (mouseY - ghostY) * 0.02;
+
+            if (cursorDot && cursorAura) {
+                cursorDot.style.left = `${mouseX}px`;
+                cursorDot.style.top = `${mouseY}px`;
+                cursorAura.style.left = `${auraX}px`;
+                cursorAura.style.top = `${auraY}px`;
+            }
+
+            if (cursorGhost) {
+                cursorGhost.style.left = `${ghostX}px`;
+                cursorGhost.style.top = `${ghostY}px`;
+            }
+
+            updateFragmentMagnetism();
+            updateDepthParallax();
+            requestAnimationFrame(render);
+        }
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+            setCursor(mouseX, mouseY);
+        }, { passive: true });
+
+        document.querySelectorAll('.interactable').forEach((element) => {
+            element.addEventListener('mouseenter', () => {
+                cursorDot.style.transform = 'translate(-50%, -50%) scale(2.5)';
+                cursorDot.style.background = 'transparent';
+                cursorDot.style.boxShadow = '0 0 14px 4px rgba(232,106,36,0.3), 0 0 40px 12px rgba(42,104,114,0.15)';
+            });
+
+            element.addEventListener('mouseleave', () => {
+                cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursorDot.style.background = 'rgba(248,243,235,0.6)';
+                cursorDot.style.boxShadow = '0 0 8px 2px rgba(248,243,235,0.15), 0 0 24px 6px rgba(232,106,36,0.08)';
+            });
+        });
+
+        document.querySelectorAll('.memory-input').forEach((input) => {
+            input.addEventListener('focus', () => body.classList.add('rsvp-quiet'));
+            input.addEventListener('blur', updateScrollState);
+        });
+
+        document.getElementById('rsvpForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            filmBurn.classList.remove('bleed');
+            void filmBurn.offsetWidth;
+            filmBurn.classList.add('bleed');
+            setTimeout(() => alert('Memory sealed.'), 260);
+        });
+
+        openMemory.addEventListener('click', igniteMemory);
+        window.addEventListener('scroll', updateScrollState, { passive: true });
+        window.addEventListener('resize', updateScrollState);
+
+        setCursor(mouseX, mouseY);
+        updateScrollState();
+        render();
+    </script>
+</body>
+</html>
