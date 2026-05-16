@@ -303,10 +303,39 @@
             display: grid;
             place-items: center;
             padding: 8vw;
+            overflow: hidden;
+            isolation: isolate;
             background:
                 radial-gradient(ellipse at 52% 50%, rgba(42, 104, 114, 0.08), transparent 38%),
                 var(--black);
             transition: opacity 1100ms cubic-bezier(.16, 1, .3, 1), filter 1100ms cubic-bezier(.16, 1, .3, 1);
+        }
+
+        #gate::before,
+        #gate::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        #gate::before {
+            z-index: 1;
+            background:
+                radial-gradient(circle at 50% 46%, rgba(1, 1, 2, 0.74), transparent 31%),
+                linear-gradient(90deg, rgba(1, 1, 2, 0.72), transparent 28%, transparent 72%, rgba(1, 1, 2, 0.72)),
+                radial-gradient(ellipse at center, transparent 18%, rgba(1, 1, 2, 0.42) 64%, rgba(1, 1, 2, 0.82));
+            mix-blend-mode: normal;
+        }
+
+        #gate::after {
+            z-index: 3;
+            opacity: 0;
+            background:
+                radial-gradient(circle at 50% 48%, rgba(255, 250, 230, 0.92), transparent 18%),
+                linear-gradient(90deg, transparent, rgba(255, 248, 230, 0.78), transparent);
+            mix-blend-mode: screen;
+            animation: introFlash 1300ms steps(1) infinite;
         }
 
         #gate.leaving {
@@ -314,9 +343,107 @@
             filter: blur(16px) brightness(2.4);
         }
 
+        .intro-mosaic {
+            position: absolute;
+            inset: -2px;
+            z-index: 0;
+            opacity: 0.68;
+            filter: saturate(0.96) contrast(1.22) brightness(0.66);
+            perspective: 900px;
+        }
+
+        .intro-tile {
+            --x: 0%;
+            --y: 0%;
+            position: absolute;
+            inset: -4vh -4vw;
+            overflow: hidden;
+            background-image: url("public/assets/memory fragments.png");
+            background-size: 300% 300%;
+            background-position: var(--x) var(--y);
+            transform-origin: center;
+            opacity: 0;
+            animation:
+                singlePhotoCut 1620ms steps(1) infinite,
+                tileSpin 1620ms steps(1) infinite,
+                tileExposure 1620ms steps(1) infinite;
+            animation-delay: var(--delay, 0ms);
+            will-change: transform, filter, opacity, background-position;
+        }
+
+        .intro-tile::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            background:
+                radial-gradient(circle at 46% 42%, rgba(255, 248, 220, 0.95), transparent 28%),
+                linear-gradient(118deg, transparent 16%, rgba(248, 243, 235, 0.78) 48%, transparent 68%);
+            mix-blend-mode: screen;
+            animation: tileFlash 1620ms steps(1) infinite;
+            animation-delay: var(--delay, 0ms);
+        }
+
+        .intro-tile:nth-child(1) {
+            --x: 0%;
+            --y: 0%;
+            --delay: 0ms;
+        }
+
+        .intro-tile:nth-child(2) {
+            --x: 50%;
+            --y: 0%;
+            --delay: -180ms;
+        }
+
+        .intro-tile:nth-child(3) {
+            --x: 100%;
+            --y: 0%;
+            --delay: -360ms;
+        }
+
+        .intro-tile:nth-child(4) {
+            --x: 0%;
+            --y: 50%;
+            --delay: -540ms;
+        }
+
+        .intro-tile:nth-child(5) {
+            --x: 50%;
+            --y: 50%;
+            --delay: -720ms;
+        }
+
+        .intro-tile:nth-child(6) {
+            --x: 100%;
+            --y: 50%;
+            --delay: -900ms;
+        }
+
+        .intro-tile:nth-child(7) {
+            --x: 0%;
+            --y: 100%;
+            --delay: -1080ms;
+        }
+
+        .intro-tile:nth-child(8) {
+            --x: 50%;
+            --y: 100%;
+            --delay: -1260ms;
+        }
+
+        .intro-tile:nth-child(9) {
+            --x: 100%;
+            --y: 100%;
+            --delay: -1440ms;
+        }
+
         .gate-inner {
+            position: relative;
+            z-index: 4;
             width: min(720px, 92vw);
             text-align: center;
+            transform: translateZ(0);
         }
 
         .ritual-text {
@@ -325,9 +452,13 @@
             font-style: italic;
             font-weight: 400;
             line-height: 1.05;
-            color: var(--ghost);
-            text-shadow: 0 0 38px rgba(248, 243, 235, 0.1);
-            animation: gateText 4s cubic-bezier(.16, 1, .3, 1) both 500ms;
+            color: rgba(248, 243, 235, 0.9);
+            text-shadow:
+                0 0 2px rgba(1, 1, 2, 1),
+                0 0 16px rgba(1, 1, 2, 0.98),
+                0 0 34px rgba(1, 1, 2, 0.95),
+                0 0 52px rgba(248, 243, 235, 0.24);
+            animation: gateText 1500ms cubic-bezier(.16, 1, .3, 1) both 250ms;
         }
 
         .trigger-btn {
@@ -1045,6 +1176,88 @@
             }
         }
 
+        @keyframes singlePhotoCut {
+            0%,
+            10.6% {
+                opacity: 0.9;
+            }
+
+            10.7%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes tileSpin {
+            0% {
+                transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.08);
+            }
+
+            4% {
+                transform: rotateX(7deg) rotateY(-9deg) rotateZ(-1deg) scale(1.12);
+            }
+
+            8% {
+                transform: rotateX(-6deg) rotateY(10deg) rotateZ(1.4deg) scale(1.1);
+            }
+
+            100% {
+                transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.08);
+            }
+        }
+
+        @keyframes tileExposure {
+            0%,
+            10.6% {
+                filter: brightness(0.78) saturate(0.98) contrast(1.14);
+            }
+
+            1.3%,
+            7.6% {
+                filter: brightness(3.1) saturate(0.72) contrast(1.46);
+            }
+
+            3.2%,
+            9% {
+                filter: brightness(0.52) saturate(1.12) contrast(1.32);
+            }
+
+            100% {
+                filter: brightness(0.78) saturate(0.98) contrast(1.14);
+            }
+        }
+
+        @keyframes tileFlash {
+            0%,
+            3.1%,
+            8.9%,
+            100% {
+                opacity: 0;
+            }
+
+            1.4%,
+            7.7% {
+                opacity: 0.72;
+            }
+        }
+
+        @keyframes introFlash {
+            0%,
+            21%,
+            66%,
+            100% {
+                opacity: 0;
+            }
+
+            18% {
+                opacity: 0.46;
+            }
+
+            64% {
+                opacity: 0.34;
+            }
+        }
+
         @media (max-width: 780px) {
 
             body,
@@ -1141,6 +1354,18 @@
                 right: auto;
                 bottom: 5vh;
             }
+
+            #gate {
+                padding: 1.4rem;
+            }
+
+            .intro-mosaic {
+                opacity: 0.6;
+            }
+
+            .intro-tile {
+                animation-duration: 1620ms, 1620ms, 1620ms;
+            }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1152,6 +1377,10 @@
                 animation-iteration-count: 1 !important;
                 scroll-behavior: auto !important;
                 transition-duration: 1ms !important;
+            }
+
+            .intro-tile {
+                transform: none;
             }
         }
     </style>
@@ -1184,6 +1413,17 @@
     <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
     <div id="gate">
+        <div class="intro-mosaic" aria-hidden="true">
+            <span class="intro-tile"></span>
+            <span class="intro-tile"></span>
+            <span class="intro-tile"></span>
+            <span class="intro-tile"></span>
+            <span class="intro-tile"></span>
+            <span class="intro-tile"></span>
+            <span class="intro-tile"></span>
+            <span class="intro-tile"></span>
+            <span class="intro-tile"></span>
+        </div>
         <div class="gate-inner">
             <p class="ritual-text">Some nights do not end. They keep projecting.</p>
             <button class="trigger-btn interactable" type="button" id="openMemory">Open the archive</button>
