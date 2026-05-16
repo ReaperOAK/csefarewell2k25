@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -83,10 +84,7 @@
         .projected-crowd,
         .air-texture,
         .cursor-dot,
-        .cursor-aura,
-        .occlusion-haze,
-        .exposure-wash,
-        .humidity-veil {
+        .cursor-aura {
             position: fixed;
             inset: 0;
             pointer-events: none;
@@ -94,40 +92,10 @@
 
         .grain {
             z-index: 90;
-            opacity: 0.14;
+            opacity: 0.11;
             mix-blend-mode: screen;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-            animation: grainShift 900ms steps(2) infinite, exposurePulseGrain 8.3s ease-in-out infinite;
-        }
-
-        .occlusion-haze {
-            z-index: 16;
-            mix-blend-mode: screen;
-            opacity: 0;
-            background:
-                radial-gradient(ellipse at 20% 40%, rgba(248,243,235,0.06), transparent 50%),
-                radial-gradient(ellipse at 75% 60%, rgba(42,104,114,0.04), transparent 45%);
-            filter: blur(40px);
-            animation: occlusionDrift 19s ease-in-out infinite alternate;
-        }
-
-        .exposure-wash {
-            z-index: 85;
-            mix-blend-mode: screen;
-            opacity: 0;
-            background: radial-gradient(ellipse at 50% 50%, rgba(248,243,235,0.12), transparent 60%);
-            filter: blur(60px);
-            animation: exposureSurge 11.7s ease-in-out infinite;
-        }
-
-        .humidity-veil {
-            z-index: 15;
-            mix-blend-mode: screen;
-            opacity: 0.04;
-            background-image: url("public/assets/nightlife leaks.png");
-            background-size: 200% 200%;
-            filter: blur(50px) saturate(0.6) brightness(0.3);
-            animation: humidityShift 37s ease-in-out infinite alternate, exposurePulseHumid 13.1s ease-in-out infinite;
+            animation: grainShift 900ms steps(2) infinite;
         }
 
         .halation {
@@ -144,8 +112,8 @@
         .vignette {
             z-index: 88;
             background:
-                linear-gradient(90deg, rgba(0,0,0,0.72), transparent 18%, transparent 82%, rgba(0,0,0,0.72)),
-                radial-gradient(ellipse at center, transparent 18%, rgba(0,0,0,0.28) 58%, rgba(0,0,0,0.88) 100%);
+                linear-gradient(90deg, rgba(0, 0, 0, 0.72), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.72)),
+                radial-gradient(ellipse at center, transparent 18%, rgba(0, 0, 0, 0.28) 58%, rgba(0, 0, 0, 0.88) 100%);
         }
 
         .projected-crowd {
@@ -158,7 +126,7 @@
             transform: scale(1.14);
             mix-blend-mode: screen;
             mask-image:
-                radial-gradient(ellipse at 46% 44%, black 0 34%, rgba(0,0,0,0.58) 52%, transparent 76%),
+                radial-gradient(ellipse at 46% 44%, black 0 34%, rgba(0, 0, 0, 0.58) 52%, transparent 76%),
                 linear-gradient(180deg, transparent 0%, black 18%, black 74%, transparent 100%);
             animation: crowdBreath 24s ease-in-out infinite alternate;
         }
@@ -188,7 +156,7 @@
             border-radius: 50%;
             filter: blur(42px);
             opacity: 0.42;
-            transform: translate3d(0,0,0);
+            transform: translate3d(0, 0, 0);
         }
 
         .projection.shore {
@@ -196,7 +164,7 @@
             bottom: -10vh;
             width: 82vw;
             height: 34vh;
-            background: linear-gradient(90deg, transparent, rgba(232,106,36,0.38), rgba(42,104,114,0.18), transparent);
+            background: linear-gradient(90deg, transparent, rgba(232, 106, 36, 0.38), rgba(42, 104, 114, 0.18), transparent);
             animation: shoreSweep 18s ease-in-out infinite alternate;
         }
 
@@ -205,7 +173,7 @@
             top: 7vh;
             width: 56vw;
             height: 42vh;
-            background: radial-gradient(circle, rgba(232,106,36,0.62), transparent 64%);
+            background: radial-gradient(circle, rgba(232, 106, 36, 0.62), transparent 64%);
             animation: sodiumDrift 15s ease-in-out infinite alternate;
         }
 
@@ -214,7 +182,7 @@
             top: 34vh;
             width: 54vw;
             height: 54vh;
-            background: radial-gradient(circle, rgba(68,35,121,0.36), transparent 66%);
+            background: radial-gradient(circle, rgba(68, 35, 121, 0.36), transparent 66%);
             animation: indigoPulse 21s ease-in-out infinite alternate;
         }
 
@@ -223,10 +191,10 @@
             inset: 0;
             opacity: calc(0.18 + var(--phase-light) * 0.38);
             background:
-                radial-gradient(circle at 18% 30%, rgba(248,243,235,0.85) 0 1px, transparent 3px),
-                radial-gradient(circle at 61% 18%, rgba(232,106,36,0.82) 0 1px, transparent 4px),
-                radial-gradient(circle at 80% 54%, rgba(42,104,114,0.7) 0 1px, transparent 5px),
-                radial-gradient(circle at 40% 74%, rgba(248,243,235,0.5) 0 1px, transparent 3px);
+                radial-gradient(circle at 18% 30%, rgba(248, 243, 235, 0.85) 0 1px, transparent 3px),
+                radial-gradient(circle at 61% 18%, rgba(232, 106, 36, 0.82) 0 1px, transparent 4px),
+                radial-gradient(circle at 80% 54%, rgba(42, 104, 114, 0.7) 0 1px, transparent 5px),
+                radial-gradient(circle at 40% 74%, rgba(248, 243, 235, 0.5) 0 1px, transparent 3px);
             animation: practicalFlicker 7s steps(1) infinite;
         }
 
@@ -237,7 +205,7 @@
             width: 150vw;
             height: 2px;
             opacity: calc(0.08 + var(--phase-light) * 0.18);
-            background: linear-gradient(90deg, transparent, rgba(248,243,235,0.18), rgba(232,106,36,0.28), transparent);
+            background: linear-gradient(90deg, transparent, rgba(248, 243, 235, 0.18), rgba(232, 106, 36, 0.28), transparent);
             filter: blur(1px);
             transform: rotate(-6deg);
             animation: streakFloat 12s ease-in-out infinite alternate;
@@ -255,34 +223,34 @@
             opacity: var(--o);
             filter: blur(var(--b));
             background: var(--g);
-            transform: translate3d(0,0,0);
+            transform: translate3d(0, 0, 0);
         }
 
         .fog.distant {
             --o: calc(0.28 + var(--phase-light) * 0.1);
             --b: 80px;
-            --g: radial-gradient(ellipse at 35% 34%, rgba(42,104,114,0.23), transparent 54%), radial-gradient(ellipse at 68% 56%, rgba(232,106,36,0.12), transparent 58%);
+            --g: radial-gradient(ellipse at 35% 34%, rgba(42, 104, 114, 0.23), transparent 54%), radial-gradient(ellipse at 68% 56%, rgba(232, 106, 36, 0.12), transparent 58%);
             animation: fogDistant 44s linear infinite alternate;
         }
 
         .fog.ambient {
             --o: calc(0.22 + var(--phase-light) * 0.16);
             --b: 58px;
-            --g: radial-gradient(ellipse at 50% 50%, rgba(90,52,118,0.2), transparent 60%);
+            --g: radial-gradient(ellipse at 50% 50%, rgba(90, 52, 118, 0.2), transparent 60%);
             animation: fogAmbient 32s ease-in-out infinite alternate;
         }
 
         .fog.humidity {
             --o: calc(0.2 + var(--phase-light) * 0.12);
             --b: 28px;
-            --g: linear-gradient(116deg, transparent 0%, rgba(248,243,235,0.06) 36%, transparent 58%), radial-gradient(ellipse at 80% 20%, rgba(42,104,114,0.16), transparent 48%);
+            --g: linear-gradient(116deg, transparent 0%, rgba(248, 243, 235, 0.06) 36%, transparent 58%), radial-gradient(ellipse at 80% 20%, rgba(42, 104, 114, 0.16), transparent 48%);
             animation: fogHumidity 23s ease-in-out infinite alternate;
         }
 
         .fog.foreground {
             --o: calc(0.12 + var(--phase-light) * 0.08);
             --b: 18px;
-            --g: radial-gradient(ellipse at 10% 88%, rgba(248,243,235,0.1), transparent 38%), radial-gradient(ellipse at 92% 78%, rgba(232,106,36,0.1), transparent 42%);
+            --g: radial-gradient(ellipse at 10% 88%, rgba(248, 243, 235, 0.1), transparent 38%), radial-gradient(ellipse at 92% 78%, rgba(232, 106, 36, 0.1), transparent 42%);
             animation: fogForeground 17s ease-in-out infinite alternate;
         }
 
@@ -291,61 +259,41 @@
             opacity: 0;
             mix-blend-mode: screen;
             background:
-                linear-gradient(90deg, transparent, rgba(255, 242, 212, 0.88) 48%, rgba(232,106,36,0.58) 58%, transparent 72%),
-                radial-gradient(circle at 8% 50%, rgba(232,106,36,0.74), transparent 38%);
+                linear-gradient(90deg, transparent, rgba(255, 242, 212, 0.88) 48%, rgba(232, 106, 36, 0.58) 58%, transparent 72%),
+                radial-gradient(circle at 8% 50%, rgba(232, 106, 36, 0.74), transparent 38%);
             filter: blur(12px);
             transform: translateX(-120%) scaleX(1.2);
         }
 
         .film-burn.bleed {
-            animation: burnWipe 1600ms cubic-bezier(.16,1,.3,1);
+            animation: burnWipe 1600ms cubic-bezier(.16, 1, .3, 1);
         }
 
         .cursor-dot {
             left: var(--cursor-x);
             top: var(--cursor-y);
             z-index: 100;
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             inset: auto;
             border-radius: 999px;
-            background: rgba(248,243,235,0.6);
+            background: var(--white);
             transform: translate(-50%, -50%);
-            mix-blend-mode: screen;
-            box-shadow: 0 0 8px 2px rgba(248,243,235,0.15), 0 0 24px 6px rgba(232,106,36,0.08);
-            animation: cursorFlicker 3.7s ease-in-out infinite;
+            mix-blend-mode: difference;
         }
 
         .cursor-aura {
             left: var(--cursor-x);
             top: var(--cursor-y);
             z-index: 83;
-            width: 38vw;
-            height: 38vw;
+            width: 44vw;
+            height: 44vw;
             inset: auto;
             border-radius: 999px;
-            background:
-                radial-gradient(circle, rgba(248,243,235,0.04), transparent 30%),
-                radial-gradient(circle at 45% 48%, rgba(232,106,36,0.02), transparent 40%),
-                radial-gradient(circle at 55% 52%, rgba(42,104,114,0.018), transparent 35%);
+            background: radial-gradient(circle, rgba(248, 243, 235, 0.055), rgba(232, 106, 36, 0.025) 30%, transparent 62%);
             transform: translate(-50%, -50%);
             mix-blend-mode: screen;
-            filter: blur(8px);
-            animation: auraBreath 7.3s ease-in-out infinite;
-        }
-
-        .cursor-ghost {
-            position: fixed;
-            z-index: 82;
-            width: 18px;
-            height: 18px;
-            border-radius: 999px;
-            background: radial-gradient(circle, rgba(232,106,36,0.12), rgba(42,104,114,0.06) 50%, transparent 70%);
-            mix-blend-mode: screen;
-            filter: blur(3px);
-            pointer-events: none;
-            opacity: 0.5;
-            transition: left 0.4s cubic-bezier(.16,1,.3,1), top 0.4s cubic-bezier(.16,1,.3,1), opacity 2s ease;
+            filter: blur(6px);
         }
 
         #gate {
@@ -356,9 +304,9 @@
             place-items: center;
             padding: 8vw;
             background:
-                radial-gradient(ellipse at 52% 50%, rgba(42,104,114,0.08), transparent 38%),
+                radial-gradient(ellipse at 52% 50%, rgba(42, 104, 114, 0.08), transparent 38%),
                 var(--black);
-            transition: opacity 1100ms cubic-bezier(.16,1,.3,1), filter 1100ms cubic-bezier(.16,1,.3,1);
+            transition: opacity 1100ms cubic-bezier(.16, 1, .3, 1), filter 1100ms cubic-bezier(.16, 1, .3, 1);
         }
 
         #gate.leaving {
@@ -378,8 +326,8 @@
             font-weight: 400;
             line-height: 1.05;
             color: var(--ghost);
-            text-shadow: 0 0 38px rgba(248,243,235,0.1);
-            animation: gateText 4s cubic-bezier(.16,1,.3,1) both 500ms;
+            text-shadow: 0 0 38px rgba(248, 243, 235, 0.1);
+            animation: gateText 4s cubic-bezier(.16, 1, .3, 1) both 500ms;
         }
 
         .trigger-btn {
@@ -389,13 +337,13 @@
             margin-top: 2.8rem;
             border: 0;
             background: transparent;
-            color: rgba(248,243,235,0.72);
+            color: rgba(248, 243, 235, 0.72);
             font-size: 0.69rem;
             font-weight: 300;
             letter-spacing: 0.38em;
             text-transform: uppercase;
             opacity: 0;
-            animation: gateText 4s cubic-bezier(.16,1,.3,1) both 2100ms;
+            animation: gateText 4s cubic-bezier(.16, 1, .3, 1) both 2100ms;
         }
 
         .trigger-btn::before,
@@ -405,7 +353,7 @@
             top: 50%;
             width: 38px;
             height: 1px;
-            background: rgba(232,106,36,0.55);
+            background: rgba(232, 106, 36, 0.55);
             transform: translateY(-50%);
             transition: transform 600ms ease, opacity 600ms ease;
         }
@@ -427,7 +375,7 @@
         .trigger-btn:focus-visible,
         .memory-submit:focus-visible,
         .memory-input:focus-visible {
-            outline: 1px solid rgba(248,243,235,0.58);
+            outline: 1px solid rgba(248, 243, 235, 0.58);
             outline-offset: 8px;
         }
 
@@ -437,7 +385,7 @@
             min-height: 720vh;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 1400ms cubic-bezier(.16,1,.3,1);
+            transition: opacity 1400ms cubic-bezier(.16, 1, .3, 1);
         }
 
         body.live #memory-space {
@@ -510,16 +458,16 @@
         .hero-kicker {
             margin-bottom: clamp(1.25rem, 3vw, 2.2rem);
             color: rgba(42, 190, 202, 0.48);
-            text-shadow: 0 0 28px rgba(42,104,114,0.36);
+            text-shadow: 0 0 28px rgba(42, 104, 114, 0.36);
             opacity: calc(0.95 - var(--scroll) * 1.1);
         }
 
         .hero-title {
             font-size: clamp(6rem, 26vw, 23rem);
-            color: rgba(248,243,235,0.9);
+            color: rgba(248, 243, 235, 0.9);
             text-shadow:
-                0 0 34px rgba(248,243,235,0.12),
-                0 0 80px rgba(232,106,36,0.18);
+                0 0 34px rgba(248, 243, 235, 0.12),
+                0 0 80px rgba(232, 106, 36, 0.18);
             transform: scaleY(1.12);
             mix-blend-mode: screen;
             opacity: calc(1 - var(--scroll) * 0.72);
@@ -530,21 +478,21 @@
             max-width: 620px;
             margin-top: clamp(-2.8rem, -3vw, -1rem);
             margin-left: clamp(0rem, 16vw, 12rem);
-            color: rgba(232,106,36,0.82);
+            color: rgba(232, 106, 36, 0.82);
             font-size: clamp(2rem, 7vw, 5.6rem);
-            text-shadow: 0 0 48px rgba(232,106,36,0.32);
+            text-shadow: 0 0 48px rgba(232, 106, 36, 0.32);
             opacity: calc(0.82 - var(--scroll) * 0.7);
         }
 
         .projected-note {
             position: absolute;
             width: min(420px, 78vw);
-            color: rgba(248,243,235,0.38);
+            color: rgba(248, 243, 235, 0.38);
             font-family: "Playfair Display", serif;
             font-size: clamp(1.15rem, 2.6vw, 2.2rem);
             font-style: italic;
             line-height: 1.2;
-            text-shadow: 0 0 22px rgba(248,243,235,0.08);
+            text-shadow: 0 0 22px rgba(248, 243, 235, 0.08);
             filter: blur(0.2px);
             mix-blend-mode: screen;
         }
@@ -571,9 +519,7 @@
             mix-blend-mode: screen;
             opacity: 0.58;
             transform:
-                translate3d(calc(var(--mx, 0) * 1px), calc(var(--my, 0) * 1px), 0)
-                rotate(var(--r, 0deg))
-                scale(var(--s, 1));
+                translate3d(calc(var(--mx, 0) * 1px), calc(var(--my, 0) * 1px), 0) rotate(var(--r, 0deg)) scale(var(--s, 1));
             animation: memoryDrift var(--d, 18s) ease-in-out infinite alternate;
         }
 
@@ -594,26 +540,26 @@
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(circle at 28% 24%, rgba(248,243,235,0.2), transparent 26%),
-                linear-gradient(120deg, transparent, rgba(232,106,36,0.16), transparent 62%);
+                radial-gradient(circle at 28% 24%, rgba(248, 243, 235, 0.2), transparent 26%),
+                linear-gradient(120deg, transparent, rgba(232, 106, 36, 0.16), transparent 62%);
             mix-blend-mode: screen;
         }
 
         .feather-soft {
             mask-image:
-                radial-gradient(ellipse at 48% 48%, black 0 38%, rgba(0,0,0,0.62) 54%, transparent 75%),
+                radial-gradient(ellipse at 48% 48%, black 0 38%, rgba(0, 0, 0, 0.62) 54%, transparent 75%),
                 linear-gradient(110deg, transparent 0%, black 22%, black 72%, transparent 100%);
         }
 
         .feather-torn {
             mask-image:
                 radial-gradient(ellipse at 32% 44%, black 0 34%, transparent 65%),
-                radial-gradient(ellipse at 70% 58%, rgba(0,0,0,0.8) 0 30%, transparent 58%);
+                radial-gradient(ellipse at 70% 58%, rgba(0, 0, 0, 0.8) 0 30%, transparent 58%);
         }
 
         .feather-burn {
             mask-image:
-                radial-gradient(ellipse at 52% 48%, black 0 28%, rgba(0,0,0,0.55) 44%, transparent 68%);
+                radial-gradient(ellipse at 52% 48%, black 0 28%, rgba(0, 0, 0, 0.55) 44%, transparent 68%);
         }
 
         .crowd-wash {
@@ -664,7 +610,6 @@
             height: 45vh;
             opacity: clamp(0.04, calc((var(--scroll) - 0.16) * 1.3), 0.48);
             filter: blur(5px) grayscale(0.55) contrast(1.25) brightness(0.5);
-            animation: memoryDrift 28s ease-in-out infinite alternate, fragmentTremble 4.7s ease-in-out infinite, fragmentOverexpose 23s ease-in-out infinite;
         }
 
         .fragment.two {
@@ -676,7 +621,6 @@
             opacity: clamp(0.02, calc((var(--scroll) - 0.26) * 1.4), 0.5);
             filter: blur(7px) saturate(1.1) brightness(0.46);
             mix-blend-mode: lighten;
-            animation: memoryDrift 22s ease-in-out infinite alternate-reverse, fragmentTremble 6.3s ease-in-out infinite;
         }
 
         .fragment.three {
@@ -688,7 +632,6 @@
             height: 40vh;
             opacity: clamp(0.02, calc((var(--scroll) - 0.34) * 1.7), 0.54);
             filter: blur(5px) saturate(0.9) brightness(0.48);
-            animation: memoryDrift 31s ease-in-out infinite alternate, fragmentTremble 5.1s ease-in-out infinite;
         }
 
         .fragment.four {
@@ -700,7 +643,6 @@
             height: 38vh;
             opacity: clamp(0.02, calc((var(--scroll) - 0.45) * 1.6), 0.46);
             filter: blur(8px) saturate(1.4) brightness(0.52);
-            animation: memoryDrift 26s ease-in-out infinite alternate-reverse, fragmentTremble 7.9s ease-in-out infinite;
         }
 
         .chaos-type {
@@ -708,7 +650,7 @@
             left: 36vw;
             top: 49vh;
             width: min(760px, 74vw);
-            color: rgba(248,243,235,0.62);
+            color: rgba(248, 243, 235, 0.62);
             opacity: clamp(0, calc((var(--scroll) - 0.22) * 2), 0.82);
             filter: blur(calc(max(0, 0.55 - var(--scroll)) * 12px));
             transform: translate(-18%, -50%) rotate(-2deg);
@@ -722,7 +664,7 @@
         .chaos-type .whisper-type {
             margin-left: clamp(2rem, 12vw, 10rem);
             margin-top: -0.5rem;
-            color: rgba(232,106,36,0.6);
+            color: rgba(232, 106, 36, 0.6);
             font-size: clamp(2rem, 6vw, 5rem);
         }
 
@@ -733,7 +675,7 @@
         }
 
         .polaroid-memory {
-            --img: url("public/assets/ibiza memories.png");
+            --img: url("public/assets/memory fragments.png");
             --r: -3deg;
             --d: 22s;
             left: 50%;
@@ -743,11 +685,8 @@
             opacity: clamp(0, calc((var(--scroll) - 0.58) * 2.6), 0.82);
             filter: blur(2px) saturate(0.72) brightness(0.7) contrast(1.08);
             transform:
-                translate3d(calc(-50% + var(--mx, 0) * 0.7px), calc(-50% + var(--my, 0) * 0.7px), 0)
-                rotate(var(--r))
-                scale(1);
+                translate3d(calc(-50% + var(--mx, 0) * 0.7px), calc(-50% + var(--my, 0) * 0.7px), 0) rotate(var(--r)) scale(1);
             mix-blend-mode: screen;
-            animation: fragmentTremble 5.8s ease-in-out infinite;
         }
 
         .polaroid-memory::before {
@@ -760,10 +699,10 @@
             left: 10vw;
             top: 20vh;
             width: min(560px, 78vw);
-            color: rgba(248,243,235,0.68);
+            color: rgba(248, 243, 235, 0.68);
             opacity: clamp(0, calc((var(--scroll) - 0.61) * 2), 0.72);
             filter: blur(calc(max(0, 0.82 - var(--scroll)) * 7px));
-            text-shadow: 0 0 42px rgba(248,243,235,0.13);
+            text-shadow: 0 0 42px rgba(248, 243, 235, 0.13);
         }
 
         .intimate-line .whisper-type {
@@ -776,8 +715,8 @@
             z-index: 13;
             opacity: clamp(0, calc((var(--scroll) - 0.72) * 2.4), 0.7);
             background:
-                radial-gradient(ellipse at 50% 80%, rgba(232,106,36,0.18), transparent 46%),
-                linear-gradient(180deg, transparent, rgba(1,1,2,0.55));
+                radial-gradient(ellipse at 50% 80%, rgba(232, 106, 36, 0.18), transparent 46%),
+                linear-gradient(180deg, transparent, rgba(1, 1, 2, 0.55));
             mix-blend-mode: screen;
         }
 
@@ -797,14 +736,14 @@
 
         .rsvp-plane .meta {
             margin-bottom: 1.6rem;
-            color: rgba(232,106,36,0.7);
-            text-shadow: 0 0 24px rgba(232,106,36,0.24);
+            color: rgba(232, 106, 36, 0.7);
+            text-shadow: 0 0 24px rgba(232, 106, 36, 0.24);
         }
 
         .rsvp-title {
-            color: rgba(248,243,235,0.78);
+            color: rgba(248, 243, 235, 0.78);
             font-size: clamp(2.5rem, 7vw, 5.8rem);
-            text-shadow: 0 0 42px rgba(248,243,235,0.1);
+            text-shadow: 0 0 42px rgba(248, 243, 235, 0.1);
         }
 
         .memory-form {
@@ -820,7 +759,7 @@
             width: 100%;
             min-height: 74px;
             border: 0;
-            border-bottom: 1px solid rgba(248,243,235,0.18);
+            border-bottom: 1px solid rgba(248, 243, 235, 0.18);
             background: transparent;
             color: var(--white);
             font-family: "Playfair Display", serif;
@@ -833,23 +772,23 @@
         }
 
         .memory-input::placeholder {
-            color: rgba(248,243,235,0.3);
+            color: rgba(248, 243, 235, 0.3);
         }
 
         .memory-input:focus {
-            border-color: rgba(232,106,36,0.58);
-            color: rgba(232,106,36,0.92);
+            border-color: rgba(232, 106, 36, 0.58);
+            color: rgba(232, 106, 36, 0.92);
             opacity: 1;
-            text-shadow: 0 0 34px rgba(232,106,36,0.28);
+            text-shadow: 0 0 34px rgba(232, 106, 36, 0.28);
         }
 
         .memory-submit {
             position: relative;
             width: min(420px, 100%);
             min-height: 64px;
-            border: 1px solid rgba(248,243,235,0.2);
+            border: 1px solid rgba(248, 243, 235, 0.2);
             background: transparent;
-            color: rgba(248,243,235,0.62);
+            color: rgba(248, 243, 235, 0.62);
             font-size: 0.72rem;
             letter-spacing: 0.34em;
             text-transform: uppercase;
@@ -861,16 +800,16 @@
             content: "";
             position: absolute;
             inset: -30%;
-            background: linear-gradient(90deg, transparent, rgba(248,243,235,0.88), rgba(232,106,36,0.62), transparent);
+            background: linear-gradient(90deg, transparent, rgba(248, 243, 235, 0.88), rgba(232, 106, 36, 0.62), transparent);
             opacity: 0;
             transform: translateX(-85%);
             filter: blur(10px);
-            transition: opacity 700ms ease, transform 1100ms cubic-bezier(.16,1,.3,1);
+            transition: opacity 700ms ease, transform 1100ms cubic-bezier(.16, 1, .3, 1);
         }
 
         .memory-submit:hover,
         .memory-submit:focus-visible {
-            border-color: rgba(248,243,235,0.66);
+            border-color: rgba(248, 243, 235, 0.66);
             color: var(--black);
         }
 
@@ -888,7 +827,7 @@
 
         .closing-line {
             margin-top: clamp(4rem, 12vh, 8rem);
-            color: rgba(248,243,235,0.25);
+            color: rgba(248, 243, 235, 0.25);
             line-height: 1.8;
         }
 
@@ -896,7 +835,7 @@
             position: absolute;
             right: 5vw;
             bottom: 9vh;
-            color: rgba(248,243,235,0.12);
+            color: rgba(248, 243, 235, 0.12);
             font-family: Oswald, sans-serif;
             font-size: clamp(3rem, 10vw, 9rem);
             font-weight: 300;
@@ -932,165 +871,189 @@
         }
 
         @keyframes grainShift {
-            0% { transform: translate3d(0,0,0); }
-            50% { transform: translate3d(-1.5%, 1%, 0); }
-            100% { transform: translate3d(1%, -1%, 0); }
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+
+            50% {
+                transform: translate3d(-1.5%, 1%, 0);
+            }
+
+            100% {
+                transform: translate3d(1%, -1%, 0);
+            }
         }
 
         @keyframes crowdBreath {
-            from { transform: scale(1.14) translate3d(-1vw, -1vh, 0); filter: brightness(0.58) blur(22px); }
-            to { transform: scale(1.22) translate3d(1.5vw, 1vh, 0); filter: brightness(0.68) blur(24px); }
+            from {
+                transform: scale(1.14) translate3d(-1vw, -1vh, 0);
+            }
+
+            to {
+                transform: scale(1.22) translate3d(1.5vw, 1vh, 0);
+            }
         }
 
         @keyframes airProjection {
-            from { transform: scale(1.18) rotate(-1deg); opacity: 0.08; }
-            to { transform: scale(1.28) rotate(1.2deg); opacity: 0.16; }
+            from {
+                transform: scale(1.18) rotate(-1deg);
+            }
+
+            to {
+                transform: scale(1.28) rotate(1.2deg);
+            }
         }
 
         @keyframes shoreSweep {
-            from { transform: translate3d(-8vw, 2vh, 0) rotate(-5deg); opacity: 0.24; }
-            to { transform: translate3d(18vw, -2vh, 0) rotate(2deg); opacity: 0.48; }
+            from {
+                transform: translate3d(-8vw, 2vh, 0) rotate(-5deg);
+                opacity: 0.24;
+            }
+
+            to {
+                transform: translate3d(18vw, -2vh, 0) rotate(2deg);
+                opacity: 0.48;
+            }
         }
 
         @keyframes sodiumDrift {
-            from { transform: translate3d(0, 0, 0) scale(0.9); }
-            to { transform: translate3d(-24vw, 18vh, 0) scale(1.18); }
+            from {
+                transform: translate3d(0, 0, 0) scale(0.9);
+            }
+
+            to {
+                transform: translate3d(-24vw, 18vh, 0) scale(1.18);
+            }
         }
 
         @keyframes indigoPulse {
-            from { transform: translate3d(-8vw, 8vh, 0) scale(0.96); opacity: 0.18; }
-            to { transform: translate3d(8vw, -8vh, 0) scale(1.12); opacity: 0.42; }
+            from {
+                transform: translate3d(-8vw, 8vh, 0) scale(0.96);
+                opacity: 0.18;
+            }
+
+            to {
+                transform: translate3d(8vw, -8vh, 0) scale(1.12);
+                opacity: 0.42;
+            }
         }
 
         @keyframes practicalFlicker {
-            0%, 12%, 23%, 54%, 78%, 100% { filter: brightness(0.7); }
-            13%, 55% { filter: brightness(2.2); }
-            24% { filter: brightness(1.8); }
-            79% { filter: brightness(0.3); }
+
+            0%,
+            12%,
+            23%,
+            54%,
+            100% {
+                filter: brightness(0.8);
+            }
+
+            13%,
+            24%,
+            55% {
+                filter: brightness(2.4);
+            }
         }
 
         @keyframes streakFloat {
-            from { transform: translateY(-5vh) rotate(-6deg); }
-            to { transform: translateY(8vh) rotate(-4deg); }
+            from {
+                transform: translateY(-5vh) rotate(-6deg);
+            }
+
+            to {
+                transform: translateY(8vh) rotate(-4deg);
+            }
         }
 
         @keyframes fogDistant {
-            from { transform: translate3d(-4vw, -2vh, 0) scale(1); }
-            to { transform: translate3d(6vw, 3vh, 0) scale(1.08); }
+            from {
+                transform: translate3d(-4vw, -2vh, 0) scale(1);
+            }
+
+            to {
+                transform: translate3d(6vw, 3vh, 0) scale(1.08);
+            }
         }
 
         @keyframes fogAmbient {
-            from { transform: translate3d(3vw, 4vh, 0) rotate(-2deg); }
-            to { transform: translate3d(-5vw, -3vh, 0) rotate(2deg); }
+            from {
+                transform: translate3d(3vw, 4vh, 0) rotate(-2deg);
+            }
+
+            to {
+                transform: translate3d(-5vw, -3vh, 0) rotate(2deg);
+            }
         }
 
         @keyframes fogHumidity {
-            from { transform: translate3d(-7vw, 0, 0) skewX(-5deg); }
-            to { transform: translate3d(7vw, 3vh, 0) skewX(4deg); }
+            from {
+                transform: translate3d(-7vw, 0, 0) skewX(-5deg);
+            }
+
+            to {
+                transform: translate3d(7vw, 3vh, 0) skewX(4deg);
+            }
         }
 
         @keyframes fogForeground {
-            from { transform: translate3d(0, 2vh, 0) scale(1.04); }
-            to { transform: translate3d(-9vw, -1vh, 0) scale(1.13); }
+            from {
+                transform: translate3d(0, 2vh, 0) scale(1.04);
+            }
+
+            to {
+                transform: translate3d(-9vw, -1vh, 0) scale(1.13);
+            }
         }
 
         @keyframes memoryDrift {
-            from { translate: -1vw -1vh; }
-            to { translate: 1.5vw 1vh; }
+            from {
+                translate: -1vw -1vh;
+            }
+
+            to {
+                translate: 1.5vw 1vh;
+            }
         }
 
         @keyframes burnWipe {
-            0% { opacity: 0; transform: translateX(-120%) scaleX(1.3); }
-            24% { opacity: 0.9; }
-            100% { opacity: 0; transform: translateX(120%) scaleX(1.1); }
+            0% {
+                opacity: 0;
+                transform: translateX(-120%) scaleX(1.3);
+            }
+
+            24% {
+                opacity: 0.9;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateX(120%) scaleX(1.1);
+            }
         }
 
         @keyframes gateText {
-            from { opacity: 0; transform: translateY(16px); filter: blur(12px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+                filter: blur(12px);
+            }
 
-        @keyframes exposurePulseGrain {
-            0%, 100% { opacity: 0.14; }
-            38% { opacity: 0.08; }
-            67% { opacity: 0.19; }
-            82% { opacity: 0.11; }
-        }
-
-        @keyframes exposurePulseHumid {
-            0%, 100% { opacity: 0.04; }
-            42% { opacity: 0.09; }
-            71% { opacity: 0.02; }
-        }
-
-        @keyframes exposureSurge {
-            0%, 100% { opacity: 0; transform: scale(1); }
-            15% { opacity: 0; }
-            18% { opacity: 0.06; transform: scale(1.02); }
-            22% { opacity: 0; }
-            50% { opacity: 0; }
-            78% { opacity: 0.04; transform: scale(0.98); }
-            82% { opacity: 0; }
-        }
-
-        @keyframes occlusionDrift {
-            from { transform: translate3d(-15vw, -8vh, 0) scale(1.2); opacity: 0.15; }
-            to { transform: translate3d(12vw, 6vh, 0) scale(1.4); opacity: 0.25; }
-        }
-
-        @keyframes humidityShift {
-            from { background-position: 0% 0%; transform: scale(1.1); }
-            to { background-position: 100% 100%; transform: scale(1.3) rotate(2deg); }
-        }
-
-        @keyframes cursorFlicker {
-            0%, 100% { opacity: 0.6; box-shadow: 0 0 8px 2px rgba(248,243,235,0.15), 0 0 24px 6px rgba(232,106,36,0.08); }
-            31% { opacity: 0.8; }
-            48% { opacity: 0.4; box-shadow: 0 0 12px 3px rgba(248,243,235,0.2), 0 0 32px 8px rgba(232,106,36,0.12); }
-            73% { opacity: 0.55; }
-        }
-
-        @keyframes auraBreath {
-            0%, 100% { opacity: 1; filter: blur(8px); }
-            44% { opacity: 0.7; filter: blur(12px); }
-            78% { opacity: 1.1; filter: blur(6px); }
-        }
-
-        @keyframes fragmentTremble {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            17% { transform: translate(0.3px, -0.5px) rotate(0.1deg); }
-            34% { transform: translate(-0.4px, 0.2px) rotate(-0.15deg); }
-            51% { transform: translate(0.2px, 0.4px) rotate(0.08deg); }
-            68% { transform: translate(-0.3px, -0.3px) rotate(-0.1deg); }
-            85% { transform: translate(0.1px, 0.3px) rotate(0.05deg); }
-        }
-
-        @keyframes fragmentOverexpose {
-            0%, 100% { filter: blur(5px) grayscale(0.55) contrast(1.25) brightness(0.5); }
-            14% { filter: blur(4px) grayscale(0.45) contrast(1.15) brightness(0.58); }
-            28% { filter: blur(6px) grayscale(0.6) contrast(1.3) brightness(0.46); }
-            42% { filter: blur(5px) grayscale(0.5) contrast(1.2) brightness(0.72); }
-            44% { filter: blur(3px) grayscale(0.3) contrast(1.1) brightness(0.54); }
-            60% { filter: blur(5px) grayscale(0.55) contrast(1.25) brightness(0.48); }
-            85% { filter: blur(7px) grayscale(0.62) contrast(1.28) brightness(0.44); }
-        }
-
-        @keyframes visualSilence {
-            0%, 100% { opacity: 0; }
-            40% { opacity: 0; }
-            50% { opacity: 0.3; }
-            60% { opacity: 0; }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
         }
 
         @media (max-width: 780px) {
+
             body,
             button {
                 cursor: auto;
             }
 
             .cursor-dot,
-            .cursor-aura,
-            .cursor-ghost {
+            .cursor-aura {
                 display: none;
             }
 
@@ -1133,10 +1096,25 @@
                 height: 38vh;
             }
 
-            .fragment.one { left: 7vw; top: 34vh; }
-            .fragment.two { right: 3vw; top: 72vh; }
-            .fragment.three { left: 8vw; top: 112vh; }
-            .fragment.four { right: 6vw; top: 148vh; }
+            .fragment.one {
+                left: 7vw;
+                top: 34vh;
+            }
+
+            .fragment.two {
+                right: 3vw;
+                top: 72vh;
+            }
+
+            .fragment.three {
+                left: 8vw;
+                top: 112vh;
+            }
+
+            .fragment.four {
+                right: 6vw;
+                top: 148vh;
+            }
 
             .chaos-type {
                 left: 9vw;
@@ -1166,6 +1144,7 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
+
             *,
             *::before,
             *::after {
@@ -1177,6 +1156,7 @@
         }
     </style>
 </head>
+
 <body class="locked">
     <div class="projected-crowd" aria-hidden="true"></div>
     <div class="air-texture" aria-hidden="true"></div>
@@ -1196,20 +1176,16 @@
         <div class="fog foreground"></div>
     </div>
 
-    <div class="occlusion-haze" aria-hidden="true"></div>
-    <div class="humidity-veil" aria-hidden="true"></div>
     <div class="halation" aria-hidden="true"></div>
     <div class="film-burn" id="filmBurn" aria-hidden="true"></div>
-    <div class="exposure-wash" aria-hidden="true"></div>
     <div class="vignette" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
     <div class="cursor-aura" id="cursorAura" aria-hidden="true"></div>
-    <div class="cursor-ghost" id="cursorGhost" aria-hidden="true"></div>
     <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
 
     <div id="gate">
         <div class="gate-inner">
-            <p class="ritual-text">Some nights refuse to finish. They just keep projecting somewhere.</p>
+            <p class="ritual-text">Some nights do not end. They keep projecting.</p>
             <button class="trigger-btn interactable" type="button" id="openMemory">Open the archive</button>
         </div>
     </div>
@@ -1223,13 +1199,13 @@
 
             <div class="copy-plane">
                 <section class="hero-copy" aria-labelledby="ibiza-title">
-                    <p class="meta hero-kicker">02:17 AM // the signal never stopped</p>
+                    <p class="meta hero-kicker">02:17 AM // Final summer signal</p>
                     <h1 class="mass-type hero-title" id="ibiza-title">IBIZA</h1>
-                    <p class="whisper-type hero-sub">before we disappear entirely.</p>
+                    <p class="whisper-type hero-sub">Before we disappear entirely.</p>
                 </section>
 
-                <p class="projected-note note-a">i dont remember taking this</p>
-                <p class="projected-note note-b">no one wanted to leave. not really.</p>
+                <p class="projected-note note-a">the shoreline was louder than our futures</p>
+                <p class="projected-note note-b">we kept laughing because leaving had already started</p>
             </div>
 
             <div class="fragment-field" aria-hidden="true">
@@ -1239,14 +1215,14 @@
                 <div class="projection-image fragment four feather-burn"></div>
                 <div class="chaos-type">
                     <p class="mass-type">Euphoria</p>
-                    <p class="whisper-type">the shoreline was louder than us.</p>
+                    <p class="whisper-type">with salt in its mouth.</p>
                 </div>
             </div>
 
             <div class="intimate-plane" aria-hidden="true">
                 <div class="intimate-line">
-                    <p class="meta">03:46 AM // wish we stayed longer</p>
-                    <p class="whisper-type">2:17 AM felt permanent.</p>
+                    <p class="meta">03:46 AM // Intimacy</p>
+                    <p class="whisper-type">A photograph only hurts after everyone goes home.</p>
                 </div>
                 <div class="projection-image polaroid-memory feather-soft"></div>
             </div>
@@ -1255,24 +1231,27 @@
 
             <section class="rsvp-plane" aria-labelledby="rsvp-title">
                 <div class="rsvp-inner">
-                    <p class="meta">the last thing left</p>
-                    <h2 class="whisper-type rsvp-title" id="rsvp-title">confirm you were here. leave something behind.</h2>
+                    <p class="meta">The final trace</p>
+                    <h2 class="whisper-type rsvp-title" id="rsvp-title">Confirm your presence. Leave a little light
+                        behind.</h2>
 
                     <form class="memory-form" id="rsvpForm">
                         <div class="field interactable">
                             <label class="sr-only" for="guestName">Your name</label>
-                            <input class="memory-input" id="guestName" name="guestName" type="text" placeholder="Your Name" autocomplete="name" required>
+                            <input class="memory-input" id="guestName" name="guestName" type="text"
+                                placeholder="Your Name" autocomplete="name" required>
                         </div>
 
                         <div class="field interactable">
                             <label class="sr-only" for="studentId">Student ID</label>
-                            <input class="memory-input" id="studentId" name="studentId" type="text" placeholder="Student ID" required>
+                            <input class="memory-input" id="studentId" name="studentId" type="text"
+                                placeholder="Student ID" required>
                         </div>
 
                         <button class="memory-submit interactable" type="submit"><span>Seal the Memory</span></button>
                     </form>
 
-                    <p class="meta closing-line">nothing lasts forever.<br>that is why it still glows.</p>
+                    <p class="meta closing-line">Nothing lasts forever.<br>That is why it glows.</p>
                 </div>
             </section>
 
@@ -1296,7 +1275,6 @@
         const filmBurn = document.getElementById('filmBurn');
         const cursorDot = document.getElementById('cursorDot');
         const cursorAura = document.getElementById('cursorAura');
-        const cursorGhost = document.getElementById('cursorGhost');
         const fragments = Array.from(document.querySelectorAll('.projection-image'));
         const phaseWords = Array.from(document.querySelectorAll('.phase-word'));
         const phaseNames = ['Silence', 'Emergence', 'Euphoria', 'Fragmentation', 'Intimacy', 'Afterglow', 'Disappearance'];
@@ -1305,24 +1283,10 @@
         let mouseY = window.innerHeight / 2;
         let auraX = mouseX;
         let auraY = mouseY;
-        let ghostX = mouseX;
-        let ghostY = mouseY;
         let lastPhase = 0;
 
-        // Depth layer velocities - near layers react faster
-        const depthLayers = {
-            '.fog.distant': { speed: 0.004, x: 0, y: 0 },
-            '.fog.ambient': { speed: 0.008, x: 0, y: 0 },
-            '.fog.humidity': { speed: 0.016, x: 0, y: 0 },
-            '.fog.foreground': { speed: 0.035, x: 0, y: 0 },
-            '.occlusion-haze': { speed: 0.012, x: 0, y: 0 },
-        };
-
-        // Fragment inertia state
-        const fragmentStates = fragments.map(() => ({ mx: 0, my: 0, targetMx: 0, targetMy: 0 }));
-
-        function clamp(v, min, max) {
-            return Math.max(min, Math.min(max, v));
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
         }
 
         function setCursor(x, y) {
@@ -1365,23 +1329,6 @@
             }
         }
 
-        // True depth: parallax with inertia per depth layer
-        function updateDepthParallax() {
-            const cx = (mouseX / window.innerWidth - 0.5) * 2;
-            const cy = (mouseY / window.innerHeight - 0.5) * 2;
-
-            Object.entries(depthLayers).forEach(([selector, layer]) => {
-                const el = document.querySelector(selector);
-                if (!el) return;
-                const targetX = cx * layer.speed * 100;
-                const targetY = cy * layer.speed * 100;
-                layer.x += (targetX - layer.x) * (layer.speed * 8);
-                layer.y += (targetY - layer.y) * (layer.speed * 8);
-                el.style.marginLeft = `${layer.x}vw`;
-                el.style.marginTop = `${layer.y}vh`;
-            });
-        }
-
         function updateFragmentMagnetism() {
             fragments.forEach((fragment, index) => {
                 const rect = fragment.getBoundingClientRect();
@@ -1393,28 +1340,15 @@
                 const pull = clamp(1 - distance / 520, 0, 1);
                 const direction = index % 2 === 0 ? 1 : -1;
 
-                // Inertia-based movement - delayed, organic
-                const state = fragmentStates[index];
-                state.targetMx = dx * pull * 0.028 * direction;
-                state.targetMy = dy * pull * 0.022;
-                const inertia = 0.04 + (index * 0.008); // each fragment has different lag
-                state.mx += (state.targetMx - state.mx) * inertia;
-                state.my += (state.targetMy - state.my) * inertia;
-
-                fragment.style.setProperty('--mx', state.mx.toFixed(2));
-                fragment.style.setProperty('--my', state.my.toFixed(2));
+                fragment.style.setProperty('--mx', (dx * pull * 0.028 * direction).toFixed(2));
+                fragment.style.setProperty('--my', (dy * pull * 0.022).toFixed(2));
                 fragment.style.setProperty('--s', (1 + pull * 0.018).toFixed(3));
             });
         }
 
         function render() {
-            // Cursor aura with heavy lag
-            auraX += (mouseX - auraX) * 0.045;
-            auraY += (mouseY - auraY) * 0.045;
-
-            // Ghost cursor - even more delayed, chromatic residue
-            ghostX += (mouseX - ghostX) * 0.02;
-            ghostY += (mouseY - ghostY) * 0.02;
+            auraX += (mouseX - auraX) * 0.07;
+            auraY += (mouseY - auraY) * 0.07;
 
             if (cursorDot && cursorAura) {
                 cursorDot.style.left = `${mouseX}px`;
@@ -1423,13 +1357,7 @@
                 cursorAura.style.top = `${auraY}px`;
             }
 
-            if (cursorGhost) {
-                cursorGhost.style.left = `${ghostX}px`;
-                cursorGhost.style.top = `${ghostY}px`;
-            }
-
             updateFragmentMagnetism();
-            updateDepthParallax();
             requestAnimationFrame(render);
         }
 
@@ -1441,15 +1369,15 @@
 
         document.querySelectorAll('.interactable').forEach((element) => {
             element.addEventListener('mouseenter', () => {
-                cursorDot.style.transform = 'translate(-50%, -50%) scale(2.5)';
+                cursorDot.style.transform = 'translate(-50%, -50%) scale(3)';
                 cursorDot.style.background = 'transparent';
-                cursorDot.style.boxShadow = '0 0 14px 4px rgba(232,106,36,0.3), 0 0 40px 12px rgba(42,104,114,0.15)';
+                cursorDot.style.border = '1px solid rgba(232,106,36,0.82)';
             });
 
             element.addEventListener('mouseleave', () => {
                 cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
-                cursorDot.style.background = 'rgba(248,243,235,0.6)';
-                cursorDot.style.boxShadow = '0 0 8px 2px rgba(248,243,235,0.15), 0 0 24px 6px rgba(232,106,36,0.08)';
+                cursorDot.style.background = 'var(--white)';
+                cursorDot.style.border = '0';
             });
         });
 
@@ -1475,4 +1403,5 @@
         render();
     </script>
 </body>
+
 </html>
