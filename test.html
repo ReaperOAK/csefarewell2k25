@@ -987,8 +987,8 @@
             background-image: var(--img);
             background-size: 200% 200%;
             background-position: var(--frame-x) var(--frame-y);
-            opacity: 0.42;
-            filter: saturate(1.08) contrast(1.18) brightness(0.7) blur(0.2px);
+            opacity: 0.34;
+            filter: saturate(1.06) contrast(1.16) brightness(0.68) blur(0.2px);
             mix-blend-mode: color-dodge;
             transform: rotate(var(--beat-rotate, -2deg)) scale(1.06);
             transition: filter 520ms ease, opacity 520ms ease, transform 520ms ease;
@@ -1007,9 +1007,11 @@
         .beat-copy {
             position: absolute;
             z-index: 1;
-            width: min(640px, 78vw);
-            color: rgba(248, 243, 235, 0.56);
-            text-shadow: 0 0 36px rgba(1, 1, 2, 0.7);
+            width: min(520px, 42vw);
+            color: rgba(248, 243, 235, 0.62);
+            text-shadow:
+                0 0 16px rgba(1, 1, 2, 0.92),
+                0 0 42px rgba(1, 1, 2, 0.72);
         }
 
         .beat-copy .meta {
@@ -1018,7 +1020,7 @@
         }
 
         .beat-copy .whisper-type {
-            font-size: clamp(2.4rem, 6vw, 6.2rem);
+            font-size: clamp(2.35rem, 4.8vw, 5.1rem);
         }
 
         .memory-beat.one {
@@ -1042,23 +1044,27 @@
         }
 
         .memory-beat.one .beat-copy {
-            left: 8vw;
-            top: 22vh;
+            right: 9vw;
+            top: 34vh;
+            text-align: right;
         }
 
         .memory-beat.two .beat-copy {
-            left: 14vw;
-            top: 29vh;
+            left: 8vw;
+            top: 42vh;
+            text-align: left;
         }
 
         .memory-beat.three .beat-copy {
-            right: 9vw;
-            bottom: 16vh;
+            right: 8vw;
+            top: 23vh;
+            text-align: right;
         }
 
         .memory-beat.four .beat-copy {
-            right: 8vw;
-            top: 24vh;
+            left: 8vw;
+            top: 28vh;
+            text-align: left;
         }
 
         .memory-beat.one .beat-frame {
@@ -1440,6 +1446,7 @@
         }
 
         @keyframes singlePhotoCut {
+
             0%,
             10.6% {
                 opacity: 0.9;
@@ -1470,6 +1477,7 @@
         }
 
         @keyframes tileExposure {
+
             0%,
             10.6% {
                 filter: brightness(0.78) saturate(0.98) contrast(1.14);
@@ -1491,6 +1499,7 @@
         }
 
         @keyframes tileFlash {
+
             0%,
             3.1%,
             8.9%,
@@ -1505,6 +1514,7 @@
         }
 
         @keyframes introFlash {
+
             0%,
             21%,
             66%,
@@ -1600,21 +1610,48 @@
 
             .memory-beat,
             .memory-beat.alt {
-                grid-template-columns: 1fr;
-                width: calc(100vw - 2.4rem);
-                left: 1.2rem;
-                right: auto;
-                top: 16vh;
-                bottom: auto;
-                gap: 1.25rem;
+                inset: 0;
             }
 
             .beat-frame {
-                min-height: 30vh;
+                inset: -4vh -8vw;
+                opacity: 0.3;
+            }
+
+            .beat-copy {
+                width: min(80vw, 360px);
             }
 
             .beat-copy .whisper-type {
-                font-size: clamp(2.1rem, 12vw, 4.4rem);
+                font-size: clamp(1.85rem, 10vw, 3.55rem);
+            }
+
+            .memory-beat.one .beat-copy,
+            .memory-beat.three .beat-copy {
+                right: 1.2rem;
+                left: auto;
+            }
+
+            .memory-beat.two .beat-copy,
+            .memory-beat.four .beat-copy {
+                left: 1.2rem;
+                right: auto;
+            }
+
+            .memory-beat.one .beat-copy {
+                top: 44vh;
+            }
+
+            .memory-beat.two .beat-copy {
+                top: 42vh;
+            }
+
+            .memory-beat.three .beat-copy {
+                top: 23vh;
+            }
+
+            .memory-beat.four .beat-copy {
+                top: 26vh;
             }
 
             .intimate-line {
@@ -1747,17 +1784,17 @@
                 <div class="projection-image fragment two feather-soft"></div>
                 <div class="projection-image fragment three feather-torn"></div>
                 <div class="projection-image fragment four feather-burn"></div>
-                
+
             </div>
 
             <div class="story-plane" aria-hidden="true">
-                <div class="memory-beat one">
-                    <div class="beat-frame"></div>
-                    <div class="beat-copy">
-                        <p class="meta">02:41 AM // Proof</p>
-                        <p class="whisper-type">A photograph only hurts after everyone goes home.</p>
-                    </div>
-                </div>
+	                <div class="memory-beat one">
+	                    <div class="beat-frame"></div>
+	                    <div class="beat-copy">
+	                        <p class="meta">02:41 AM // Proof</p>
+	                        <p class="whisper-type">The proof stayed brighter than the night itself.</p>
+	                    </div>
+	                </div>
 
                 <div class="memory-beat two alt">
                     <div class="beat-copy">
