@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import ShapeCanvas from './common/ShapeCanvas';
-import RSVPModal from './modals/RSVPModal';
 
 // Styled components for the home page
 const HomeContainer = styled.div`
@@ -284,7 +284,7 @@ const FloatingParticles = () => {
 };
 
 const Home: React.FC = () => {
-  const [showRSVPModal, setShowRSVPModal] = useState(false);
+  const router = useRouter();
   const [floatingSymbols, setFloatingSymbols] = useState<Array<{id: number, x: number, y: number, symbol: string}>>([]);
 
   useEffect(() => {
@@ -301,18 +301,8 @@ const Home: React.FC = () => {
     setFloatingSymbols(symbols);
   }, []);
 
-  const openRSVPModal = () => {
-    setShowRSVPModal(true);
-  };
-
-  const closeRSVPModal = () => {
-    setShowRSVPModal(false);
-  };
-
-  const handleRSVPSubmit = (data: any) => {
-    console.log('RSVP Data:', data);
-    setShowRSVPModal(false);
-    // Add logic to save the RSVP data to Firebase
+  const openRSVP = () => {
+    router.push('/rsvp');
   };
 
   return (
@@ -403,7 +393,7 @@ const Home: React.FC = () => {
         />
         
         <Button
-          onClick={openRSVPModal}
+          onClick={openRSVP}
           whileHover={{ scale: 1.05, boxShadow: '0 0 15px rgba(212, 175, 55, 0.4)' }}
           whileTap={{ scale: 0.98 }}
           initial={{ opacity: 0, y: 20 }}
@@ -413,16 +403,6 @@ const Home: React.FC = () => {
           GENERAL RSVP
         </Button>
       </ContentWrapper>
-      
-      {/* RSVP Modal */}
-      <AnimatePresence>
-        {showRSVPModal && (
-          <RSVPModal
-            onClose={closeRSVPModal}
-            onSubmit={handleRSVPSubmit}
-          />
-        )}
-      </AnimatePresence>
     </HomeContainer>
   );
 };

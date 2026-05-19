@@ -1,10 +1,12 @@
+'use client';
+
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 import { useAudio } from '../../context/AudioContext';
 
 // This component helps ensure audio continues playing during route changes
 const AudioContinuity: React.FC = () => {
-  const location = useLocation();
+  const pathname = usePathname();
   const { isPlaying, togglePlay } = useAudio();
   
   // When route changes, make sure audio keeps playing if it was playing before
@@ -18,7 +20,7 @@ const AudioContinuity: React.FC = () => {
       // If user interacted but audio isn't playing, try to restart it
       togglePlay();
     }
-  }, [location.pathname, isPlaying, togglePlay]);
+  }, [pathname, isPlaying, togglePlay]);
   
   return null; // This component doesn't render anything
 };

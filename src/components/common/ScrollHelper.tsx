@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
@@ -34,12 +36,12 @@ const ScrollButton = styled(motion.button)`
 
 const ScrollHelper: React.FC = () => {
   const [showHelper, setShowHelper] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
   // Only show on invitation pages
   useEffect(() => {
-    setShowHelper(location.pathname.includes('/invitation'));
-  }, [location]);
+    setShowHelper(pathname.includes('/invitation'));
+  }, [pathname]);
 
   // Scroll to RSVP section
   const scrollToRSVP = () => {

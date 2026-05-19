@@ -1,10 +1,7 @@
 import { initializeApp, FirebaseApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-import { getAnalytics } from 'firebase/analytics';
+import { getFirestore, Firestore } from 'firebase/firestore';
+import { getAuth, Auth } from 'firebase/auth';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAm3GrtCxIrK6fU-K6TgVx46yamlFlV9Pc",
   authDomain: "oblivion-3c64c.firebaseapp.com",
@@ -15,26 +12,25 @@ const firebaseConfig = {
   measurementId: "G-GTJR1LE68Z"
 };
 
-// Initialize Firebase with error handling
-let app: FirebaseApp;
-let db: ReturnType<typeof getFirestore>;
-let auth: ReturnType<typeof getAuth>;
-let analytics: any;
+// SSR-safe Firebase initialization
+// Use non-null assertions for client-only use
+let firestoreInstance: Firestore = null as unknown as Firestore;
+let authInstance: Auth = null as unknown as Auth;
 
-try {
-  app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
-  auth = getAuth(app);
-  
-  // Only initialize analytics if running in browser and not in SSR
+const initFirebase = () => {
   if (typeof window !== 'undefined') {
-    analytics = getAnalytics(app);
+    try {
+      const app = initializeApp(firebaseConfig, 'oblivion-app');
+      firestoreInstance = getFirestore(app);
+      authInstance = getAuth(app);
+      console.log('Firebase initialized successfully');
+    } catch (error) {
+      console.error('Error initializing Firebase:', error);
+    }
   }
-  
-  console.log('Firebase initialized successfully');
-} catch (error) {
-  console.error('Error initializing Firebase:', error);
-  throw error; // Re-throw to ensure app fails if Firebase can't initialize
-}
+};
 
-export { app, db, auth, analytics };
+initFirebase();
+
+export const db = firestoreInstance;
+export const auth = authInstance;
