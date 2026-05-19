@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { motion, useAnimation, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import { db } from '../firebase';
@@ -9,6 +11,7 @@ import { encodeImageUrl } from '../utils/imageUtils';
 
 // Helper to detect mobile
 const isMobile = () => {
+  if (typeof window === 'undefined') return false;
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
     || (window.innerWidth <= 768);
 };
@@ -593,8 +596,9 @@ const EmberParticles: React.FC = () => {
 
 // Main component
 const AmpStory: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const params = useParams();
+  const router = useRouter();
+  const id = params?.id as string | undefined;
   const [invitee, setInvitee] = useState<Invitee | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -604,12 +608,12 @@ const AmpStory: React.FC = () => {
   const mouseY = useMotionValue(0);
   
   // Parallax effect values
-  const backgroundX = useTransform(mouseX, [0, window.innerWidth], [10, -10]);
-  const backgroundY = useTransform(mouseY, [0, window.innerHeight], [10, -10]);
-  const midgroundX = useTransform(mouseX, [0, window.innerWidth], [20, -20]);
-  const midgroundY = useTransform(mouseY, [0, window.innerHeight], [20, -20]);
-  const foregroundX = useTransform(mouseX, [0, window.innerWidth], [30, -30]);
-  const foregroundY = useTransform(mouseY, [0, window.innerHeight], [30, -30]);
+  const backgroundX = useTransform(mouseX, [0, typeof window !== 'undefined' ? window.innerWidth : 1000], [10, -10]);
+  const backgroundY = useTransform(mouseY, [0, typeof window !== 'undefined' ? window.innerHeight : 1000], [10, -10]);
+  const midgroundX = useTransform(mouseX, [0, typeof window !== 'undefined' ? window.innerWidth : 1000], [20, -20]);
+  const midgroundY = useTransform(mouseY, [0, typeof window !== 'undefined' ? window.innerHeight : 1000], [20, -20]);
+  const foregroundX = useTransform(mouseX, [0, typeof window !== 'undefined' ? window.innerWidth : 1000], [30, -30]);
+  const foregroundY = useTransform(mouseY, [0, typeof window !== 'undefined' ? window.innerHeight : 1000], [30, -30]);
   
   // Animation controls
   const frameControls = useAnimation();
@@ -751,18 +755,18 @@ const AmpStory: React.FC = () => {
     
     // Navigate to RSVP form
     if (id) {
-      navigate(`/invitation/${id}#rsvp`);
+      router.push(`/invitation/${id}#rsvp`);
     } else {
-      navigate('/invitation#rsvp');
+      router.push('/invitation#rsvp');
     }
   };
   
   // Go back to invitation
   const goBack = () => {
     if (id) {
-      navigate(`/invitation/${id}`);
+      router.push(`/invitation/${id}`);
     } else {
-      navigate('/invitation');
+      router.push('/invitation');
     }
   };
   

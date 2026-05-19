@@ -23,11 +23,10 @@
     "gh-pages": "^6.3.0",
     "handlebars": "^4.7.8",
     "howler": "^2.2.4",
+    "next": "^16.2.6",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.1.0",
-    "react-router-dom": "^7.5.3",
-    "react-scripts": "5.0.1",
     "recharts": "^2.15.3",
     "styled-components": "^6.1.17",
     "three": "^0.176.0",
@@ -36,30 +35,12 @@
   },
   "scripts": {
     "generate-profile-manifest": "node scripts/generate-profile-pics-manifest.js",
-    "start": "npm run generate-profile-manifest && react-scripts start",
-    "build": "npm run generate-profile-manifest && react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "dev": "next dev",
+    "build": "npm run generate-profile-manifest && next build",
+    "start": "next start",
+    "lint": "next lint",
     "deploy": "firebase deploy --only hosting",
     "build-deploy": "npm run build && npm run deploy"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   },
   "devDependencies": {
     "firebase-tools": "^14.2.1"

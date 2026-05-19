@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import styled from 'styled-components';
 import { db } from '../firebase';
@@ -412,8 +414,9 @@ const ThankYouDetails = styled.p`
 `;
 
 const Invitation: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const params = useParams();
+  const router = useRouter();
+  const id = params?.id as string | undefined;
   const [invitee, setInvitee] = useState<Invitee | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -497,7 +500,7 @@ const Invitation: React.FC = () => {
   };
   
   const goBack = () => {
-    navigate('/');
+    router.push('/');
   };
   
   const defaultPhoto = '/fp/skull.png';

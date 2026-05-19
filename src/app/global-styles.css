@@ -1,0 +1,155 @@
+/* Critical CSS for scrolling - applied globally */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  touch-action: manipulation;
+}
+
+#__next {
+  min-height: 100%;
+  overflow-y: auto !important;
+}
+
+/* RSVP Experience Base Styles */
+:root {
+  --black: #010102;
+  --black-blue: #04050a;
+  --amber: #e86a24;
+  --amber-soft: rgba(232, 106, 36, 0.38);
+  --indigo: #160b2b;
+  --cyan: #2a6872;
+  --cyan-soft: rgba(42, 104, 114, 0.24);
+  --white: #f8f3eb;
+  --ghost: rgba(248, 243, 235, 0.42);
+  --low: rgba(248, 243, 235, 0.14);
+  --phase-light: 0;
+  --phase-quiet: 1;
+  --cursor-x: 50vw;
+  --cursor-y: 50vh;
+  --scroll: 0;
+}
+
+body.locked {
+  overflow: hidden;
+}
+
+body.live #memory-space {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+body.rsvp-quiet .fragment-field,
+body.rsvp-quiet .chaos-type,
+body.rsvp-quiet .crowd-wash,
+body.rsvp-quiet .texture-wash {
+  opacity: 0.08 !important;
+  filter: blur(18px) saturate(0.5) brightness(0.42) !important;
+}
+
+body.rsvp-quiet .projected-crowd,
+body.rsvp-quiet .air-texture {
+  opacity: 0.08 !important;
+}
+
+body.rsvp-quiet .depth-fog {
+  opacity: 0.56 !important;
+}
+
+/* Input focus effects for RSVP */
+.memory-input:focus {
+  border-color: rgba(232, 106, 36, 0.58) !important;
+  color: rgba(232, 106, 36, 0.92) !important;
+  opacity: 1 !important;
+  text-shadow: 0 0 34px rgba(232, 106, 36, 0.28) !important;
+}
+
+.memory-input::placeholder {
+  color: rgba(248, 243, 235, 0.3) !important;
+}
+
+/* Trigger button decorative lines */
+.trigger-btn::before,
+.trigger-btn::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 38px;
+  height: 1px;
+  background: rgba(232, 106, 36, 0.55);
+  transform: translateY(-50%);
+  transition: transform 600ms ease, opacity 600ms ease;
+}
+.trigger-btn::before {
+  left: -28px;
+}
+.trigger-btn::after {
+  right: -20px;
+  opacity: 0.2;
+}
+.trigger-btn:hover::before,
+.trigger-btn:focus-visible::before {
+  transform: translate(16px, -50%);
+}
+
+/* Submit button hover glow sweep */
+.memory-submit::before {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  background: linear-gradient(90deg, transparent, rgba(248, 243, 235, 0.88), rgba(232, 106, 36, 0.62), transparent);
+  opacity: 0;
+  transform: translateX(-85%);
+  filter: blur(10px);
+  transition: opacity 700ms ease, transform 1100ms cubic-bezier(.16, 1, .3, 1);
+}
+.memory-submit:hover::before,
+.memory-submit:focus-visible::before {
+  opacity: 1;
+  transform: translateX(20%);
+}
+.memory-submit:hover,
+.memory-submit:focus-visible {
+  border-color: rgba(248, 243, 235, 0.66) !important;
+  color: #010102 !important;
+}
+
+/* Intro-tile flash overlay (the ::before pseudo) */
+.intro-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(circle at 46% 42%, rgba(255, 248, 220, 0.95), transparent 28%), linear-gradient(118deg, transparent 16%, rgba(248, 243, 235, 0.78) 48%, transparent 68%);
+  mix-blend-mode: screen;
+  animation: tileFlash 1620ms steps(1) infinite;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* Projection image ::after overlay */
+.projection-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 28% 24%, rgba(248, 243, 235, 0.2), transparent 26%), linear-gradient(120deg, transparent, rgba(232, 106, 36, 0.16), transparent 62%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Beat frame ::after overlay */
+.beat-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 48% 46%, rgba(248, 243, 235, 0.18), transparent 32%), linear-gradient(120deg, transparent, rgba(232, 106, 36, 0.2), transparent 64%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+@media (max-width: 780px) {
+  body, button {
+    cursor: auto;
+  }
+}
