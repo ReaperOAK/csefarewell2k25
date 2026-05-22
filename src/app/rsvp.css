@@ -1,0 +1,1102 @@
+/* RSVP Gate Experience CSS - Migrated from test-backup.html */
+
+:root {
+    --black: #010102;
+    --black-blue: #04050a;
+    --amber: #e86a24;
+    --amber-soft: rgba(232, 106, 36, 0.38);
+    --indigo: #160b2b;
+    --cyan: #2a6872;
+    --cyan-soft: rgba(42, 104, 114, 0.24);
+    --white: #f8f3eb;
+    --ghost: rgba(248, 243, 235, 0.42);
+    --low: rgba(248, 243, 235, 0.14);
+    --phase-light: 0;
+    --phase-quiet: 1;
+    --cursor-x: 50vw;
+    --cursor-y: 50vh;
+    --scroll: 0;
+}
+
+body.locked {
+    overflow: hidden;
+}
+
+/* Fixed atmosphere layers */
+.grain,
+.halation,
+.light-engine,
+.depth-fog,
+.film-burn,
+.vignette,
+.projected-crowd,
+.air-texture,
+.cursor-dot,
+.cursor-aura {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+}
+
+.grain {
+    z-index: 90;
+    opacity: 0.11;
+    mix-blend-mode: screen;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grainShift 900ms steps(2) infinite;
+}
+
+.halation {
+    z-index: 84;
+    opacity: calc(0.34 + var(--phase-light) * 0.2);
+    mix-blend-mode: screen;
+    background:
+        radial-gradient(circle at var(--cursor-x) var(--cursor-y), rgba(248, 243, 235, 0.08), transparent 28vw),
+        radial-gradient(ellipse at 8% 24%, rgba(42, 104, 114, 0.16), transparent 38vw),
+        radial-gradient(ellipse at 82% 68%, rgba(232, 106, 36, 0.12), transparent 34vw);
+    filter: blur(1px);
+}
+
+.vignette {
+    z-index: 88;
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.72), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.72)),
+        radial-gradient(ellipse at center, transparent 18%, rgba(0, 0, 0, 0.28) 58%, rgba(0, 0, 0, 0.88) 100%);
+}
+
+.projected-crowd {
+    z-index: 1;
+    opacity: calc(0.18 + var(--phase-light) * 0.34);
+    background-image: url("/assets/hero.png");
+    background-size: cover;
+    background-position: center;
+    filter: blur(22px) saturate(0.86) contrast(1.2) brightness(0.62);
+    transform: scale(1.14);
+    mix-blend-mode: screen;
+    mask-image:
+        radial-gradient(ellipse at 46% 44%, black 0 34%, rgba(0, 0, 0, 0.58) 52%, transparent 76%),
+        linear-gradient(180deg, transparent 0%, black 18%, black 74%, transparent 100%);
+    -webkit-mask-image:
+        radial-gradient(ellipse at 46% 44%, black 0 34%, rgba(0, 0, 0, 0.58) 52%, transparent 76%),
+        linear-gradient(180deg, transparent 0%, black 18%, black 74%, transparent 100%);
+    animation: crowdBreath 24s ease-in-out infinite alternate;
+}
+
+.air-texture {
+    z-index: 2;
+    opacity: calc(0.1 + var(--phase-light) * 0.3);
+    background-image: url("/assets/urban nightscape through blurred glass.png");
+    background-size: cover;
+    background-position: center;
+    filter: blur(18px) saturate(1.25);
+    transform: scale(1.18);
+    mix-blend-mode: color-dodge;
+    mask-image: radial-gradient(ellipse at 52% 52%, black 0 46%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse at 52% 52%, black 0 46%, transparent 78%);
+    animation: airProjection 32s ease-in-out infinite alternate;
+}
+
+.light-engine {
+    z-index: 4;
+    overflow: hidden;
+    opacity: calc(0.62 - var(--phase-quiet) * 0.18);
+    mix-blend-mode: screen;
+}
+
+.projection {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(42px);
+    opacity: 0.42;
+    transform: translate3d(0, 0, 0);
+}
+
+.projection.shore {
+    left: -22vw;
+    bottom: -10vh;
+    width: 82vw;
+    height: 34vh;
+    background: linear-gradient(90deg, transparent, rgba(232, 106, 36, 0.38), rgba(42, 104, 114, 0.18), transparent);
+    animation: shoreSweep 18s ease-in-out infinite alternate;
+}
+
+.projection.sodium {
+    right: -18vw;
+    top: 7vh;
+    width: 56vw;
+    height: 42vh;
+    background: radial-gradient(circle, rgba(232, 106, 36, 0.62), transparent 64%);
+    animation: sodiumDrift 15s ease-in-out infinite alternate;
+}
+
+.projection.indigo {
+    left: 12vw;
+    top: 34vh;
+    width: 54vw;
+    height: 54vh;
+    background: radial-gradient(circle, rgba(68, 35, 121, 0.36), transparent 66%);
+    animation: indigoPulse 21s ease-in-out infinite alternate;
+}
+
+.practical-lights {
+    position: absolute;
+    inset: 0;
+    opacity: calc(0.18 + var(--phase-light) * 0.38);
+    background:
+        radial-gradient(circle at 18% 30%, rgba(248, 243, 235, 0.85) 0 1px, transparent 3px),
+        radial-gradient(circle at 61% 18%, rgba(232, 106, 36, 0.82) 0 1px, transparent 4px),
+        radial-gradient(circle at 80% 54%, rgba(42, 104, 114, 0.7) 0 1px, transparent 5px),
+        radial-gradient(circle at 40% 74%, rgba(248, 243, 235, 0.5) 0 1px, transparent 3px);
+    animation: practicalFlicker 7s steps(1) infinite;
+}
+
+.lens-streak {
+    position: absolute;
+    left: -20vw;
+    top: 26vh;
+    width: 150vw;
+    height: 2px;
+    opacity: calc(0.08 + var(--phase-light) * 0.18);
+    background: linear-gradient(90deg, transparent, rgba(248, 243, 235, 0.18), rgba(232, 106, 36, 0.28), transparent);
+    filter: blur(1px);
+    transform: rotate(-6deg);
+    animation: streakFloat 12s ease-in-out infinite alternate;
+}
+
+.depth-fog {
+    z-index: 12;
+    overflow: hidden;
+    mix-blend-mode: screen;
+}
+
+.fog {
+    position: absolute;
+    inset: -30vh -30vw;
+    opacity: var(--o);
+    filter: blur(var(--b));
+    background: var(--g);
+    transform: translate3d(0, 0, 0);
+}
+
+.fog.distant {
+    --o: calc(0.28 + var(--phase-light) * 0.1);
+    --b: 80px;
+    --g: radial-gradient(ellipse at 35% 34%, rgba(42, 104, 114, 0.23), transparent 54%), radial-gradient(ellipse at 68% 56%, rgba(232, 106, 36, 0.12), transparent 58%);
+    animation: fogDistant 44s linear infinite alternate;
+}
+
+.fog.ambient {
+    --o: calc(0.22 + var(--phase-light) * 0.16);
+    --b: 58px;
+    --g: radial-gradient(ellipse at 50% 50%, rgba(90, 52, 118, 0.2), transparent 60%);
+    animation: fogAmbient 32s ease-in-out infinite alternate;
+}
+
+.fog.humidity {
+    --o: calc(0.2 + var(--phase-light) * 0.12);
+    --b: 28px;
+    --g: linear-gradient(116deg, transparent 0%, rgba(248, 243, 235, 0.06) 36%, transparent 58%), radial-gradient(ellipse at 80% 20%, rgba(42, 104, 114, 0.16), transparent 48%);
+    animation: fogHumidity 23s ease-in-out infinite alternate;
+}
+
+.fog.foreground {
+    --o: calc(0.12 + var(--phase-light) * 0.08);
+    --b: 18px;
+    --g: radial-gradient(ellipse at 10% 88%, rgba(248, 243, 235, 0.1), transparent 38%), radial-gradient(ellipse at 92% 78%, rgba(232, 106, 36, 0.1), transparent 42%);
+    animation: fogForeground 17s ease-in-out infinite alternate;
+}
+
+.film-burn {
+    z-index: 82;
+    opacity: 0;
+    mix-blend-mode: screen;
+    background:
+        linear-gradient(90deg, transparent, rgba(255, 242, 212, 0.88) 48%, rgba(232, 106, 36, 0.58) 58%, transparent 72%),
+        radial-gradient(circle at 8% 50%, rgba(232, 106, 36, 0.74), transparent 38%);
+    filter: blur(12px);
+    transform: translateX(-120%) scaleX(1.2);
+}
+
+.film-burn.bleed {
+    animation: burnWipe 1600ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.cursor-dot {
+    left: var(--cursor-x);
+    top: var(--cursor-y);
+    z-index: 100;
+    width: 8px;
+    height: 8px;
+    inset: auto;
+    border-radius: 999px;
+    background: var(--white);
+    transform: translate(-50%, -50%);
+    mix-blend-mode: difference;
+}
+
+.cursor-aura {
+    left: var(--cursor-x);
+    top: var(--cursor-y);
+    z-index: 83;
+    width: 44vw;
+    height: 44vw;
+    inset: auto;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(248, 243, 235, 0.055), rgba(232, 106, 36, 0.025) 30%, transparent 62%);
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+    filter: blur(6px);
+}
+
+#gate {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: grid;
+    place-items: center;
+    padding: 8vw;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+        radial-gradient(ellipse at 52% 50%, rgba(42, 104, 114, 0.08), transparent 38%),
+        var(--black);
+    transition: opacity 1100ms cubic-bezier(.16, 1, .3, 1), filter 1100ms cubic-bezier(.16, 1, .3, 1);
+}
+
+#gate::before,
+#gate::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+#gate::before {
+    z-index: 1;
+    background:
+        radial-gradient(circle at 50% 46%, rgba(1, 1, 2, 0.74), transparent 31%),
+        linear-gradient(90deg, rgba(1, 1, 2, 0.72), transparent 28%, transparent 72%, rgba(1, 1, 2, 0.72)),
+        radial-gradient(ellipse at center, transparent 18%, rgba(1, 1, 2, 0.42) 64%, rgba(1, 1, 2, 0.82));
+    mix-blend-mode: normal;
+}
+
+#gate::after {
+    z-index: 3;
+    opacity: 0;
+    background:
+        radial-gradient(circle at 50% 48%, rgba(255, 250, 230, 0.92), transparent 18%),
+        linear-gradient(90deg, transparent, rgba(255, 248, 230, 0.78), transparent);
+    mix-blend-mode: screen;
+    animation: introFlash 1300ms steps(1) infinite;
+}
+
+#gate.leaving {
+    opacity: 0;
+    filter: blur(16px) brightness(2.4);
+    pointer-events: none;
+}
+
+.intro-mosaic {
+    position: absolute;
+    inset: -2px;
+    z-index: 0;
+    opacity: 0.68;
+    filter: saturate(0.96) contrast(1.22) brightness(0.66);
+    perspective: 900px;
+}
+
+.intro-tile {
+    --x: 0%;
+    --y: 0%;
+    position: absolute;
+    inset: -4vh -4vw;
+    overflow: hidden;
+    background-image: url("/assets/memory fragments.png");
+    background-size: 300% 300%;
+    background-position: var(--x) var(--y);
+    transform-origin: center;
+    opacity: 0;
+    animation:
+        singlePhotoCut 1620ms steps(1) infinite,
+        tileSpin 1620ms steps(1) infinite,
+        tileExposure 1620ms steps(1) infinite;
+    animation-delay: var(--delay, 0ms);
+    will-change: transform, filter, opacity, background-position;
+}
+
+.intro-tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background:
+        radial-gradient(circle at 46% 42%, rgba(255, 248, 220, 0.95), transparent 28%),
+        linear-gradient(118deg, transparent 16%, rgba(248, 243, 235, 0.78) 48%, transparent 68%);
+    mix-blend-mode: screen;
+    animation: tileFlash 1620ms steps(1) infinite;
+    animation-delay: var(--delay, 0ms);
+}
+
+.intro-tile:nth-child(1) { --x: 0%; --y: 0%; --delay: 0ms; }
+.intro-tile:nth-child(2) { --x: 50%; --y: 0%; --delay: -180ms; }
+.intro-tile:nth-child(3) { --x: 100%; --y: 0%; --delay: -360ms; }
+.intro-tile:nth-child(4) { --x: 0%; --y: 50%; --delay: -540ms; }
+.intro-tile:nth-child(5) { --x: 50%; --y: 50%; --delay: -720ms; }
+.intro-tile:nth-child(6) { --x: 100%; --y: 50%; --delay: -900ms; }
+.intro-tile:nth-child(7) { --x: 0%; --y: 100%; --delay: -1080ms; }
+.intro-tile:nth-child(8) { --x: 50%; --y: 100%; --delay: -1260ms; }
+.intro-tile:nth-child(9) { --x: 100%; --y: 100%; --delay: -1440ms; }
+
+.gate-inner {
+    position: relative;
+    z-index: 4;
+    width: min(720px, 92vw);
+    text-align: center;
+    transform: translateZ(0);
+}
+
+.ritual-text {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(1.25rem, 4vw, 3rem);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.05;
+    color: rgba(248, 243, 235, 0.9);
+    text-shadow:
+        0 0 2px rgba(1, 1, 2, 1),
+        0 0 16px rgba(1, 1, 2, 0.98),
+        0 0 34px rgba(1, 1, 2, 0.95),
+        0 0 52px rgba(248, 243, 235, 0.24);
+    animation: gateText 1500ms cubic-bezier(.16, 1, .3, 1) both 250ms;
+}
+
+.trigger-btn {
+    position: relative;
+    min-width: 210px;
+    min-height: 48px;
+    margin-top: 2.8rem;
+    border: 0;
+    background: transparent;
+    color: rgba(248, 243, 235, 0.72);
+    font-size: 0.69rem;
+    font-weight: 300;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: gateText 4s cubic-bezier(.16, 1, .3, 1) both 2100ms;
+}
+
+.trigger-btn::before,
+.trigger-btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 38px;
+    height: 1px;
+    background: rgba(232, 106, 36, 0.55);
+    transform: translateY(-50%);
+    transition: transform 600ms ease, opacity 600ms ease;
+}
+
+.trigger-btn::before { left: -28px; }
+.trigger-btn::after { right: -20px; opacity: 0.2; }
+
+.trigger-btn:hover::before,
+.trigger-btn:focus-visible::before {
+    transform: translate(16px, -50%);
+}
+
+#memory-space {
+    position: relative;
+    z-index: 20;
+    min-height: 1320vh;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1400ms cubic-bezier(.16, 1, .3, 1);
+}
+
+body.live #memory-space {
+    opacity: 1;
+    visibility: visible;
+}
+
+.sticky-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.memory-plane,
+.transition-plane,
+.copy-plane,
+.fragment-field,
+.story-plane,
+.intimate-plane,
+.rsvp-plane,
+.phase-words {
+    position: absolute;
+    inset: 0;
+}
+
+.memory-plane {
+    z-index: 3;
+}
+
+.memory-plane::before {
+    content: "";
+    position: absolute;
+    inset: -5vh -5vw;
+    background-image:
+        linear-gradient(180deg, rgba(1, 1, 2, 0.18), rgba(1, 1, 2, 0.62) 72%, rgba(1, 1, 2, 0.9)),
+        radial-gradient(ellipse at 50% 44%, transparent 0 42%, rgba(1, 1, 2, 0.58) 84%),
+        url("/assets/hero.png");
+    background-size: cover;
+    background-position: center;
+    opacity: calc(var(--hero-bg-opacity, 1) * 0.94);
+    filter: saturate(1.08) contrast(1.08) brightness(0.78);
+    transform: scale(calc(1.03 + var(--scroll) * 0.08));
+    transform-origin: center;
+    will-change: opacity, transform;
+}
+
+.transition-plane {
+    z-index: 5;
+    overflow: hidden;
+    opacity: var(--transition-opacity, 0);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transition: opacity 120ms linear;
+}
+
+.transition-plane::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+        radial-gradient(circle at 52% 48%, rgba(248, 243, 235, 0.09), transparent 28%),
+        linear-gradient(180deg, rgba(1, 1, 2, 0.1), rgba(1, 1, 2, 0.42) 78%, rgba(1, 1, 2, 0.72)),
+        radial-gradient(ellipse at center, transparent 0 45%, rgba(1, 1, 2, 0.64) 92%);
+    mix-blend-mode: normal;
+}
+
+.transition-frame {
+    --x: 0%;
+    --y: 0%;
+    position: absolute;
+    inset: -5vh -5vw;
+    z-index: 1;
+    opacity: 0;
+    background-image: url("/assets/urban nightscape through blurred glass.png");
+    background-size: 300% 300%;
+    background-position: var(--x) var(--y);
+    filter: saturate(1.18) contrast(1.18) brightness(0.72) blur(0.4px);
+    transform: scale(calc(1.06 + var(--transition-zoom, 0) * 0.06)) rotate(calc(var(--transition-tilt, 0) * 1deg));
+    transform-origin: center;
+    transition: opacity 360ms ease, filter 360ms ease, transform 360ms ease;
+    will-change: opacity, filter, transform;
+}
+
+.transition-frame.is-live {
+    filter: saturate(1.32) contrast(1.2) brightness(0.86) blur(0.2px);
+}
+
+.transition-frame:nth-child(1) { --x: 0%; --y: 0%; }
+.transition-frame:nth-child(2) { --x: 50%; --y: 0%; }
+.transition-frame:nth-child(3) { --x: 100%; --y: 0%; }
+.transition-frame:nth-child(4) { --x: 0%; --y: 50%; }
+.transition-frame:nth-child(5) { --x: 50%; --y: 50%; }
+.transition-frame:nth-child(6) { --x: 100%; --y: 50%; }
+.transition-frame:nth-child(7) { --x: 0%; --y: 100%; }
+.transition-frame:nth-child(8) { --x: 50%; --y: 100%; }
+.transition-frame:nth-child(9) { --x: 100%; --y: 100%; }
+
+.copy-plane {
+    z-index: 14;
+    pointer-events: none;
+}
+
+.phase-words {
+    z-index: 6;
+    pointer-events: none;
+}
+
+.story-plane {
+    z-index: 16;
+    pointer-events: none;
+}
+
+.mass-type {
+    font-family: Oswald, sans-serif;
+    font-weight: 500;
+    line-height: 0.78;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.whisper-type {
+    font-family: "Playfair Display", serif;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.08;
+}
+
+.meta {
+    font-size: 0.68rem;
+    font-weight: 300;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+}
+
+.hero-copy {
+    position: absolute;
+    left: clamp(1.25rem, 6vw, 5rem);
+    top: 12vh;
+    width: min(92vw, 980px);
+    opacity: var(--hero-opacity, 1);
+    transform: translate3d(0, calc(var(--scroll) * -22vh), 0);
+    will-change: opacity, transform;
+}
+
+.hero-kicker {
+    margin-bottom: clamp(1.25rem, 3vw, 2.2rem);
+    color: rgba(42, 190, 202, 0.48);
+    text-shadow: 0 0 28px rgba(42, 104, 114, 0.36);
+    opacity: calc(0.95 - var(--scroll) * 1.1);
+}
+
+.hero-title {
+    font-size: clamp(6rem, 26vw, 23rem);
+    color: rgba(248, 243, 235, 0.9);
+    text-shadow:
+        0 0 34px rgba(248, 243, 235, 0.12),
+        0 0 80px rgba(232, 106, 36, 0.18);
+    transform: scaleY(1.12);
+    mix-blend-mode: screen;
+    opacity: calc(1 - var(--scroll) * 0.72);
+    filter: blur(calc(var(--scroll) * 7px));
+}
+
+.hero-sub {
+    max-width: 620px;
+    margin-top: clamp(-2.8rem, -3vw, -1rem);
+    margin-left: clamp(0rem, 16vw, 12rem);
+    color: rgba(232, 106, 36, 0.82);
+    font-size: clamp(2rem, 7vw, 5.6rem);
+    text-shadow: 0 0 48px rgba(232, 106, 36, 0.32);
+    opacity: calc(0.82 - var(--scroll) * 0.7);
+}
+
+.projected-note {
+    position: absolute;
+    width: min(420px, 78vw);
+    color: rgba(248, 243, 235, 0.38);
+    font-family: "Playfair Display", serif;
+    font-size: clamp(1.15rem, 2.6vw, 2.2rem);
+    font-style: italic;
+    line-height: 1.2;
+    text-shadow: 0 0 22px rgba(248, 243, 235, 0.08);
+    filter: blur(0.2px);
+    mix-blend-mode: screen;
+}
+
+.note-a {
+    right: 8vw;
+    top: 18vh;
+    opacity: calc(var(--beat-one, 0) * 0.65);
+    transform: translateY(calc((var(--scroll) - 0.15) * -14vh)) rotate(-2deg);
+}
+
+.note-b {
+    left: 12vw;
+    bottom: 16vh;
+    opacity: calc(var(--beat-three, 0) * 0.56);
+    transform: translateY(calc((var(--scroll) - 0.5) * -9vh)) rotate(2deg);
+}
+
+.projection-image {
+    position: absolute;
+    overflow: hidden;
+    will-change: transform, opacity, filter;
+    filter: saturate(0.86) contrast(1.18) brightness(0.7) blur(2px);
+    mix-blend-mode: screen;
+    opacity: 0.58;
+    transform: translate3d(calc(var(--mx, 0) * 1px), calc(var(--my, 0) * 1px), 0) rotate(var(--r, 0deg)) scale(var(--s, 1));
+    animation: memoryDrift var(--d, 18s) ease-in-out infinite alternate;
+}
+
+.projection-image::before {
+    content: "";
+    position: absolute;
+    inset: -12%;
+    background-image: var(--img);
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.12);
+    filter: blur(var(--img-blur, 0px));
+    opacity: 0.98;
+}
+
+.projection-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 28% 24%, rgba(248, 243, 235, 0.2), transparent 26%),
+        linear-gradient(120deg, transparent, rgba(232, 106, 36, 0.16), transparent 62%);
+    mix-blend-mode: screen;
+}
+
+.feather-soft {
+    mask-image:
+        radial-gradient(ellipse at 48% 48%, black 0 38%, rgba(0, 0, 0, 0.62) 54%, transparent 75%),
+        linear-gradient(110deg, transparent 0%, black 22%, black 72%, transparent 100%);
+    -webkit-mask-image:
+        radial-gradient(ellipse at 48% 48%, black 0 38%, rgba(0, 0, 0, 0.62) 54%, transparent 75%),
+        linear-gradient(110deg, transparent 0%, black 22%, black 72%, transparent 100%);
+}
+
+.feather-torn {
+    mask-image:
+        radial-gradient(ellipse at 32% 44%, black 0 34%, transparent 65%),
+        radial-gradient(ellipse at 70% 58%, rgba(0, 0, 0, 0.8) 0 30%, transparent 58%);
+    -webkit-mask-image:
+        radial-gradient(ellipse at 32% 44%, black 0 34%, transparent 65%),
+        radial-gradient(ellipse at 70% 58%, rgba(0, 0, 0, 0.8) 0 30%, transparent 58%);
+}
+
+.feather-burn {
+    mask-image: radial-gradient(ellipse at 52% 48%, black 0 28%, rgba(0, 0, 0, 0.55) 44%, transparent 68%);
+    -webkit-mask-image: radial-gradient(ellipse at 52% 48%, black 0 28%, rgba(0, 0, 0, 0.55) 44%, transparent 68%);
+}
+
+.crowd-wash {
+    --img: url("/assets/hero.png");
+    --r: -1deg;
+    --s: 1.05;
+    --d: 28s;
+    left: -12vw;
+    top: 22vh;
+    width: 72vw;
+    height: 48vh;
+    opacity: clamp(0.02, calc(var(--scroll) * 0.24), 0.24);
+    filter: blur(18px) saturate(0.86) contrast(1.2) brightness(0.48);
+}
+
+.texture-wash {
+    --img: url("/assets/nightlife leaks.png");
+    --r: 3deg;
+    --s: 1.1;
+    --d: 24s;
+    right: -10vw;
+    top: 6vh;
+    width: 58vw;
+    height: 54vh;
+    opacity: clamp(0.04, calc((var(--scroll) - 0.08) * 0.55), 0.34);
+    filter: blur(10px) saturate(1.25) brightness(0.7);
+}
+
+.fragment-field {
+    z-index: 9;
+    opacity: var(--fragment-opacity, 0);
+    transform: translate3d(0, calc((var(--scroll) - 0.24) * -32vh), 0);
+}
+
+.fragment {
+    --img: url("/assets/ibiza memories.png");
+    --d: 18s;
+    --s: 1;
+    opacity: 0.52;
+    border-radius: 44% 56% 52% 48% / 42% 46% 54% 58%;
+}
+
+.fragment.one {
+    --r: -4deg;
+    left: 7vw;
+    top: 38vh;
+    width: min(520px, 54vw);
+    height: 45vh;
+    opacity: clamp(0.04, calc((var(--scroll) - 0.16) * 1.3), 0.48);
+    filter: blur(5px) grayscale(0.55) contrast(1.25) brightness(0.5);
+}
+
+.fragment.two {
+    --r: 2.5deg;
+    right: 5vw;
+    top: 26vh;
+    width: min(610px, 60vw);
+    height: 42vh;
+    opacity: clamp(0.02, calc((var(--scroll) - 0.26) * 1.4), 0.5);
+    filter: blur(7px) saturate(1.1) brightness(0.46);
+    mix-blend-mode: lighten;
+}
+
+.fragment.three {
+    --img: url("/assets/memory fragments.png");
+    --r: -1deg;
+    left: 32vw;
+    top: 76vh;
+    width: min(560px, 56vw);
+    height: 40vh;
+    opacity: clamp(0.02, calc((var(--scroll) - 0.34) * 1.7), 0.54);
+    filter: blur(5px) saturate(0.9) brightness(0.48);
+}
+
+.fragment.four {
+    --img: url("/assets/nightlife leaks.png");
+    --r: 5deg;
+    right: 22vw;
+    top: 104vh;
+    width: min(470px, 52vw);
+    height: 38vh;
+    opacity: clamp(0.02, calc((var(--scroll) - 0.45) * 1.6), 0.46);
+    filter: blur(8px) saturate(1.4) brightness(0.52);
+}
+
+.chaos-type {
+    position: absolute;
+    left: 36vw;
+    top: 49vh;
+    width: min(760px, 74vw);
+    color: rgba(248, 243, 235, 0.62);
+    opacity: calc(var(--beat-two, 0) * 0.82);
+    filter: blur(calc(max(0, 0.55 - var(--scroll)) * 12px));
+    transform: translate(-18%, -50%) rotate(-2deg);
+    mix-blend-mode: overlay;
+}
+
+.chaos-type .mass-type {
+    font-size: clamp(4.6rem, 15vw, 14rem);
+}
+
+.chaos-type .whisper-type {
+    margin-left: clamp(2rem, 12vw, 10rem);
+    margin-top: -0.5rem;
+    color: rgba(232, 106, 36, 0.6);
+    font-size: clamp(2rem, 6vw, 5rem);
+}
+
+.intimate-plane {
+    z-index: 12;
+    opacity: var(--intimate-opacity, 0);
+    transform: translateY(calc((var(--scroll) - 0.64) * -22vh));
+}
+
+.polaroid-memory {
+    --img: url("/assets/memory fragments.png");
+    --r: -3deg;
+    --d: 22s;
+    left: 50%;
+    top: 47vh;
+    width: min(560px, 82vw);
+    height: min(460px, 62vh);
+    opacity: clamp(0, calc((var(--scroll) - 0.58) * 2.6), 0.82);
+    filter: blur(2px) saturate(0.72) brightness(0.7) contrast(1.08);
+    transform: translate3d(calc(-50% + var(--mx, 0) * 0.7px), calc(-50% + var(--my, 0) * 0.7px), 0) rotate(var(--r)) scale(1);
+    mix-blend-mode: screen;
+}
+
+.polaroid-memory::before {
+    background-position: center;
+    filter: blur(1px);
+}
+
+.intimate-line {
+    position: absolute;
+    left: 10vw;
+    top: 20vh;
+    width: min(560px, 78vw);
+    color: rgba(248, 243, 235, 0.68);
+    opacity: clamp(0, calc((var(--scroll) - 0.61) * 2), 0.72);
+    filter: blur(calc(max(0, 0.82 - var(--scroll)) * 7px));
+    text-shadow: 0 0 42px rgba(248, 243, 235, 0.13);
+}
+
+.intimate-line .whisper-type {
+    font-size: clamp(2.5rem, 7vw, 6rem);
+}
+
+.afterglow {
+    position: absolute;
+    inset: 0;
+    z-index: 13;
+    opacity: calc(var(--rsvp-opacity, 0) * 0.7);
+    background:
+        radial-gradient(ellipse at 50% 80%, rgba(232, 106, 36, 0.18), transparent 46%),
+        linear-gradient(180deg, transparent, rgba(1, 1, 2, 0.55));
+    mix-blend-mode: screen;
+}
+
+.memory-beat {
+    position: absolute;
+    inset: 0;
+    opacity: var(--beat-opacity, 0);
+    transform: translate3d(0, calc((1 - var(--beat-opacity, 0)) * 4vh), 0);
+    will-change: opacity, transform;
+}
+
+.memory-beat.alt {
+    display: block;
+}
+
+.beat-frame {
+    --img: url("/assets/nightlife leaks.png");
+    --frame-x: 0%;
+    --frame-y: 0%;
+    position: absolute;
+    inset: -7vh -7vw;
+    z-index: 0;
+    overflow: hidden;
+    background-image: var(--img);
+    background-size: 200% 200%;
+    background-position: var(--frame-x) var(--frame-y);
+    opacity: 0.34;
+    filter: saturate(1.06) contrast(1.16) brightness(0.68) blur(0.2px);
+    mix-blend-mode: color-dodge;
+    transform: rotate(var(--beat-rotate, -2deg)) scale(1.06);
+    transition: filter 520ms ease, opacity 520ms ease, transform 520ms ease;
+}
+
+.beat-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 48% 46%, rgba(248, 243, 235, 0.18), transparent 32%),
+        linear-gradient(120deg, transparent, rgba(232, 106, 36, 0.2), transparent 64%);
+    mix-blend-mode: screen;
+}
+
+.beat-copy {
+    position: absolute;
+    z-index: 1;
+    width: min(520px, 42vw);
+    color: rgba(248, 243, 235, 0.62);
+    text-shadow:
+        0 0 16px rgba(1, 1, 2, 0.92),
+        0 0 42px rgba(1, 1, 2, 0.72);
+}
+
+.beat-copy .meta {
+    margin-bottom: 1rem;
+    color: rgba(232, 106, 36, 0.44);
+}
+
+.beat-copy .whisper-type {
+    font-size: clamp(2.35rem, 4.8vw, 5.1rem);
+}
+
+.memory-beat.one {
+    --beat-opacity: var(--beat-one, 0);
+    --beat-rotate: -2deg;
+}
+
+.memory-beat.two {
+    --beat-opacity: var(--beat-two, 0);
+    --beat-rotate: 2.4deg;
+}
+
+.memory-beat.three {
+    --beat-opacity: var(--beat-three, 0);
+    --beat-rotate: -1.4deg;
+}
+
+.memory-beat.four {
+    --beat-opacity: var(--beat-four, 0);
+    --beat-rotate: 2deg;
+}
+
+.memory-beat.one .beat-copy { right: 9vw; top: 34vh; text-align: right; }
+.memory-beat.two .beat-copy { left: 8vw; top: 42vh; text-align: left; }
+.memory-beat.three .beat-copy { right: 8vw; top: 23vh; text-align: right; }
+.memory-beat.four .beat-copy { left: 8vw; top: 28vh; text-align: left; }
+
+.memory-beat.one .beat-frame { --frame-x: 0%; --frame-y: 0%; }
+.memory-beat.two .beat-frame { --frame-x: 100%; --frame-y: 0%; }
+.memory-beat.three .beat-frame { --frame-x: 0%; --frame-y: 100%; }
+.memory-beat.four .beat-frame { --frame-x: 100%; --frame-y: 100%; }
+
+.rsvp-plane {
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    padding: 7vw;
+    overflow: hidden;
+    isolation: isolate;
+    opacity: var(--rsvp-opacity, 0);
+    transform: translateY(calc((1 - var(--rsvp-opacity, 0)) * 20vh));
+}
+
+.rsvp-plane::before,
+.rsvp-plane::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.rsvp-plane::before {
+    z-index: -2;
+    background-image:
+        linear-gradient(180deg, rgba(1, 1, 2, 0.18), rgba(1, 1, 2, 0.42) 48%, rgba(1, 1, 2, 0.74)),
+        radial-gradient(ellipse at 50% 52%, transparent 0 38%, rgba(1, 1, 2, 0.62) 86%),
+        url("/assets/ibiza memories.png");
+    background-size: cover;
+    background-position: center;
+    filter: saturate(0.94) contrast(1.08) brightness(0.7);
+    transform: scale(1.04);
+    transform-origin: center;
+}
+
+.rsvp-plane::after {
+    z-index: -1;
+    background:
+        radial-gradient(circle at 48% 42%, rgba(232, 106, 36, 0.16), transparent 32%),
+        linear-gradient(90deg, rgba(1, 1, 2, 0.68), transparent 28%, transparent 72%, rgba(1, 1, 2, 0.68));
+    mix-blend-mode: multiply;
+}
+
+.rsvp-inner {
+    position: relative;
+    z-index: 1;
+    width: min(620px, 100%);
+    text-align: center;
+}
+
+.rsvp-plane .meta {
+    margin-bottom: 1.6rem;
+    color: rgba(232, 106, 36, 0.7);
+    text-shadow: 0 0 24px rgba(232, 106, 36, 0.24);
+}
+
+.rsvp-title {
+    color: rgba(248, 243, 235, 0.78);
+    font-size: clamp(2.5rem, 7vw, 5.8rem);
+    text-shadow: 0 0 42px rgba(248, 243, 235, 0.1);
+}
+
+.memory-form {
+    margin-top: clamp(2.8rem, 8vh, 5rem);
+}
+
+.field {
+    position: relative;
+    margin-bottom: clamp(2rem, 7vh, 4.5rem);
+}
+
+.memory-input {
+    width: 100%;
+    min-height: 74px;
+    border: 0;
+    border-bottom: 1px solid rgba(248, 243, 235, 0.18);
+    background: transparent;
+    color: var(--white);
+    font-family: "Playfair Display", serif;
+    font-size: clamp(2rem, 5vw, 4.2rem);
+    font-style: italic;
+    text-align: center;
+    outline: none;
+    opacity: 0.54;
+    transition: color 900ms ease, opacity 900ms ease, border-color 900ms ease, text-shadow 900ms ease;
+}
+
+.memory-input::placeholder {
+    color: rgba(248, 243, 235, 0.3);
+}
+
+.memory-input:focus {
+    border-color: rgba(232, 106, 36, 0.58);
+    color: rgba(232, 106, 36, 0.92);
+    opacity: 1;
+    text-shadow: 0 0 34px rgba(232, 106, 36, 0.28);
+}
+
+.memory-submit {
+    position: relative;
+    width: min(420px, 100%);
+    min-height: 64px;
+    border: 1px solid rgba(248, 243, 235, 0.2);
+    background: transparent;
+    color: rgba(248, 243, 235, 0.62);
+    font-size: 0.72rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    overflow: hidden;
+    transition: border-color 700ms ease, color 700ms ease;
+}
+
+.memory-submit::before {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    background: linear-gradient(90deg, transparent, rgba(248, 243, 235, 0.88), rgba(232, 106, 36, 0.62), transparent);
+    opacity: 0;
+    transform: translateX(-85%);
+    filter: blur(10px);
+    transition: opacity 700ms ease, transform 1100ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.memory-submit:hover,
+.memory-submit:focus-visible {
+    border-color: rgba(248, 243, 235, 0.66);
+    color: var(--black);
+}
+
+.memory-submit:hover::before,
+.memory-submit:focus-visible::before {
+    opacity: 1;
+    transform: translateX(20%);
+}
+
+.memory-submit span {
+    position: relative;
+    z-index: 1;
+    mix-blend-mode: difference;
+}
+
+.closing-line {
+    margin-top: clamp(4rem, 12vh, 8rem);
+    color: rgba(248, 243, 235, 0.25);
+    line-height: 1.8;
+}
+
+.phase-word {
+    position: absolute;
+    right: 5vw;
+    bottom: 9vh;
+    color: rgba(248, 243, 235, 0.12);
+    font-family: Oswald, sans-serif;
+    font-size: clamp(3rem, 10vw, 9rem);
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0;
+    filter: blur(9px);
+    transform: translateY(16px);
+    transition: opacity 1400ms ease, filter 1400ms ease, transform 1400ms ease;
+}
+
+.phase-word.active {
+    opacity: 1;
+    filter: blur(2px);
+    transform: translateY(0);
+}
+
+body.rsvp-quiet .fragment-field,
+body.rsvp-quiet .chaos-type,
+body.rsvp-quiet .crowd-wash,
+body.rsvp-quiet .texture-wash {
+    opacity: 0.08;
+    filter: blur(18px) saturate(0.5) brightness(0.42);
+}
+
+body.rsvp-quiet .projected-crowd,
+body.rsvp-quiet .air-texture {
+    opacity: 0.08;
+}
+
+body.rsvp-quiet .depth-fog {
+    opacity: 0.56;
+}

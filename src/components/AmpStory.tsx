@@ -16,13 +16,12 @@ const isMobile = () => {
     || (window.innerWidth <= 768);
 };
 
+
 // Styled components with Framer Motion
 const StoryContainer = styled(motion.div)`
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
   z-index: 9999;
   display: flex;
@@ -30,9 +29,6 @@ const StoryContainer = styled(motion.div)`
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  position: static !important;
-  min-height: 100vh;
-  height: auto;
   touch-action: pan-y;
 `;
 
