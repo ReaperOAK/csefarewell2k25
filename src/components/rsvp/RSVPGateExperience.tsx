@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import '../../app/rsvp.css';
@@ -13,6 +13,11 @@ export function RSVPGateExperience() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Gate visibility is React state — so React never re-inserts it on re-render
+  const [gateVisible, setGateVisible] = useState(true);
+  // Track whether archive has been opened (body.live)
+  const [memoryLive, setMemoryLive] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +33,49 @@ export function RSVPGateExperience() {
     finally { setSubmitting(false); }
   };
 
+  // Stable callback so useEffect can call it without stale closure
+  const igniteGate = useCallback(() => {
+    const gate = document.getElementById('gate');
+    const filmBurn = document.getElementById('filmBurn');
+    if (!gate) return;
+
+    document.body.classList.remove('locked');
+    document.body.classList.add('live');
+    setMemoryLive(true);
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    window.dispatchEvent(new Event('scroll'));
+
+    gate.classList.add('leaving');
+    if (filmBurn) {
+      filmBurn.classList.remove('bleed');
+      void (filmBurn as HTMLElement).offsetWidth;
+      filmBurn.classList.add('bleed');
+    }
+
+    // Wait for leaving animation, then fully unmount via React state
+    setTimeout(() => {
+      setGateVisible(false);   // React unmounts the gate — no re-render can bring it back
+    }, 780);
+  }, []);
+
+  // Apply / remove body classes based on state
+  useEffect(() => {
+    const body = document.body;
+    if (memoryLive) {
+      body.classList.remove('locked');
+      body.classList.add('live');
+    } else {
+      body.classList.add('locked');
+      body.classList.remove('live');
+    }
+    return () => {
+      body.classList.remove('locked', 'live');
+    };
+  }, [memoryLive]);
+
   useEffect(() => {
     const root = document.documentElement;
     const body = document.body;
-    const gate = document.getElementById('gate');
-    const openMemory = document.getElementById('openMemory');
     const filmBurn = document.getElementById('filmBurn');
     const cursorDot = document.getElementById('cursorDot');
     const cursorAura = document.getElementById('cursorAura');
@@ -80,7 +123,11 @@ export function RSVPGateExperience() {
       root.style.setProperty('--beat-two', opacityWindow(progress,0.37,0.42,0.48,0.54).toFixed(4));
       root.style.setProperty('--beat-three', opacityWindow(progress,0.56,0.61,0.67,0.73).toFixed(4));
       root.style.setProperty('--beat-four', opacityWindow(progress,0.75,0.8,0.86,0.9).toFixed(4));
-      root.style.setProperty('--fragment-opacity', Math.max(opacityWindow(progress,0.18,0.23,0.29,0.35)*0.38, opacityWindow(progress,0.37,0.42,0.48,0.54)*0.82, opacityWindow(progress,0.56,0.61,0.67,0.73)*0.42).toFixed(4));
+      root.style.setProperty('--fragment-opacity', Math.max(
+        opacityWindow(progress,0.18,0.23,0.29,0.35)*0.38,
+        opacityWindow(progress,0.37,0.42,0.48,0.54)*0.82,
+        opacityWindow(progress,0.56,0.61,0.67,0.73)*0.42
+      ).toFixed(4));
       root.style.setProperty('--intimate-opacity', opacityWindow(progress,0.91,0.925,0.94,0.955).toFixed(4));
       root.style.setProperty('--rsvp-opacity', clamp((progress-0.965)/0.035,0,1).toFixed(4));
       body.classList.toggle('rsvp-quiet', progress > 0.9);
@@ -121,22 +168,10 @@ export function RSVPGateExperience() {
       rafId = requestAnimationFrame(render);
     }
 
-    function igniteMemory() {
-      if (!gate) return;
-      gate.classList.add('leaving');
-      if (filmBurn) { filmBurn.classList.remove('bleed'); void (filmBurn as HTMLElement).offsetWidth; filmBurn.classList.add('bleed'); }
-      setTimeout(() => {
-        if (gate) (gate as HTMLElement).style.display = 'none';
-        body.classList.remove('locked'); body.classList.add('live');
-        updateScrollState();
-      }, 780);
-    }
-
     const onMouseMove = (e: MouseEvent) => { mouseX = e.clientX; mouseY = e.clientY; setCursor(mouseX, mouseY); };
     document.addEventListener('mousemove', onMouseMove, { passive: true });
     window.addEventListener('scroll', updateScrollState, { passive: true });
     window.addEventListener('resize', updateScrollState);
-    openMemory?.addEventListener('click', igniteMemory);
 
     document.querySelectorAll('.interactable').forEach(el => {
       el.addEventListener('mouseenter', () => {
@@ -147,7 +182,6 @@ export function RSVPGateExperience() {
       });
     });
 
-    body.classList.add('locked');
     setCursor(mouseX, mouseY);
     updateScrollState();
     rafId = requestAnimationFrame(render);
@@ -157,9 +191,21 @@ export function RSVPGateExperience() {
       window.removeEventListener('scroll', updateScrollState);
       window.removeEventListener('resize', updateScrollState);
       cancelAnimationFrame(rafId);
-      body.classList.remove('locked','live','rsvp-quiet');
     };
-  }, []);
+  }, [igniteGate]);
+
+  // Trigger scroll state update after gate unmounts so CSS vars are fresh
+  useEffect(() => {
+    if (!gateVisible) {
+      // Small rAF delay to let the DOM settle after React unmounts the gate
+      requestAnimationFrame(() => {
+        const root = document.documentElement;
+        const maxScroll = Math.max(1, root.scrollHeight - window.innerHeight);
+        const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+        root.style.setProperty('--scroll', progress.toFixed(4));
+      });
+    }
+  }, [gateVisible]);
 
   return (
     <>
@@ -182,18 +228,22 @@ export function RSVPGateExperience() {
       <div className="film-burn" id="filmBurn" aria-hidden="true" />
       <div className="vignette" aria-hidden="true" />
       <div className="grain" aria-hidden="true" />
-      <div className="cursor-aura" id="cursorAura" aria-hidden="true" />
-      <div className="cursor-dot" id="cursorDot" aria-hidden="true" />
+      {/* cursor-aura needs pointer-events:none to never block wheel scroll */}
+      <div className="cursor-aura" id="cursorAura" aria-hidden="true" style={{ pointerEvents: 'none' }} />
+      <div className="cursor-dot" id="cursorDot" aria-hidden="true" style={{ pointerEvents: 'none' }} />
 
-      <div id="gate" ref={containerRef}>
-        <div className="intro-mosaic" aria-hidden="true">
-          {[...Array(9)].map((_,i) => <span key={i} className="intro-tile" />)}
+      {/* Gate is conditionally rendered — when gateVisible=false React fully removes it from DOM */}
+      {gateVisible && (
+        <div id="gate" ref={containerRef}>
+          <div className="intro-mosaic" aria-hidden="true">
+            {[...Array(9)].map((_,i) => <span key={i} className="intro-tile" />)}
+          </div>
+          <div className="gate-inner">
+            <p className="ritual-text">Some nights do not end. They keep projecting.</p>
+            <button className="trigger-btn interactable" type="button" id="openMemory" onClick={igniteGate}>Open the archive</button>
+          </div>
         </div>
-        <div className="gate-inner">
-          <p className="ritual-text">Some nights do not end. They keep projecting.</p>
-          <button className="trigger-btn interactable" type="button" id="openMemory">Open the archive</button>
-        </div>
-      </div>
+      )}
 
       <main id="memory-space" aria-label="IBIZA farewell memory experience">
         <div className="sticky-stage">

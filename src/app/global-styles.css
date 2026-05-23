@@ -36,9 +36,15 @@ body.locked {
   overflow: hidden;
 }
 
+body.live {
+  overflow-y: auto !important;
+  touch-action: pan-y pinch-zoom;
+}
+
 body.live #memory-space {
   opacity: 1 !important;
   visibility: visible !important;
+  pointer-events: auto;
 }
 
 body.rsvp-quiet .fragment-field,
