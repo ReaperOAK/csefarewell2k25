@@ -33,18 +33,14 @@ export function RSVPGateExperience() {
     finally { setSubmitting(false); }
   };
 
-  // Stable callback so useEffect can call it without stale closure
+  // Matches test-backup.html igniteMemory() exactly:
+  // body.live is only applied AFTER the 780ms gate-leave animation.
   const igniteGate = useCallback(() => {
     const gate = document.getElementById('gate');
     const filmBurn = document.getElementById('filmBurn');
     if (!gate) return;
 
-    document.body.classList.remove('locked');
-    document.body.classList.add('live');
-    setMemoryLive(true);
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    window.dispatchEvent(new Event('scroll'));
-
+    // Start gate leave animation + film burn
     gate.classList.add('leaving');
     if (filmBurn) {
       filmBurn.classList.remove('bleed');
@@ -52,26 +48,26 @@ export function RSVPGateExperience() {
       filmBurn.classList.add('bleed');
     }
 
-    // Wait for leaving animation, then fully unmount via React state
+    // After animation: unmount gate, unlock scroll, update CSS vars — exact original order
     setTimeout(() => {
-      setGateVisible(false);   // React unmounts the gate — no re-render can bring it back
+      setGateVisible(false);
+      document.body.classList.remove('locked');
+      document.body.classList.add('live');
+      setMemoryLive(true);
+      // Let the DOM settle, then fire scroll state so CSS vars reflect current scrollY
+      requestAnimationFrame(() => {
+        window.dispatchEvent(new Event('scroll'));
+      });
     }, 780);
   }, []);
 
-  // Apply / remove body classes based on state
+  // Apply locked class on initial mount; live is managed by igniteGate directly
   useEffect(() => {
-    const body = document.body;
-    if (memoryLive) {
-      body.classList.remove('locked');
-      body.classList.add('live');
-    } else {
-      body.classList.add('locked');
-      body.classList.remove('live');
-    }
+    document.body.classList.add('locked');
     return () => {
-      body.classList.remove('locked', 'live');
+      document.body.classList.remove('locked', 'live');
     };
-  }, [memoryLive]);
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;

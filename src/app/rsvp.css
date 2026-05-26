@@ -432,8 +432,13 @@ body.live #memory-space {
     position: sticky;
     top: 0;
     height: 100vh;
-    overflow: hidden;
+    /* overflow:clip clips children visually without creating a scroll container,
+       so mouse-wheel events always bubble up to the window scroll handler. */
+    overflow: clip;
     isolation: isolate;
+    /* pointer-events:none ensures the stage never swallows wheel/touch events.
+       Interactive children (e.g. .rsvp-inner) override this with pointer-events:auto. */
+    pointer-events: none;
 }
 
 .memory-plane,
@@ -446,6 +451,7 @@ body.live #memory-space {
 .phase-words {
     position: absolute;
     inset: 0;
+    pointer-events: none;
 }
 
 .memory-plane {
@@ -971,6 +977,7 @@ body.live #memory-space {
     z-index: 1;
     width: min(620px, 100%);
     text-align: center;
+    pointer-events: auto;
 }
 
 .rsvp-plane .meta {
