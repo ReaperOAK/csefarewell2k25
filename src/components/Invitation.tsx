@@ -1,777 +1,382 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import styled from 'styled-components';
 import { db } from '../firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { Invitee } from '../types';
-import ShapeCanvas from './common/ShapeCanvas';
-import { encodeImageUrl } from '../utils/imageUtils';
+import '../app/invite.css';
 
-// Mobile scroll-friendly container
-const PageWrapper = styled.div`
-  display: block;
-  width: 100%;
-  min-height: 100vh;
-  position: static;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-bottom: 80px; /* Add padding at bottom to ensure RSVP is visible */
-`;
-
-// Content container with static positioning for better scrolling
-const InvitationContainer = styled.div`
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 4rem 1rem 2rem; /* Increased top padding to account for nav buttons */
-  position: static;
-  overflow-x: hidden;
-  overflow-y: visible;
-  background-color: var(--bg);
-
-  @media (min-width: 768px) {
-    padding: 5rem 2rem 2rem;
-  }
-`;
-
-// Replace fixed-position buttons with absolute positioning
-const BackButton = styled(motion.button)`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: transparent;
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  padding: 0.4rem 0.8rem;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
-  cursor: pointer;
-  z-index: 20;
-  
-  @media (min-width: 768px) {
-    top: 20px;
-    left: 20px;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-  }
-  
-  /* Prevent any touch-related scrolling issues */
-  touch-action: manipulation;
-`;
-
-// Simplified card container
-const InvitationCard = styled(motion.div)`
-  max-width: 800px;
-  width: 100%;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-  text-align: center;
-  
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
-`;
-
-const PortraitFrame = styled(motion.div)`
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 2px solid var(--gold);
-  overflow: hidden;
-  margin-bottom: 2rem;
-  
-  @media (min-width: 768px) {
-    width: 200px;
-    height: 200px;
-  }
-`;
-
-const Portrait = styled.div<{ photoUrl: string }>`
-  width: 100%;
-  height: 100%;
-  background-image: ${props => {
-    // Ensure the photoUrl has a leading slash
-    const url = props.photoUrl && props.photoUrl.startsWith('/')
-      ? props.photoUrl
-      : props.photoUrl && !props.photoUrl.startsWith('http')
-        ? `/${props.photoUrl}`
-        : props.photoUrl;
-    return `url(${url})`;
-  }};
-  background-size: cover;
-  background-position: center;
-`;
-
-const NameBanner = styled(motion.div)`
-  position: relative;
-  padding: 0.6rem 1.5rem;
-  margin-bottom: 1.5rem;
-  
-  @media (min-width: 768px) {
-    padding: 0.6rem 3rem;
-    margin-bottom: 2rem;
-  }
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: var(--gold);
-    transform: translateY(-50%);
-    z-index: -1;
-  }
-`;
-
-const InviteeName = styled.h2`
-  font-family: 'Unbounded', sans-serif;
-  font-size: 24px;
-  color: white;
-  background-color: var(--bg);
-  padding: 0 1rem;
-  margin: 0;
-  display: inline-block;
-  
-  @media (min-width: 768px) {
-    font-size: 32px;
-  }
-`;
-
-const ScrollContainer = styled(motion.div)`
-  width: 90%;
-  max-width: 600px;
-  background-color: rgba(20, 20, 20, 0.7);
-  border-top: 1px solid var(--gold);
-  border-bottom: 1px solid var(--gold);
-  padding: 1.5rem 1rem;
-  margin-bottom: 2rem;
-  position: relative;
-  
-  @media (min-width: 768px) {
-    width: 80%;
-    padding: 2rem;
-  }
-  
-  &::before, &::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: var(--bg);
-    border: 1px solid var(--gold);
-    border-radius: 50%;
-  }
-  
-  &::before {
-    top: -10px;
-    left: calc(50% - 10px);
-  }
-  
-  &::after {
-    bottom: -10px;
-    left: calc(50% - 10px);
-  }
-`;
-
-const ScrollHeading = styled.h3`
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 1.2rem;
-  color: var(--crimson);
-  margin-bottom: 0.8rem;
-  
-  @media (min-width: 768px) {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-`;
-
-const ScrollContent = styled.div`
-  text-align: center;
-`;
-
-const EventTitle = styled.h1`
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 2rem;
-  background: linear-gradient(to right, var(--gold) 0%, #f5e7a3 50%, var(--gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin: 0.5rem 0;
-  
-  @media (min-width: 768px) {
-    font-size: 2.5rem;
-  }
-`;
-
-const EventDetails = styled.p`
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  color: var(--text);
-  margin: 0.5rem 0;
-`;
-
-const RSVPSection = styled(motion.div)`
-  width: 100%;
-  max-width: 400px;
-  margin-top: 3rem;
-  padding-top: 1rem;
-  
-  @media (min-width: 768px) {
-    margin-top: 3.5rem;
-  }
-`;
-
-const RSVPTitle = styled.h3`
-  font-family: 'Cinzel', serif;
-  font-size: 1.3rem;
-  color: var(--gold);
-  margin-bottom: 1rem;
-`;
-
-const RSVPButtonGroup = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  
-  @media (min-width: 768px) {
-    gap: 1rem;
-  }
-`;
-
-const RSVPButton = styled(motion.button)<{ $selected?: boolean }>`
-  position: relative;
-  width: 100px;
-  padding: 0.7rem 0;
-  background-color: ${props => props.$selected ? 'rgba(212, 175, 55, 0.2)' : 'transparent'};
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  font-family: 'Montserrat', sans-serif;
-  font-weight: ${props => props.$selected ? 'bold' : 'normal'};
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  
-  @media (min-width: 768px) {
-    width: 120px;
-    padding: 0.8rem 0;
-  }
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg, 
-      transparent, 
-      rgba(212, 175, 55, 0.2), 
-      transparent
-    );
-    transition: left 0.5s ease;
-  }
-  
-  &:hover::before {
-    left: 100%;
-  }
-  
-  &:hover {
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-    text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
-  }
-`;
-
-const SubmitButton = styled(motion.button)`
-  width: 100%;
-  padding: 0.8rem;
-  background-color: transparent;
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 1rem;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    background: rgba(212, 175, 55, 0.5);
-    opacity: 0;
-    border-radius: 100%;
-    transform: scale(1, 1) translate(-50%, -50%);
-    transform-origin: 50% 50%;
-  }
-  
-  &:hover {
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-    text-shadow: 0 0 5px rgba(212, 175, 55, 0.4);
-  }
-  
-  &:focus:not(:active)::after {
-    animation: ripple 1s ease-out;
-  }
-  
-  @keyframes ripple {
-    0% {
-      transform: scale(0, 0);
-      opacity: 0.5;
-    }
-    20% {
-      transform: scale(25, 25);
-      opacity: 0.3;
-    }
-    100% {
-      opacity: 0;
-      transform: scale(40, 40);
-    }
-  }
-`;
-
-const ResponseTextarea = styled.textarea`
-  width: 100%;
-  height: 80px;
-  padding: 0.7rem;
-  background-color: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--gold);
-  color: var(--text);
-  font-family: 'Montserrat', sans-serif;
-  resize: none;
-  font-size: 0.9rem;
-  
-  @media (min-width: 768px) {
-    height: 100px;
-    padding: 0.8rem;
-    font-size: 1rem;
-  }
-  
-  &:focus {
-    outline: none;
-    border-color: var(--gold);
-  }
-`;
-
-const ThankYouOverlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 50;
-  padding: 1rem;
-  text-align: center;
-  
-  @media (min-width: 768px) {
-    padding: 2rem;
-  }
-`;
-
-const ThankYouMessage = styled.h2`
-  font-family: 'Cinzel Decorative', serif;
-  font-size: 1.6rem;
-  color: var(--gold);
-  margin-bottom: 1rem;
-  
-  @media (min-width: 768px) {
-    font-size: 2rem;
-  }
-`;
-
-const ThankYouDetails = styled.p`
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  color: var(--text);
-  max-width: 600px;
-  margin-bottom: 1.5rem;
-  
-  @media (min-width: 768px) {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-  }
-`;
-
-const Invitation: React.FC = () => {
+export default function Invitation() {
   const params = useParams();
   const router = useRouter();
   const id = params?.id as string | undefined;
+
   const [invitee, setInvitee] = useState<Invitee | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [attending, setAttending] = useState<boolean | null>(null);
   const [response, setResponse] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [showThankYou, setShowThankYou] = useState(false);
-  
+  const [submitted, setSubmitted] = useState(false);
+
   useEffect(() => {
     const fetchInviteeData = async () => {
       try {
         setLoading(true);
-        
         if (!id) {
           setLoading(false);
           return;
         }
-        
+
         const inviteeDoc = await getDoc(doc(db, 'invitees', id));
-        
         if (inviteeDoc.exists()) {
           const inviteeData = { id: inviteeDoc.id, ...inviteeDoc.data() } as Invitee;
           setInvitee(inviteeData);
-          
           if (inviteeData.attending !== null) {
             setAttending(inviteeData.attending);
             setResponse(inviteeData.response || '');
+            setSubmitted(true);
           }
         } else {
-          setError('Invitation not found');
+          setError('Invitation not found in records.');
         }
       } catch (err) {
         console.error('Error loading invitation:', err);
-        setError('Failed to load invitation');
+        setError('Connection lost. Could not retrieve invitation.');
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchInviteeData();
   }, [id]);
-  
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
+    const cursorDot = document.getElementById('cursorDotInvite');
+    const cursorAura = document.getElementById('cursorAuraInvite');
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let auraX = mouseX;
+    let auraY = mouseY;
+    let rafId: number;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      root.style.setProperty('--cursor-x', `${mouseX}px`);
+      root.style.setProperty('--cursor-y', `${mouseY}px`);
+    };
+
+    const handleScroll = () => {
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+      root.style.setProperty('--scroll', progress.toFixed(4));
+    };
+
+    const render = () => {
+      auraX += (mouseX - auraX) * 0.08;
+      auraY += (mouseY - auraY) * 0.08;
+
+      if (cursorDot) {
+        cursorDot.style.left = `${mouseX}px`;
+        cursorDot.style.top = `${mouseY}px`;
+      }
+      if (cursorAura) {
+        cursorAura.style.left = `${auraX}px`;
+        cursorAura.style.top = `${auraY}px`;
+      }
+
+      rafId = requestAnimationFrame(render);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    rafId = requestAnimationFrame(render);
+
+    // Apply interactive hover animations to buttons/cards
+    const interactables = document.querySelectorAll('.interactable-invite');
+    interactables.forEach((el) => {
+      el.addEventListener('mouseenter', () => {
+        if (cursorAura) {
+          cursorAura.style.transform = 'translate(-50%, -50%) scale(1.4)';
+          cursorAura.style.borderColor = 'rgba(232, 106, 36, 0.74)';
+          cursorAura.style.background = 'rgba(232, 106, 36, 0.04)';
+        }
+      });
+      el.addEventListener('mouseleave', () => {
+        if (cursorAura) {
+          cursorAura.style.transform = 'translate(-50%, -50%) scale(1)';
+          cursorAura.style.borderColor = 'rgba(232, 106, 36, 0.34)';
+          cursorAura.style.background = 'transparent';
+        }
+      });
+    });
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(rafId);
+      body.classList.remove('rsvp-attending', 'rsvp-away');
+    };
+  }, [loading]);
+
+  // Handle class changes on body depending on selected state
+  useEffect(() => {
+    if (attending === true) {
+      document.body.classList.add('rsvp-attending');
+      document.body.classList.remove('rsvp-away');
+    } else if (attending === false) {
+      document.body.classList.add('rsvp-away');
+      document.body.classList.remove('rsvp-attending');
+    } else {
+      document.body.classList.remove('rsvp-attending', 'rsvp-away');
+    }
+  }, [attending]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (attending === null) {
-      return;
-    }
-    
+    if (attending === null || !id) return;
+
+    setSubmitting(true);
     try {
-      setSubmitting(true);
-      
-      if (id) {
-        await updateDoc(doc(db, 'invitees', id), {
-          attending,
-          response,
-          timestamp: Date.now()
-        });
-        
-        if (invitee) {
-          setInvitee({
-            ...invitee,
-            attending,
-            response
-          });
-        }
-      }
-      
-      setShowThankYou(true);
-      
-      setTimeout(() => {
-        setShowThankYou(false);
-      }, 5000);
+      await updateDoc(doc(db, 'invitees', id), {
+        attending,
+        response,
+        timestamp: Date.now(),
+      });
+      setSubmitted(true);
     } catch (err) {
       console.error('Error submitting RSVP:', err);
-      alert('Failed to submit your response. Please try again.');
+      alert('Memory could not be sealed. Try again.');
     } finally {
       setSubmitting(false);
     }
   };
-  
-  const goBack = () => {
-    router.push('/');
-  };
-  
+
   const defaultPhoto = '/fp/skull.png';
-  
+  const displayPhoto = invitee?.photoUrl || defaultPhoto;
+  const displayName = invitee ? invitee.name : 'Archisman';
+
   if (loading) {
     return (
-      <InvitationContainer>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          style={{ textAlign: 'center' }}
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-            style={{
-              width: '60px',
-              height: '60px',
-              borderRadius: '50%',
-              border: '3px solid rgba(212, 175, 55, 0.3)',
-              borderTopColor: 'var(--gold)',
-              margin: '0 auto 1rem'
-            }}
-          />
-          <h2>Loading your invitation...</h2>
-        </motion.div>
-      </InvitationContainer>
+      <div style={{
+        minHeight: '100vh',
+        display: 'grid',
+        placeItems: 'center',
+        background: '#010102',
+        color: '#f8f3eb',
+        fontFamily: "'Playfair Display', serif"
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '2px solid rgba(248, 243, 235, 0.1)',
+            borderTopColor: '#e86a24',
+            borderRadius: '50%',
+            animation: 'practicalFlicker 1.5s linear infinite',
+            margin: '0 auto 1.5rem'
+          }} />
+          <p style={{ letterSpacing: '0.2em', textTransform: 'uppercase', fontSize: '0.8rem', opacity: 0.6 }}>Summoning the memory...</p>
+        </div>
+      </div>
     );
   }
-  
+
   if (error) {
     return (
-      <InvitationContainer>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          style={{ textAlign: 'center' }}
-        >
-          <h2>{error}</h2>
-          <SubmitButton
-            onClick={goBack}
-            whileHover={{ scale: 1.05, backgroundColor: 'rgba(212, 175, 55, 0.1)' }}
-            whileTap={{ scale: 0.98 }}
+      <div style={{
+        minHeight: '100vh',
+        display: 'grid',
+        placeItems: 'center',
+        background: '#010102',
+        color: '#f8f3eb',
+        fontFamily: "'Playfair Display', serif",
+        padding: '2rem',
+        textAlign: 'center'
+      }}>
+        <div>
+          <h2 style={{ fontSize: '1.8rem', fontStyle: 'italic', marginBottom: '1.5rem' }}>{error}</h2>
+          <button
+            onClick={() => router.push('/')}
+            style={{
+              padding: '0.8rem 1.6rem',
+              background: 'transparent',
+              border: '1px solid rgba(248, 243, 235, 0.2)',
+              color: '#f8f3eb',
+              textTransform: 'uppercase',
+              fontSize: '0.7rem',
+              letterSpacing: '0.2em',
+              cursor: 'pointer'
+            }}
           >
             Return Home
-          </SubmitButton>
-        </motion.div>
-      </InvitationContainer>
+          </button>
+        </div>
+      </div>
     );
   }
-  
-  const encodedPhotoUrl = encodeImageUrl(invitee?.photoUrl || defaultPhoto);
-  
+
   return (
-    <PageWrapper>
-      <ShapeCanvas shapeCount={8} />
-      
-      <BackButton
-        onClick={goBack}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        ← Back
-      </BackButton>
+    <>
+      <div className="air-texture" aria-hidden="true">
+        {[...Array(9)].map((_, i) => (
+          <span key={i} className="air-frame" />
+        ))}
+      </div>
+      <div className="ambient-lights" aria-hidden="true">
+        <span className="shore-glow" />
+        <span className="sodium-glow" />
+        <span className="violet-glow" />
+      </div>
+      <div className="cursor-dot-invite" id="cursorDotInvite" aria-hidden="true" />
+      <div className="cursor-aura-invite" id="cursorAuraInvite" aria-hidden="true" />
 
-      <InvitationContainer>
-        <InvitationCard
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <PortraitFrame
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
-          >
-            <Portrait
-              photoUrl={encodedPhotoUrl}
-            />
-          </PortraitFrame>
-          
-          <NameBanner
-            initial={{ x: -100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-          >
-            <InviteeName>
-              {invitee ? invitee.name : 'Distinguished Guest'}
-            </InviteeName>
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: '100%' }}
-              transition={{ delay: 1, duration: 1.5 }}
-              style={{ 
-                height: '2px', 
-                background: 'linear-gradient(to right, transparent, var(--gold), transparent)',
-                marginTop: '8px' 
-              }}
-            />
-          </NameBanner>
-          
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.1, duration: 0.8, type: "spring" }}
-            style={{
-              fontSize: '28px',
-              color: 'var(--gold)',
-              margin: '-10px 0 15px',
-              fontFamily: "'Cinzel Decorative', serif"
-            }}
-          >
-            ✧ ✦ ✧
-          </motion.div>
-          
-          <ScrollContainer
-            initial={{ scaleY: 0, opacity: 0 }}
-            animate={{ scaleY: 1, opacity: 1 }}
-            transition={{ delay: 1.2, duration: 1.2 }}
-          >
-            <ScrollContent>
-              <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 2, duration: 0.8 }}
-              >
-                <ScrollHeading>You Are Summoned</ScrollHeading>
-              </motion.div>
-              
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 2.3, duration: 0.8, type: "spring" }}
-              >
-                <EventTitle>OBLIVION</EventTitle>
-              </motion.div>
-              
-              <motion.div
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 2.7, duration: 0.6 }}
-              >
-                <EventDetails>CSE Farewell 2025</EventDetails>
-              </motion.div>
-              
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 3, duration: 0.6 }}
-              >
-                <EventDetails style={{ fontStyle: 'italic' }}>May 17 | STCET Dias</EventDetails>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 3.3, duration: 1 }}
-                style={{
-                  marginTop: '20px',
-                  padding: '0 20px',
-                  fontSize: '0.9rem',
-                  fontStyle: 'italic',
-                  color: 'rgba(255, 255, 255, 0.7)'
+      <main className="page-shell">
+        <section className="hero" aria-label="Personal Farewell Invitation">
+          <div className="hero-copy">
+            <p className="eyebrow">Personal Farewell Invitation</p>
+            <div className="event-title">
+              <h1 className="invite-name">{displayName}</h1>
+              <p className="hero-line">A farewell by the shore, after dark.</p>
+            </div>
+            <p className="hero-note">
+              We started in the quiet labs and we finish under the shoreline neon. This is your personal invitation to step through the gate one last time before the signal drops.
+            </p>
+          </div>
+
+          <div className="portrait-wrap">
+            <div className="portrait-frame">
+              <img
+                className="invitee-photo"
+                src={displayPhoto}
+                alt={displayName}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = defaultPhoto;
                 }}
-              >
-                "Embrace the end, for in endings we celebrate the journey that was"
-              </motion.div>
-            </ScrollContent>
-          </ScrollContainer>
-          
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 1, 0.5, 1] }}
-            transition={{ delay: 4, duration: 3, repeat: Infinity, repeatType: "reverse" }}
-            style={{
-              width: '100%',
-              maxWidth: '300px',
-              height: '1px',
-              background: 'linear-gradient(to right, transparent, var(--gold), transparent)',
-              margin: '10px 0 25px'
-            }}
-          />
-          
-          <RSVPSection
-            id="rsvp"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 4.2, duration: 0.5 }}
-          >
-            <form onSubmit={handleSubmit}>
-              <RSVPTitle>Will you attend?</RSVPTitle>
-              
-              <RSVPButtonGroup>
-                <RSVPButton
-                  type="button"
-                  $selected={attending === true}
-                  onClick={() => setAttending(true)}
-                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(212, 175, 55, 0.1)' }}
-                  whileTap={{ scale: 0.95 }}
-                  animate={attending === null ? { scale: [1, 1.05, 1] } : {}}
-                  transition={attending === null ? { 
-                    repeat: Infinity, 
-                    repeatDelay: 1 
-                  } : {}}
-                >
-                  Yes
-                </RSVPButton>
-                
-                <RSVPButton
-                  type="button"
-                  $selected={attending === false}
-                  onClick={() => setAttending(false)}
-                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(212, 175, 55, 0.1)' }}
-                  whileTap={{ scale: 0.95 }}
-                  animate={attending === null ? { scale: [1, 1.05, 1] } : {}}
-                  transition={attending === null ? { 
-                    repeat: Infinity, 
-                    repeatDelay: 1,
-                    delay: 0.5
-                  } : {}}
-                >
-                  No
-                </RSVPButton>
-              </RSVPButtonGroup>
-              
-              <ResponseTextarea
-                placeholder="Leave a message (optional)"
-                value={response}
-                onChange={(e) => setResponse(e.target.value)}
               />
-              
-              <SubmitButton
-                type="submit"
-                disabled={attending === null || submitting}
-                whileHover={{ scale: !submitting ? 1.02 : 1, backgroundColor: !submitting ? 'rgba(212, 175, 55, 0.1)' : 'transparent' }}
-                whileTap={{ scale: !submitting ? 0.98 : 1 }}
-              >
-                {submitting ? 'Submitting...' : invitee?.attending !== null ? 'Update Response' : 'Submit'}
-              </SubmitButton>
-            </form>
-          </RSVPSection>
-        </InvitationCard>
-      </InvitationContainer>
-      
-      <AnimatePresence>
-        {showThankYou && (
-          <ThankYouOverlay
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-          >
-            <ThankYouMessage>Thank You!</ThankYouMessage>
-            <ThankYouDetails>
-              {attending 
-                ? 'We look forward to your presence at OBLIVION. Prepare for a night of unforgettable memories.' 
-                : 'We understand and appreciate your response. Your presence will be missed.'}
-            </ThankYouDetails>
-            <SubmitButton
-              onClick={() => setShowThankYou(false)}
-              whileHover={{ scale: 1.05, backgroundColor: 'rgba(212, 175, 55, 0.1)' }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Close
-            </SubmitButton>
-          </ThankYouOverlay>
-        )}
-      </AnimatePresence>
-    </PageWrapper>
-  );
-};
+              <div className="portrait-caption">
+                <p className="eyebrow" style={{ color: '#e86a24', marginBottom: '0.2rem' }}>Invitee Portrait</p>
+                <p style={{ fontSize: '0.62rem', letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.6 }}>Archived Code: {id ? id.substring(0, 8) : '00000000'}</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-export default Invitation;
+        <section className="content-section" aria-labelledby="details-title">
+          <div className="event-details">
+            <div>
+              <p className="section-kicker">The Ritual</p>
+              <h2 className="section-title" id="details-title">A night designed to be remembered.</h2>
+              <p className="event-intro" style={{ marginTop: '2rem' }}>
+                Dress in code, speak in memories, and let the beach club bass wash over everything we left behind. Some nights stay projected forever.
+              </p>
+            </div>
+            <div className="detail-list">
+              <div className="detail-row">
+                <span className="detail-label">The Signal</span>
+                <span className="detail-value">CSE Farewell 2K25</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">The Date</span>
+                <span className="detail-value">Friday, 30 May</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">The Arena</span>
+                <span className="detail-value">Ibiza Beach Club</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">The Time</span>
+                <span className="detail-value">7:30 PM onwards</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Dress Protocol</span>
+                <span className="detail-value">Black, linen, shimmer</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="content-section rsvp-section" aria-labelledby="rsvp-title">
+          <div className="rsvp-header">
+            <div>
+              <p className="section-kicker">Seal the response</p>
+              <h2 className="section-title" id="rsvp-title">Are you stepping through the gate?</h2>
+            </div>
+            <p className="rsvp-note">
+              Select your path. Your response will seal the light trace left in the final yearbook.
+            </p>
+          </div>
+
+          <form className="rsvp-form" onSubmit={handleSubmit}>
+            <div className="choice-group">
+              <button
+                type="button"
+                className={`choice-card interactable-invite${attending === true ? ' is-selected' : ''}`}
+                data-attendance="yes"
+                onClick={() => setAttending(true)}
+              >
+                <span className="choice-meta">Step In</span>
+                <span className="choice-title">Yes, I will be there.</span>
+                <span className="choice-copy">I will carry my neon and confirm my space in the final yearbook.</span>
+              </button>
+
+              <button
+                type="button"
+                className={`choice-card interactable-invite${attending === false ? ' is-selected' : ''}`}
+                data-attendance="no"
+                onClick={() => setAttending(false)}
+              >
+                <span className="choice-meta">Fade Out</span>
+                <span className="choice-title">No, I will miss it.</span>
+                <span className="choice-copy">I will project my memory from afar but cannot seal it in person.</span>
+              </button>
+            </div>
+
+            <div className={`message-panel${attending !== null ? ' is-open' : ''}`}>
+              <div className="message-inner">
+                <label className="eyebrow message-label" htmlFor="guestMessage">Write a final trace (optional)</label>
+                <textarea
+                  id="guestMessage"
+                  className="message-field"
+                  placeholder="Leave a message for the yearbook..."
+                  value={response}
+                  onChange={(e) => setResponse(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="submit-row">
+              <button
+                type="submit"
+                className="submit-invite interactable-invite"
+                disabled={attending === null || submitting}
+              >
+                {submitting ? 'Sealing...' : submitted ? 'Update Response' : 'Seal response'}
+              </button>
+              <p className="status-line" id="statusMessage">
+                {submitted ? '✦ RESPONSE RECORDED IN ARCHIVE' : '✧ AWAITING DECK COMMANDS'}
+              </p>
+            </div>
+          </form>
+
+          <div className={`confirmation${submitted ? ' is-visible' : ''}`} id="confirmationBox" style={{ marginTop: '4rem' }}>
+            <h3 className="confirmation-title">
+              {attending ? 'Your projection is confirmed.' : 'Your signal has faded.'}
+            </h3>
+            <p className="confirmation-copy">
+              {attending
+                ? 'Your slot in the digital archive and the real beach club beachside tables has been officially written. See you in the lights.'
+                : 'Your response has been logged. We will remember you in the noise. May your signals remain clear.'}
+            </p>
+          </div>
+        </section>
+      </main>
+    </>
+  );
+}

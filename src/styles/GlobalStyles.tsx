@@ -1,7 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Montserrat:wght@400;500;600&family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&display=swap');
   
   :root {
     --bg: #111111;
@@ -10,9 +9,7 @@ const GlobalStyle = createGlobalStyle`
     --text: #EEEEEE;
     --text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     --border-color: rgba(212, 175, 55, 0.3);
-    overflow-y: auto !important;
     touch-action: pan-y;
-    height: 100%;
   }
   
   * {
@@ -22,13 +19,11 @@ const GlobalStyle = createGlobalStyle`
   
   html,
   body {
-    height: 100%;
     width: 100%;
     position: static;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
   }
@@ -43,11 +38,8 @@ const GlobalStyle = createGlobalStyle`
   
   #root {
     position: static;
-    min-height: 100%;
-    height: auto;
     width: 100%;
     display: block;
-    overflow-y: auto !important;
   }
   
   h1, h2, h3, h4, h5, h6 {
