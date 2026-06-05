@@ -111,8 +111,27 @@ export function useScrollPhase(
     root.style.setProperty('--intimate-opacity', state.intimateOpacity.toFixed(4));
     root.style.setProperty('--rsvp-opacity', state.rsvpOpacity.toFixed(4));
 
-    // Toggle quiet class
+    // Update quiet class
     document.body.classList.toggle('rsvp-quiet', progress > 0.9);
+
+    // Update transition frames
+    const transitionFrames = container.querySelectorAll('.transition-frame');
+    if (transitionFrames.length > 0) {
+      const transitionPosition = transitionProgress * (transitionFrames.length - 1);
+      const transitionIndex = Math.floor(transitionPosition);
+      const transitionMix = transitionPosition - transitionIndex;
+
+      transitionFrames.forEach((frame, index) => {
+        const isCurrent = index === transitionIndex;
+        const isNext = index === transitionIndex + 1;
+        const currentOpacity = isCurrent ? 1 - transitionMix * 0.52 : 0;
+        const nextOpacity = isNext ? transitionMix * 0.92 : 0;
+        const frameOpacity = transitionOpacity > 0 ? Math.max(currentOpacity, nextOpacity) : 0;
+
+        (frame as HTMLElement).style.opacity = frameOpacity.toFixed(4);
+        frame.classList.toggle('is-live', frameOpacity > 0.08);
+      });
+    }
 
     // Phase change callback
     if (phase !== lastPhaseRef.current) {

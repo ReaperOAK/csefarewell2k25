@@ -3,13 +3,21 @@ import { getFirestore, Firestore } from 'firebase/firestore';
 import { getAuth, Auth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAm3GrtCxIrK6fU-K6TgVx46yamlFlV9Pc",
-  authDomain: "oblivion-3c64c.firebaseapp.com",
-  projectId: "oblivion-3c64c",
-  storageBucket: "oblivion-3c64c.firebasestorage.app",
-  messagingSenderId: "669343480639",
-  appId: "1:669343480639:web:3962f1d1a4f36c4c25f18a",
-  measurementId: "G-GTJR1LE68Z"
+
+  apiKey: "AIzaSyCuvZ2iQp6kK7FJ6yC7Z4oIwwURejzx_z4",
+
+  authDomain: "rishabhfarewell-99e6a.firebaseapp.com",
+
+  projectId: "rishabhfarewell-99e6a",
+
+  storageBucket: "rishabhfarewell-99e6a.firebasestorage.app",
+
+  messagingSenderId: "299027473981",
+
+  appId: "1:299027473981:web:f08df75a39193dd7042c54",
+
+  measurementId: "G-N6PFVDYKRR"
+
 };
 
 // SSR-safe Firebase initialization
