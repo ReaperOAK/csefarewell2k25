@@ -11,8 +11,10 @@ import { useScrollPhase } from '../../hooks/useScrollPhase';
 
 export function RSVPGateExperience() {
   const [gateOpen, setGateOpen] = useState(false);
-  const [cursorActive, setCursorActive] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
+  const [cursorActive, setCursorActive] = useState(true);
   const [currentPhase, setCurrentPhase] = useState(0);
+
   const filmBurnRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -32,17 +34,21 @@ export function RSVPGateExperience() {
   const { phaseNames } = useScrollPhase(containerRef, onPhaseChange);
 
   const handleEnter = () => {
+    setIsLeaving(true);
     triggerFilmBurn();
     setTimeout(() => {
       setGateOpen(true);
-      setCursorActive(true);
     }, 780);
   };
+
 
   useEffect(() => {
     // Initial state: body is locked
     if (!gateOpen) {
       document.body.classList.add('locked');
+    } else {
+      document.body.classList.remove('locked');
+      document.body.classList.add('live');
     }
     return () => {
       document.body.classList.remove('live', 'locked', 'rsvp-quiet');
@@ -196,7 +202,7 @@ export function RSVPGateExperience() {
       <AtmosphereLayer filmBurnRef={filmBurnRef} />
       <CustomCursor isActive={cursorActive} />
 
-      {!gateOpen && <GateScreen onEnter={handleEnter} />}
+      {!gateOpen && <GateScreen onEnter={handleEnter} isLeaving={isLeaving} />}
 
       <div
         ref={containerRef}
