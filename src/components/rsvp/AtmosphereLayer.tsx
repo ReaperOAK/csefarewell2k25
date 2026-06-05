@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 
 const styles = {
   grain: {
@@ -106,7 +106,7 @@ const styles = {
   filmGap: { position: 'fixed' as const, inset: 0, zIndex: 82.5 as any, pointerEvents: 'none' as const },
 };
 
-export function AtmosphereLayer({ filmBurnRef }: { filmBurnRef: React.RefObject<HTMLDivElement | null> }) {
+const _AtmosphereLayer = function AtmosphereLayer({ filmBurnRef }: { filmBurnRef: React.RefObject<HTMLDivElement | null> }) {
   return (
     <>
       <div className="projected-crowd" style={styles.projectedCrowd} aria-hidden="true" />
@@ -208,4 +208,6 @@ export function AtmosphereLayer({ filmBurnRef }: { filmBurnRef: React.RefObject<
       <div className="grain" style={styles.grain} aria-hidden="true" />
     </>
   );
-}
+};
+
+export const AtmosphereLayer = memo(_AtmosphereLayer);

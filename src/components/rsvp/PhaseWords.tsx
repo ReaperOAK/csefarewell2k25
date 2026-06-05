@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 
 const phaseNames = ['Silence', 'Emergence', 'Euphoria', 'Fragmentation', 'Intimacy', 'Afterglow', 'Disappearance'];
 
-export function PhaseWords({ currentPhase }: { currentPhase: number }) {
+const _PhaseWords = function PhaseWords({ currentPhase }: { currentPhase: number }) {
   return (
     <div
       style={{
@@ -41,4 +41,6 @@ export function PhaseWords({ currentPhase }: { currentPhase: number }) {
       ))}
     </div>
   );
-}
+};
+
+export const PhaseWords = memo(_PhaseWords);
