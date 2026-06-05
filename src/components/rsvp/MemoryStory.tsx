@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 
 const planeBase: React.CSSProperties = {
   position: 'absolute',
@@ -53,7 +53,7 @@ const beatCopyText: React.CSSProperties = {
   fontSize: 'clamp(2.35rem, 4.8vw, 5.1rem)',
 };
 
-export function MemoryStory() {
+const _MemoryStory = function MemoryStory() {
   return (
     <>
       {/* Memory Plane */}
@@ -328,7 +328,7 @@ export function MemoryStory() {
             <p className="meta" style={beatCopyLabel}>03:03 AM // Noise</p>
             <p className="whisper-type" style={beatCopyText}>The night kept making new versions of us.</p>
           </div>
-          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url(/assets/urban nightscape through blurred glass.png)', backgroundSize: '200% 200%', backgroundPosition: '100% 0%', transform: 'rotate(2.4deg) scale(1.06)' }} />
+          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.png")', backgroundSize: '200% 200%', backgroundPosition: '100% 0%', transform: 'rotate(2.4deg) scale(1.06)' }} />
         </div>
 
         {/* Beat 3 */}
@@ -339,7 +339,7 @@ export function MemoryStory() {
           transform: 'translate3d(0, calc((1 - var(--beat-three, 0)) * 4vh), 0)',
           willChange: 'opacity, transform',
         }}>
-          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/memory fragments.png")', backgroundSize: '200% 200%', backgroundPosition: '0% 100%', transform: 'rotate(-1.4deg) scale(1.06)' }} />
+          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.png")', backgroundSize: '200% 200%', backgroundPosition: '0% 100%', transform: 'rotate(-1.4deg) scale(1.06)' }} />
           <div className="beat-copy" style={{ ...beatCopyBase, right: '8vw', top: '23vh', textAlign: 'right' }}>
             <p className="meta" style={beatCopyLabel}>03:27 AM // Shoreline</p>
             <p className="whisper-type" style={beatCopyText}>We stayed because leaving was already happening.</p>
@@ -358,7 +358,7 @@ export function MemoryStory() {
             <p className="meta" style={beatCopyLabel}>04:12 AM // Trace</p>
             <p className="whisper-type" style={beatCopyText}>Some faces become light before they become memory.</p>
           </div>
-          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/ibiza memories.png")', backgroundSize: '200% 200%', backgroundPosition: '100% 100%', transform: 'rotate(2deg) scale(1.06)' }} />
+          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.png")', backgroundSize: '200% 200%', backgroundPosition: '100% 100%', transform: 'rotate(2deg) scale(1.06)' }} />
         </div>
       </div>
 
@@ -416,4 +416,6 @@ export function MemoryStory() {
       />
     </>
   );
-}
+};
+
+export const MemoryStory = memo(_MemoryStory);
