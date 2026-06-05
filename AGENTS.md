@@ -117,6 +117,16 @@ Every agent follows this Standard Operating Procedure from `tool_dispatcher.md`:
 | CTO | `markitdown/*`, `com.figma.mcp/*`, `awesome-copilot/*`, `renderMermaidDiagram`, `firecrawl/*` |
 | Ticketer | `memory/*`, `execute/*`, `github/*` *(dispatcher-only subset)* |
 
+## 11) Project-Specific Context (CRITICAL)
+
+Future agents working on this codebase MUST be aware of the following established patterns and fixed bugs:
+
+- **Next.js & Scroll Events:** Do not use `height: 100%`, `overflow-y: auto !important`, or `overflow-x: hidden` on the `html` or `body` tags globally or in mobile queries. These break the `window.scrollY` tracking required by `useScrollPhase.ts` for the memory scroll animations. Use `overflow-x: clip` and `min-height: 100vh` instead.
+- **Firebase Security Rules:** The `general-rsvp` collection requires explicit write permissions in the Firebase Console (`allow write: if true;`). Do not attempt to mock database calls if a "Missing or Insufficient Permission" error occurs; prompt the user to update their Firestore rules.
+- **CSS Animations vs Transforms:** Avoid using inline `transform: scale()` on elements (like `.projectedCrowd` or `.airTexture`) that are already animated via CSS `@keyframes` (like `crowdBreath`). Inline transforms will override keyframes and cause severe visual snapping/glitching near the edges of the screen.
+- **Asset Paths:** Always wrap `url(...)` paths in CSS and inline styles in double quotes (e.g., `url("/assets/my image.png")`), especially if the filenames contain spaces. Unquoted spaces cause React/CSS parsers to silently drop the background image.
+- **Audio Overlays:** Ensure the `AudioControl` button maintains a `z-index` of `9999` and explicitly sets `pointer-events: auto`. Atmospheric layers (like `.cursor-aura`) often use fullscreen overlays that will otherwise intercept click events.
+
 ## References
 
 - .github/instructions/core.instructions.md
