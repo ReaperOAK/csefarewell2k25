@@ -17,3 +17,18 @@
   - RSVP form submits to Firestore `general-rsvp` collection
 
 - **Timestamp:** 2026-05-19T09:01:00+05:30
+
+### [PR-REVIEW-1] — Reviewed PRs, Made TheArcaneVamp's code canonical
+
+- **Artifacts:**
+  - PR #1 (Vortex-16) merged then reverted (`850b57d` → `8f66c4a`)
+  - PR #2 (TheArcaneVamp) merged (`3f18f82`) — now canonical on main
+  - PR #2 changes: `AGENTS.md` updated with project-specific context, `package-lock.json` cleaned (removed react-scripts/react-router-dom), Firebase config, scroll fixes, profile pics added
+
+- **Decisions:**
+  - Initially merged PR #1 but user preferred PR #2 (TheArcaneVamp)'s code
+  - Reverted PR #1, then merged PR #2's branch `origin/rishabh`
+  - PR #2 was a clean merge with no conflicts
+  - Local stash conflicts resolved to preserve PR #2 as canonical, stash dropped
+
+- **Timestamp:** 2026-05-06T23:42:00+05:30
