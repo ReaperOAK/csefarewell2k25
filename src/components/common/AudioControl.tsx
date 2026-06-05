@@ -17,7 +17,8 @@ const AudioControlContainer = styled(motion.div)`
   color: var(--gold);
   border: 1px solid var(--gold);
   cursor: pointer;
-  z-index: 1000;
+  z-index: 9999;
+  pointer-events: auto;
   backdrop-filter: blur(5px);
 `;
 

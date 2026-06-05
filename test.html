@@ -39,7 +39,7 @@
 
         body {
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow-x: clip;
             background:
                 radial-gradient(circle at 50% 0%, rgba(232, 106, 36, 0.08), transparent 38vh),
                 linear-gradient(180deg, var(--black) 0%, var(--black-blue) 48%, var(--black) 100%);
@@ -1701,6 +1701,9 @@
             .intro-tile {
                 transform: none;
             }
+        }
+      #gate[hidden] {
+            display: none !important;
         }
     </style>
 </head>

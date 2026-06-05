@@ -16,7 +16,7 @@ const styles = {
     position: 'fixed' as const,
     inset: 0,
     zIndex: 84,
-    opacity: 'var(--halation-opacity, 0.34)' as any,
+    opacity: 'calc(0.34 + var(--phase-light, 0) * 0.2)' as any,
     mixBlendMode: 'screen' as const,
     pointerEvents: 'none' as const,
     background: `
@@ -40,13 +40,12 @@ const styles = {
     position: 'fixed' as const,
     inset: 0,
     zIndex: 1,
-    opacity: 'var(--crowd-opacity, 0.18)' as any,
+    opacity: 'calc(0.18 + var(--phase-light, 0) * 0.34)' as any,
     pointerEvents: 'none' as const,
-    backgroundImage: 'url(/assets/hero.png)',
+    backgroundImage: 'url("/assets/hero.png")',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     filter: 'blur(22px) saturate(0.86) contrast(1.2) brightness(0.62)',
-    transform: 'scale(1.14)',
     mixBlendMode: 'screen' as const,
     WebkitMaskImage: `
       radial-gradient(ellipse at 46% 44%, black 0 34%, rgba(0, 0, 0, 0.58) 52%, transparent 76%),
@@ -61,13 +60,12 @@ const styles = {
     position: 'fixed' as const,
     inset: 0,
     zIndex: 2,
-    opacity: 'var(--air-opacity, 0.1)' as any,
+    opacity: 'calc(0.1 + var(--phase-light, 0) * 0.3)' as any,
     pointerEvents: 'none' as const,
-    backgroundImage: 'url(/assets/urban nightscape through blurred glass.png)',
+    backgroundImage: 'url("/assets/urban nightscape through blurred glass.png")',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     filter: 'blur(18px) saturate(1.25)',
-    transform: 'scale(1.18)',
     mixBlendMode: 'color-dodge' as const,
     WebkitMaskImage: 'radial-gradient(ellipse at 52% 52%, black 0 46%, transparent 78%)',
     maskImage: 'radial-gradient(ellipse at 52% 52%, black 0 46%, transparent 78%)',
@@ -77,10 +75,11 @@ const styles = {
     inset: 0,
     zIndex: 4,
     overflow: 'hidden' as const,
-    opacity: 'var(--engine-opacity, 0.62)' as any,
+    opacity: 'calc(0.62 - var(--phase-quiet, 0) * 0.18)' as any,
     mixBlendMode: 'screen' as const,
     pointerEvents: 'none' as const,
   },
+
   depthFog: {
     position: 'fixed' as const,
     inset: 0,
@@ -150,7 +149,7 @@ export function AtmosphereLayer({ filmBurnRef }: { filmBurnRef: React.RefObject<
         <div className="practical-lights" style={{
           position: 'absolute',
           inset: 0,
-          opacity: 'var(--lights-opacity, 0.18)',
+          opacity: 'calc(0.18 + var(--phase-light, 0) * 0.38)' as any,
           background: `
             radial-gradient(circle at 18% 30%, rgba(248, 243, 235, 0.85) 0 1px, transparent 3px),
             radial-gradient(circle at 61% 18%, rgba(232, 106, 36, 0.82) 0 1px, transparent 4px),
@@ -164,7 +163,7 @@ export function AtmosphereLayer({ filmBurnRef }: { filmBurnRef: React.RefObject<
           top: '26vh',
           width: '150vw',
           height: '2px',
-          opacity: 'var(--streak-opacity, 0.08)',
+          opacity: 'calc(0.08 + var(--phase-light, 0) * 0.18)' as any,
           background: 'linear-gradient(90deg, transparent, rgba(248, 243, 235, 0.18), rgba(232, 106, 36, 0.28), transparent)',
           filter: 'blur(1px)',
           transform: 'rotate(-6deg)',
@@ -175,32 +174,33 @@ export function AtmosphereLayer({ filmBurnRef }: { filmBurnRef: React.RefObject<
         <div className="fog distant" style={{
           position: 'absolute',
           inset: '-30vh -30vw',
-          opacity: 'var(--fog-distant-opacity, 0.28)',
+          opacity: 'calc(0.28 + var(--phase-light, 0) * 0.1)' as any,
           filter: 'blur(80px)',
           background: 'radial-gradient(ellipse at 35% 34%, rgba(42, 104, 114, 0.23), transparent 54%), radial-gradient(ellipse at 68% 56%, rgba(232, 106, 36, 0.12), transparent 58%)',
         }} />
         <div className="fog ambient" style={{
           position: 'absolute',
           inset: '-30vh -30vw',
-          opacity: 'var(--fog-ambient-opacity, 0.22)',
+          opacity: 'calc(0.22 + var(--phase-light, 0) * 0.16)' as any,
           filter: 'blur(58px)',
           background: 'radial-gradient(ellipse at 50% 50%, rgba(90, 52, 118, 0.2), transparent 60%)',
         }} />
         <div className="fog humidity" style={{
           position: 'absolute',
           inset: '-30vh -30vw',
-          opacity: 'var(--fog-humidity-opacity, 0.2)',
+          opacity: 'calc(0.2 + var(--phase-light, 0) * 0.12)' as any,
           filter: 'blur(28px)',
           background: 'linear-gradient(116deg, transparent 0%, rgba(248, 243, 235, 0.06) 36%, transparent 58%), radial-gradient(ellipse at 80% 20%, rgba(42, 104, 114, 0.16), transparent 48%)',
         }} />
         <div className="fog foreground" style={{
           position: 'absolute',
           inset: '-30vh -30vw',
-          opacity: 'var(--fog-foreground-opacity, 0.12)',
+          opacity: 'calc(0.12 + var(--phase-light, 0) * 0.08)' as any,
           filter: 'blur(18px)',
           background: 'radial-gradient(ellipse at 10% 88%, rgba(248, 243, 235, 0.1), transparent 38%), radial-gradient(ellipse at 92% 78%, rgba(232, 106, 36, 0.1), transparent 42%)',
         }} />
       </div>
+
 
       <div style={styles.halation} aria-hidden="true" />
       <div ref={filmBurnRef} className="film-burn" style={styles.filmBurn} id="filmBurn" aria-hidden="true" />
