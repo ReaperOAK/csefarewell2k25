@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site":"ibiza2k26",
     "public": "out",
     "cleanUrls": true,
     "ignore": [
