@@ -1,12 +1,21 @@
 {
   "hosting": {
     "public": "out",
+    "cleanUrls": true,
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
     "rewrites": [
+      {
+        "source": "/invitation/**",
+        "destination": "/invitation/1.html"
+      },
+      {
+        "source": "/amp-story/**",
+        "destination": "/amp-story/1.html"
+      },
       {
         "source": "**",
         "destination": "/index.html"
