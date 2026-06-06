@@ -1,12 +1,11 @@
-import AmpStoryPage from './client-page';
+import AmpStory from '../../../components/AmpStory';
 
 // Required for static export with dynamic routes
-export function generateStaticParams() {
-  // Return an empty array - pages that aren't pre-rendered will 
-  // be handled client-side via Firebase fetch
-  return [];
+// Returning a dummy param to satisfy the build requirement
+export async function generateStaticParams() {
+  return [{ id: '1' }];
 }
 
 export default function Page() {
-  return <AmpStoryPage />;
+  return <AmpStory />;
 }
