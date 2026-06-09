@@ -102,11 +102,11 @@ const ActivityItem = styled(motion.li)`
   border-color: ${props => props.color || 'var(--gold)'};
 `;
 
-const ActivityPhoto = styled.div<{ photoUrl: string }>`
+const ActivityPhoto = styled.div<{ $photoUrl: string }>`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-image: ${props => `url(${props.photoUrl})`};
+  background-image: ${props => `url(${props.$photoUrl})`};
   background-size: cover;
   background-position: center;
   margin-right: 1rem;
@@ -152,11 +152,11 @@ const CommentCard = styled(motion.div)`
   align-items: flex-start;
 `;
 
-const CommentPhoto = styled.div<{ photoUrl: string }>`
+const CommentPhoto = styled.div<{ $photoUrl: string }>`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-image: ${props => `url(${props.photoUrl})`};
+  background-image: ${props => `url(${props.$photoUrl})`};
   background-size: cover;
   background-position: center;
   margin-right: 1.2rem;
@@ -189,8 +189,8 @@ const CommentStatus = styled.span<{ $attending: boolean | null }>`
   border-radius: 3px;
   color: white;
   background-color: ${props => 
-    props.$attending === true ? '#4CAF50' : 
-    props.$attending === false ? '#F44336' : '#9E9E9E'};
+    props.$attending === true ? 'var(--success, #4CAF50)' : 
+    props.$attending === false ? 'var(--error, #F44336)' : '#9E9E9E'};
 `;
 
 const CommentText = styled.div`
@@ -362,7 +362,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <MetricTitle>Attending</MetricTitle>
-          <Gauge value={attendingPercentage} color="#4CAF50" />
+          <Gauge value={attendingPercentage} color="var(--success, #4CAF50)" />
           <MetricPercentage>{totalAttending} of {totalResponded}</MetricPercentage>
         </MetricCard>
         
@@ -372,7 +372,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <MetricTitle>Declined</MetricTitle>
-          <Gauge value={declinedPercentage} color="#F44336" />
+          <Gauge value={declinedPercentage} color="var(--error, #F44336)" />
           <MetricPercentage>{totalDeclined} of {totalResponded}</MetricPercentage>
         </MetricCard>
       </MetricsSection>
@@ -391,12 +391,12 @@ const Dashboard: React.FC<DashboardProps> = ({
             recentActivity.map((activity, index) => (
               <ActivityItem
                 key={`${activity.invitee.id}-${activity.timestamp}`}
-                color={activity.action.includes('attending') ? '#4CAF50' : '#F44336'}
+                color={activity.action.includes('attending') ? 'var(--success, #4CAF50)' : 'var(--error, #F44336)'}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
               >
-                <ActivityPhoto photoUrl={activity.invitee.photoUrl} />
+                <ActivityPhoto $photoUrl={activity.invitee.photoUrl} />
                 <ActivityContent>
                   <ActivityName>{activity.invitee.name}</ActivityName>
                   <ActivityDetail>{activity.action}</ActivityDetail>
@@ -456,7 +456,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
-                  <CommentPhoto photoUrl={encodedPhotoUrl} />
+                  <CommentPhoto $photoUrl={encodedPhotoUrl} />
                   <CommentContent>
                     <CommentHeader>
                       <CommentName>{activity.invitee.name}</CommentName>

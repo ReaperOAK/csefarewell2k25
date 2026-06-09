@@ -90,11 +90,11 @@ const PhotoPreviewContainer = styled.div`
   margin-top: 0.5rem;
 `;
 
-const PhotoPreview = styled.div<{ photoUrl: string }>`
+const PhotoPreview = styled.div<{ $photoUrl: string }>`
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background-image: ${props => `url(${props.photoUrl})`};
+  background-image: ${props => `url(${props.$photoUrl})`};
   background-size: cover;
   background-position: center;
   border: 2px solid var(--gold);
@@ -185,12 +185,12 @@ const DropdownItem = styled.div<{ $isSelected: boolean }>`
   }
 `;
 
-const DropdownItemImage = styled.div<{ photoUrl: string }>`
+const DropdownItemImage = styled.div<{ $photoUrl: string }>`
   width: 30px;
   height: 30px;
   border-radius: 50%;
   margin-right: 10px;
-  background-image: ${props => `url(${props.photoUrl})`};
+  background-image: ${props => `url(${props.$photoUrl})`};
   background-size: cover;
   background-position: center;
   border: 1px solid var(--gold);
@@ -446,7 +446,7 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
                             $isSelected={photo === photoUrl}
                             onClick={() => handlePhotoSelect(photo)}
                           >
-                            <DropdownItemImage photoUrl={encodedUrl} />
+                            <DropdownItemImage $photoUrl={encodedUrl} />
                             <DropdownItemText>{photoName}</DropdownItemText>
                           </DropdownItem>
                         );
@@ -458,9 +458,7 @@ const InviteeModal: React.FC<InviteeModalProps> = ({
                 <HelpText>Search and select a profile picture</HelpText>
                 
                 <PhotoPreviewContainer>
-                  <PhotoPreview 
-                    photoUrl={encodedPhotoUrl} 
-                  />
+                  <PhotoPreview $photoUrl={encodedPhotoUrl} />
                   {photoUrl && (
                     <DropdownItemText>
                       {photoUrl.split('/').pop()?.split('.')[0] || ''}

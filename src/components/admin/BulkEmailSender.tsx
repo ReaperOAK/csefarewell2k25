@@ -107,11 +107,11 @@ const InviteeCard = styled(motion.div)<{ $selected: boolean }>`
   }
 `;
 
-const InviteePhoto = styled.div<{ photoUrl: string }>`
+const InviteePhoto = styled.div<{ $photoUrl: string }>`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-image: ${props => `url(${props.photoUrl})`};
+  background-image: ${props => `url(${props.$photoUrl})`};
   background-size: cover;
   background-position: center;
   margin-right: 1rem;
@@ -406,7 +406,7 @@ const BulkEmailSender: React.FC<BulkEmailSenderProps> = ({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <InviteePhoto photoUrl={encodedPhotoUrl} />
+                  <InviteePhoto $photoUrl={encodedPhotoUrl} />
                   <InviteeInfo>
                     <InviteeName>{invitee.name}</InviteeName>
                     <InviteeEmail>{invitee.email}</InviteeEmail>

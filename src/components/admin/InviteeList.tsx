@@ -129,11 +129,11 @@ const PhotoTd = styled(Td)`
   width: 60px;
 `;
 
-const InviteePhoto = styled.div<{ photoUrl: string }>`
+const InviteePhoto = styled.div<{ $photoUrl: string }>`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-image: ${props => `url(${props.photoUrl})`};
+  background-image: ${props => `url(${props.$photoUrl})`};
   background-size: cover;
   background-position: center;
   border: 1px solid var(--gold);
@@ -508,7 +508,7 @@ const InviteeList: React.FC<InviteeListProps> = ({
                         transition={{ duration: 0.3 }}
                       >
                         <PhotoTd>
-                          <InviteePhoto photoUrl={encodedPhotoUrl} />
+                          <InviteePhoto $photoUrl={encodedPhotoUrl} />
                         </PhotoTd>
                         <Td>{invitee.name}</Td>
                         <Td>{invitee.email || '-'}</Td>

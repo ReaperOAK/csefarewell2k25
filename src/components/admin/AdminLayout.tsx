@@ -7,6 +7,10 @@ const LayoutContainer = styled.div`
   display: flex;
   min-height: 100vh;
   background-color: var(--bg);
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const Sidebar = styled.div`
@@ -16,6 +20,13 @@ const Sidebar = styled.div`
   padding: 2rem 0;
   display: flex;
   flex-direction: column;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 1rem 0;
+    border-right: none;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  }
 `;
 
 const Logo = styled.div`
@@ -198,6 +209,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
                 onClick={onAddClick}
                 whileHover={{ scale: 1.05, backgroundColor: 'rgba(212, 175, 55, 0.1)' }}
                 whileTap={{ scale: 0.98 }}
+                aria-label="Add new invitee"
               >
                 + Add Invitee
               </AddButton>
@@ -207,6 +219,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
               onClick={onLogout}
               whileHover={{ scale: 1.05, backgroundColor: 'rgba(139, 0, 0, 0.1)' }}
               whileTap={{ scale: 0.98 }}
+              aria-label="Logout from admin dashboard"
             >
               Logout
             </LogoutButton>
