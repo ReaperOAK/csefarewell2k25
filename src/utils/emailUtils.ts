@@ -29,15 +29,11 @@ export const sendInvitationEmail = async (invitee: Invitee): Promise<void> => {
     throw new Error('Invitee does not have a valid email address');
   }
 
+  // Only the id is sent; the server looks up the canonical recipient in Firestore.
   const res = await fetch(SEND_INVITE_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      id: invitee.id,
-      name: invitee.name,
-      email: invitee.email,
-      photoUrl: invitee.photoUrl,
-    }),
+    body: JSON.stringify({ id: invitee.id }),
   });
 
   if (!res.ok) {
@@ -95,27 +91,12 @@ async function sendEmailAndCatchError(invitee: Invitee): Promise<boolean> {
 }
 
 /**
- * Send a test email to verify the backend + Gmail config.
- * Callable from the admin Email Template Test tool.
+ * Arbitrary test sends are intentionally disabled: the backend only emails registered
+ * invitees (looked up by id in Firestore) to prevent the endpoint being used as an open
+ * relay. To preview the real email, add yourself as an invitee and send to that entry.
  */
-export const testEmailSend = async (testEmail: string = 'test@example.com'): Promise<void> => {
-  const res = await fetch(SEND_INVITE_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      id: 'test-id',
-      name: 'Test User',
-      email: testEmail,
-    }),
-  });
-  if (!res.ok) {
-    let detail = `HTTP ${res.status}`;
-    try {
-      const data = await res.json();
-      if (data?.error) detail = data.error;
-    } catch {
-      /* ignore */
-    }
-    throw new Error(`Test email failed: ${detail}`);
-  }
+export const testEmailSend = async (_testEmail: string = 'test@example.com'): Promise<void> => {
+  throw new Error(
+    'Test sends are disabled. The system only emails registered invitees — add yourself as an invitee and send the invite to preview it.',
+  );
 };
