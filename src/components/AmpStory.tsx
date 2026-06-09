@@ -799,7 +799,7 @@ const AmpStory: React.FC = () => {
     );
   }
   
-  const defaultPhoto = '/fp/skull.png';
+  const defaultPhoto = '/fp/skull.webp';
   const encodedDefaultPhoto = encodeImageUrl(defaultPhoto);
   
   return (

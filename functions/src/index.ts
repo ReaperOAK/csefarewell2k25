@@ -5,13 +5,15 @@ import * as nodemailer from 'nodemailer';
 // Initialize Firebase Admin
 admin.initializeApp();
 
-// Create email transporter using Gmail
+// DEPRECATED: invite emails are now sent by the standalone email-service on the
+// openclaw server (Gmail SMTP via Tailscale Funnel), not by this Cloud Function.
+// Credentials are read from functions config only — never hardcode secrets here.
 const createTransporter = () => {
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: functions.config().gmail?.email || 'owaimine1@gmail.com',
-      pass: functions.config().gmail?.password || 'oa786ak92',
+      user: functions.config().gmail?.email,
+      pass: functions.config().gmail?.password,
     },
   });
 };

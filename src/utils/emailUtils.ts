@@ -1,162 +1,89 @@
-import emailjs from '@emailjs/browser';
 import { Invitee } from '../types';
 
-// Configuration for EmailJS from environment variables
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'ReaperOAK';
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'ReaperOAK';
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'wsCefJMospSDh5hqJ';
+// The browser calls our same-origin Next.js route (/api/send-invite), which holds the
+// email-service token server-side and forwards to the openclaw email-service (Gmail SMTP).
+// No secret is ever exposed to the client.
+const SEND_INVITE_ENDPOINT = '/api/send-invite';
 
 /**
- * Check if EmailJS is properly configured
+ * Always true on the client — configuration lives server-side in the API route.
+ * (The route returns 503 if the backend env vars are missing.)
  */
-export const isEmailJSConfigured = (): boolean => {
-  return (
-    EMAILJS_SERVICE_ID !== 'ReaperOAK' &&
-    EMAILJS_TEMPLATE_ID !== 'ReaperOAK' &&
-    EMAILJS_PUBLIC_KEY !== 'wsCefJMospSDh5hqJ' &&
-    EMAILJS_SERVICE_ID !== '' &&
-    EMAILJS_TEMPLATE_ID !== '' &&
-    EMAILJS_PUBLIC_KEY !== ''
-  );
-};
+export const isEmailConfigured = (): boolean => true;
 
 /**
- * Check if an email is valid and not empty
- * @param email The email address to check
- * @returns boolean indicating if the email is valid
+ * Check if an email is valid and not empty.
  */
 export const isValidEmail = (email: string | undefined | null): boolean => {
-  if (!email || email.trim() === '') {
-    return false;
-  }
-  
-  // Basic email validation regex
+  if (!email || email.trim() === '') return false;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
 /**
- * Send an invitation email to a single invitee
- * @param invitee The invitee object containing email and other details
- * @param customMessage Optional custom message to include in the email
- * @returns Promise that resolves when the email is sent
+ * Send a single invitation email via the backend.
+ * The invite link is derived server-side from the invitee id (we never send a URL).
  */
-export const sendInvitationEmail = async (
-  invitee: Invitee,
-  customMessage?: string
-): Promise<void> => {
+export const sendInvitationEmail = async (invitee: Invitee): Promise<void> => {
   if (!isValidEmail(invitee.email)) {
     throw new Error('Invitee does not have a valid email address');
   }
 
-  if (!isEmailJSConfigured()) {
-    console.error('EmailJS is not configured. Please set the environment variables.');
-    throw new Error('Email sending is currently disabled. Please contact the administrator to set up EmailJS credentials.');
-  }
+  const res = await fetch(SEND_INVITE_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: invitee.id,
+      name: invitee.name,
+      email: invitee.email,
+      photoUrl: invitee.photoUrl,
+    }),
+  });
 
-  try {
-    // Initialize EmailJS with your public key
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-    
-    
-    // Create a complete invitation link with the full URL
-    const invitationLink = `${window.location.origin}/invitation/${invitee.id}`;
-    
-    // Create template parameters matching the standardized format
-    const templateParams = {
-      to_email: invitee.email,
-      to_name: invitee.name,
-      invitation_link: invitationLink,
-    };
-    
-    // Log the template parameters for debugging
-    console.log('Sending email to:', invitee.email);
-    console.log('With template parameters:', templateParams);
-    
-    // Send the email using EmailJS with the simplified format
-    const response = await emailjs.send(
-      EMAILJS_SERVICE_ID, 
-      EMAILJS_TEMPLATE_ID, 
-      templateParams
-    );
-    
-    console.log(`Email sent successfully to ${invitee.name}`, response);
-  } catch (error: unknown) {
-    console.error('Error sending email:', error);
-    if (error instanceof Error) {
-      throw new Error(`Failed to send email: ${error.message}`);
-    } else {
-      throw new Error('Failed to send email: Unknown error occurred');
+  if (!res.ok) {
+    let detail = `HTTP ${res.status}`;
+    try {
+      const data = await res.json();
+      if (data?.error) detail = data.error;
+    } catch {
+      /* ignore non-JSON error bodies */
     }
+    throw new Error(`Failed to send email: ${detail}`);
   }
 };
 
 /**
- * Send invitation emails to multiple invitees with a progress callback
- * @param invitees Array of invitees to send emails to
- * @param onProgress Callback function to track progress (receives number of emails sent so far)
- * @returns Promise that resolves when all emails are sent
+ * Send invitation emails to multiple invitees, in small batches, with a progress callback.
  */
 export const sendBulkInvitationEmails = async (
   invitees: Invitee[],
-  onProgress?: (sent: number) => void
+  onProgress?: (sent: number) => void,
 ): Promise<void> => {
-  // Filter invitees to only include those with valid email addresses
-  const inviteesWithEmail = invitees.filter(invitee => isValidEmail(invitee.email));
-  
+  const inviteesWithEmail = invitees.filter((invitee) => isValidEmail(invitee.email));
   if (inviteesWithEmail.length === 0) {
     console.warn('No invitees with valid email addresses found');
     return;
   }
-  
-  // Define batch size for processing (to avoid rate limits)
+
   const batchSize = 3;
-  
-  // Calculate total number of batches
   const totalBatches = Math.ceil(inviteesWithEmail.length / batchSize);
-  
-  // Track total emails sent
   let totalSent = 0;
-  
-  // Process each batch sequentially
+
   for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
-    // Calculate start and end indices for this batch
     const startIndex = batchIndex * batchSize;
-    const endIndex = Math.min(startIndex + batchSize, inviteesWithEmail.length);
-    
-    // Get the current batch of invitees
-    const currentBatch = inviteesWithEmail.slice(startIndex, endIndex);
-    
-    // Process this batch and get the number of successfully sent emails
-    const batchResults = await Promise.all(
-      currentBatch.map(invitee => 
-        sendEmailAndCatchError(invitee)
-      )
-    );
-    
-    // Count successful emails in this batch
-    const batchSent = batchResults.filter(result => result).length;
-    
-    // Update total sent count
-    totalSent += batchSent;
-    
-    // Call progress callback if provided
-    if (onProgress) {
-      onProgress(totalSent);
-    }
-    
-    // Add a small delay between batches to prevent rate limiting
+    const currentBatch = inviteesWithEmail.slice(startIndex, startIndex + batchSize);
+
+    const batchResults = await Promise.all(currentBatch.map((invitee) => sendEmailAndCatchError(invitee)));
+    totalSent += batchResults.filter(Boolean).length;
+    onProgress?.(totalSent);
+
+    // brief pause between batches to stay gentle on Gmail
     if (batchIndex < totalBatches - 1) {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
     }
   }
 };
 
-/**
- * Helper function to send an email and catch any errors
- * @param invitee The invitee to send an email to
- * @returns Promise that resolves to true if successful, false if failed
- */
 async function sendEmailAndCatchError(invitee: Invitee): Promise<boolean> {
   try {
     await sendInvitationEmail(invitee);
@@ -168,44 +95,27 @@ async function sendEmailAndCatchError(invitee: Invitee): Promise<boolean> {
 }
 
 /**
- * Test function to verify EmailJS configuration
- * This can be called directly from the browser console for debugging
+ * Send a test email to verify the backend + Gmail config.
+ * Callable from the admin Email Template Test tool.
  */
-export const testEmailSend = async (testEmail: string = "test@example.com"): Promise<void> => {
-  try {
-    if (!isEmailJSConfigured()) {
-      throw new Error('EmailJS is not configured.');
+export const testEmailSend = async (testEmail: string = 'test@example.com'): Promise<void> => {
+  const res = await fetch(SEND_INVITE_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: 'test-id',
+      name: 'Test User',
+      email: testEmail,
+    }),
+  });
+  if (!res.ok) {
+    let detail = `HTTP ${res.status}`;
+    try {
+      const data = await res.json();
+      if (data?.error) detail = data.error;
+    } catch {
+      /* ignore */
     }
-
-    // Initialize EmailJS
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-    
-    // Create simple test parameters using the standardized format
-    const testParams = {
-      to_email: testEmail,
-      to_name: "Test User",
-      invitation_link: `${window.location.origin}/invitation/test-id`
-    };
-    
-    console.log('Testing EmailJS with parameters:', testParams);
-    
-    // Send test email
-    const response = await emailjs.send(
-      EMAILJS_SERVICE_ID, 
-      EMAILJS_TEMPLATE_ID, 
-      testParams
-    );
-    
-    console.log('Test email sent successfully:', response);
-  } catch (error) {
-    console.error('Test email failed:', error);
-    // Add more detailed error logging
-    if (error instanceof Error) {
-      console.error('Error details:', {
-        message: error.message,
-        name: error.name,
-        stack: error.stack
-      });
-    }
+    throw new Error(`Test email failed: ${detail}`);
   }
 };

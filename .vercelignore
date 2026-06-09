@@ -1,0 +1,16 @@
+# Not part of the Vercel (Next.js) frontend build:
+email-service/
+functions/
+asset-backups/
+out/
+.firebase/
+.forgeos/
+TODO/
+.remember/
+scripts/preview-server.js
+test.html
+invite.html
+design
+docs.md
+tickets.py
+todo_visual.py

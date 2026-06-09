@@ -158,7 +158,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
     <LayoutContainer>
       <Sidebar>
         <Logo>
-          <LogoText>OBLIVION</LogoText>
+          <LogoText>IBIZA</LogoText>
         </Logo>
         
         <Nav>

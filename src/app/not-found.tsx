@@ -55,7 +55,7 @@ export default function NotFound() {
       <Title>404</Title>
       <Subtitle>This path does not exist in our realm</Subtitle>
       <HomeButton onClick={() => router.push('/')}>
-        Return to OBLIVION
+        Return to IBIZA
       </HomeButton>
     </Container>
   );
