@@ -1,10 +1,24 @@
 import emailjs from '@emailjs/browser';
 import { Invitee } from '../types';
 
-// Configuration for EmailJS
-const EMAILJS_SERVICE_ID = 'ReaperOAK';
-const EMAILJS_TEMPLATE_ID = 'ReaperOAK';
-const EMAILJS_PUBLIC_KEY = 'wsCefJMospSDh5hqJ';
+// Configuration for EmailJS from environment variables
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'ReaperOAK';
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'ReaperOAK';
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'wsCefJMospSDh5hqJ';
+
+/**
+ * Check if EmailJS is properly configured
+ */
+export const isEmailJSConfigured = (): boolean => {
+  return (
+    EMAILJS_SERVICE_ID !== 'ReaperOAK' &&
+    EMAILJS_TEMPLATE_ID !== 'ReaperOAK' &&
+    EMAILJS_PUBLIC_KEY !== 'wsCefJMospSDh5hqJ' &&
+    EMAILJS_SERVICE_ID !== '' &&
+    EMAILJS_TEMPLATE_ID !== '' &&
+    EMAILJS_PUBLIC_KEY !== ''
+  );
+};
 
 /**
  * Check if an email is valid and not empty
@@ -35,6 +49,11 @@ export const sendInvitationEmail = async (
     throw new Error('Invitee does not have a valid email address');
   }
 
+  if (!isEmailJSConfigured()) {
+    console.error('EmailJS is not configured. Please set the environment variables.');
+    throw new Error('Email sending is currently disabled. Please contact the administrator to set up EmailJS credentials.');
+  }
+
   try {
     // Initialize EmailJS with your public key
     emailjs.init(EMAILJS_PUBLIC_KEY);
@@ -43,11 +62,11 @@ export const sendInvitationEmail = async (
     // Create a complete invitation link with the full URL
     const invitationLink = `${window.location.origin}/invitation/${invitee.id}`;
     
-    // Create template parameters matching the expected format
+    // Create template parameters matching the standardized format
     const templateParams = {
-      email: invitee.email,
-      name: invitee.name,
-      link: invitationLink,
+      to_email: invitee.email,
+      to_name: invitee.name,
+      invitation_link: invitationLink,
     };
     
     // Log the template parameters for debugging
@@ -154,14 +173,18 @@ async function sendEmailAndCatchError(invitee: Invitee): Promise<boolean> {
  */
 export const testEmailSend = async (testEmail: string = "test@example.com"): Promise<void> => {
   try {
+    if (!isEmailJSConfigured()) {
+      throw new Error('EmailJS is not configured.');
+    }
+
     // Initialize EmailJS
     emailjs.init(EMAILJS_PUBLIC_KEY);
     
-    // Create simple test parameters using the exact format from the request
+    // Create simple test parameters using the standardized format
     const testParams = {
-      email: testEmail,
-      name: "Test User",
-      link: `${window.location.origin}/invitation/test-id`
+      to_email: testEmail,
+      to_name: "Test User",
+      invitation_link: `${window.location.origin}/invitation/test-id`
     };
     
     console.log('Testing EmailJS with parameters:', testParams);
