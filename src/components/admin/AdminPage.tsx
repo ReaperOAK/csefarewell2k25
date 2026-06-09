@@ -1,5 +1,6 @@
-// filepath: c:\Owais\farewell 2025\csefarewell2k25\src\components\admin\AdminPage.tsx
 import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { motion, AnimatePresence } from 'framer-motion';
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Invitee } from '../../types';
@@ -12,6 +13,22 @@ import BulkEmailSender from './BulkEmailSender';
 import CommentsPage from './CommentsPage';
 import Toast from '../common/Toast';
 import { sendInvitationEmail } from '../../utils/emailUtils';
+
+const Alert = styled(motion.div)<{ $type: 'success' | 'error' }>`
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: ${props => props.$type === 'error' ? 'rgba(244, 67, 54, 0.1)' : 'rgba(76, 175, 80, 0.1)'};
+  border: 1px solid ${props => props.$type === 'error' ? 'var(--error, #F44336)' : 'var(--success, #4CAF50)'};
+  border-radius: 4px;
+  color: var(--text);
+`;
+
+const AlertTitle = styled.h3<{ $type: 'success' | 'error' }>`
+  color: ${props => props.$type === 'error' ? 'var(--error, #F44336)' : 'var(--success, #4CAF50)'};
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-family: 'Unbounded', sans-serif;
+`;
 
 const AdminPage: React.FC = () => {
   // Authentication state
@@ -248,8 +265,6 @@ const AdminPage: React.FC = () => {
       
       // Refresh the invitees list to update UI
       await fetchInvitees();
-      
-      // Return void instead of boolean
     } catch (error) {
       console.error('Error recording email status:', error);
       throw new Error('Failed to update email records');
@@ -341,20 +356,35 @@ const AdminPage: React.FC = () => {
         onAddClick={() => openInviteeModal()}
         showAddButton={currentSection === 'invitees'}
       >
-        {error && (
-          <div style={{ 
-            marginBottom: '1rem', 
-            padding: '1rem',
-            backgroundColor: 'rgba(244, 67, 54, 0.1)',
-            border: '1px solid #F44336',
-            borderRadius: '4px'
-          }}>
-            <h3 style={{ color: '#F44336', margin: '0 0 0.5rem' }}>Error</h3>
-            <p style={{ margin: 0 }}>{error}</p>
-          </div>
-        )}
+        <AnimatePresence>
+          {error && (
+            <Alert 
+              $type="error"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <AlertTitle $type="error">Error</AlertTitle>
+              <p style={{ margin: 0 }}>{error}</p>
+            </Alert>
+          )}
+        </AnimatePresence>
         
-        {renderContent()}
+        {loading && !invitees.length ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              style={{
+                width: '40px',
+                height: '40px',
+                border: '3px solid rgba(212, 175, 55, 0.1)',
+                borderTopColor: 'var(--gold)',
+                borderRadius: '50%'
+              }}
+            />
+          </div>
+        ) : renderContent()}
       </AdminLayout>
       
       {/* Invitee Modal */}
