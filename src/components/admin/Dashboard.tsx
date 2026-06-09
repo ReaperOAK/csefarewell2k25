@@ -9,6 +9,39 @@ const DashboardContainer = styled.div`
   gap: 2rem;
 `;
 
+const SyncBar = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const SyncButton = styled(motion.button)`
+  background: var(--accent-color);
+  color: #0a0a0c;
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1.6rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+`;
+
+const SyncStatus = styled.span`
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text);
+  opacity: 0.85;
+`;
+
 const MetricsSection = styled.section`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -300,6 +333,28 @@ const Dashboard: React.FC<DashboardProps> = ({
   recentActivity
 }) => {
   const [commentsFilter, setCommentsFilter] = useState<'all' | 'attending' | 'declined'>('all');
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
+
+  const syncFromForm = async () => {
+    setSyncing(true);
+    setSyncMsg('Syncing from form…');
+    try {
+      const res = await fetch('/api/sync-form', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      if (data.added > 0) {
+        setSyncMsg(`Added ${data.added} new invitee${data.added === 1 ? '' : 's'} — refreshing…`);
+        setTimeout(() => window.location.reload(), 1200);
+      } else {
+        setSyncMsg(`Up to date — no new responses (${data.totalInvitees} invitees).`);
+      }
+    } catch (err) {
+      setSyncMsg(`Sync failed: ${err instanceof Error ? err.message : 'unknown error'}`);
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const respondedPercentage = totalInvitees > 0 
     ? Math.round((totalResponded / totalInvitees) * 100) 
@@ -334,6 +389,17 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <DashboardContainer>
+      <SyncBar>
+        <SyncButton
+          onClick={syncFromForm}
+          disabled={syncing}
+          whileHover={{ scale: syncing ? 1 : 1.04 }}
+          whileTap={{ scale: syncing ? 1 : 0.97 }}
+        >
+          {syncing ? 'Syncing…' : 'Sync from form'}
+        </SyncButton>
+        {syncMsg && <SyncStatus>{syncMsg}</SyncStatus>}
+      </SyncBar>
       <MetricsSection>
         <MetricCard
           initial={{ opacity: 0, y: 20 }}
