@@ -148,7 +148,7 @@ const AdminLogin: React.FC<{ onLogin: (token: string) => void }> = ({ onLogin })
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
       >
-        <Title>OBLIVION ADMIN</Title>
+        <Title>IBIZA ADMIN</Title>
         
         <InputGroup>
           <Label htmlFor="email">Email</Label>

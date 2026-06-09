@@ -136,7 +136,7 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
   return (
     <SidebarContainer>
       <Logo>
-        <h1>OBLIVION</h1>
+        <h1>IBIZA</h1>
         <span>Admin Panel</span>
       </Logo>
       

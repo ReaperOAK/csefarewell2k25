@@ -89,7 +89,7 @@ export function GateScreen({ onEnter, isLeaving }: GateScreenProps) {
               position: 'absolute',
               inset: '-4vh -4vw',
               overflow: 'hidden',
-              backgroundImage: 'url("/assets/memory fragments.png")',
+              backgroundImage: 'url("/assets/memory fragments.webp")',
               backgroundSize: '300% 300%',
               backgroundPosition: `${pos.x} ${pos.y}`,
               transformOrigin: 'center',

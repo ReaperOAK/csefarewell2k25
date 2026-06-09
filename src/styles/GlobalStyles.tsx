@@ -1,8 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Montserrat:wght@400;500;600&family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&display=swap');
-  
+  /* Fonts are loaded once via a consolidated <link> in src/app/layout.tsx (with preconnect). */
   :root {
     --bg: #111111;
     --gold: #D4AF37;
@@ -12,7 +11,13 @@ const GlobalStyle = createGlobalStyle`
     --error: #F44336;
     --warning: #FF9800;
     --text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    --border-color: rgba(212, 175, 55, 0.3);
+    --border-color: rgba(232, 106, 36, 0.3);
+
+    /* IBIZA admin palette (amber on near-black). Consumed by src/components/admin/* */
+    --primary-color: #0a0a0c;
+    --secondary-color: rgba(232, 106, 36, 0.14);
+    --accent-color: #e86a24;
+    --text-color: #f8f3eb;
     touch-action: pan-y;
   }
   

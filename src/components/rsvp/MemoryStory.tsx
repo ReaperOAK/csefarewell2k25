@@ -66,7 +66,7 @@ const _MemoryStory = function MemoryStory() {
           style={{
             position: 'absolute',
             inset: '-5vh -5vw',
-            backgroundImage: 'linear-gradient(180deg, rgba(1, 1, 2, 0.18), rgba(1, 1, 2, 0.62) 72%, rgba(1, 1, 2, 0.9)), radial-gradient(ellipse at 50% 44%, transparent 0 42%, rgba(1, 1, 2, 0.58) 84%), url("/assets/hero.png")',
+            backgroundImage: 'linear-gradient(180deg, rgba(1, 1, 2, 0.18), rgba(1, 1, 2, 0.62) 72%, rgba(1, 1, 2, 0.9)), radial-gradient(ellipse at 50% 44%, transparent 0 42%, rgba(1, 1, 2, 0.58) 84%), url("/assets/hero.webp")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             opacity: 'var(--hero-bg-opacity, 0.94)',
@@ -113,7 +113,7 @@ const _MemoryStory = function MemoryStory() {
                 position: 'absolute',
                 inset: '-5vh -5vw',
                 zIndex: 1,
-                backgroundImage: 'url(/assets/urban nightscape through blurred glass.png)',
+                backgroundImage: 'url(/assets/urban nightscape through blurred glass.webp)',
 
                 backgroundSize: '300% 300%',
                 backgroundPosition: `${positions[i].x} ${positions[i].y}`,
@@ -309,7 +309,7 @@ const _MemoryStory = function MemoryStory() {
           transform: 'translate3d(0, calc((1 - var(--beat-one, 0)) * 4vh), 0)',
           willChange: 'opacity, transform',
         }}>
-          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.png")', backgroundSize: '200% 200%', backgroundPosition: '0% 0%', transform: 'rotate(-2deg) scale(1.06)' }} />
+          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.webp")', backgroundSize: '200% 200%', backgroundPosition: '0% 0%', transform: 'rotate(-2deg) scale(1.06)' }} />
           <div className="beat-copy" style={{ ...beatCopyBase, right: '9vw', top: '34vh', textAlign: 'right' }}>
             <p className="meta" style={beatCopyLabel}>02:41 AM // Proof</p>
             <p className="whisper-type" style={beatCopyText}>The proof stayed brighter than the night itself.</p>
@@ -328,7 +328,7 @@ const _MemoryStory = function MemoryStory() {
             <p className="meta" style={beatCopyLabel}>03:03 AM // Noise</p>
             <p className="whisper-type" style={beatCopyText}>The night kept making new versions of us.</p>
           </div>
-          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.png")', backgroundSize: '200% 200%', backgroundPosition: '100% 0%', transform: 'rotate(2.4deg) scale(1.06)' }} />
+          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.webp")', backgroundSize: '200% 200%', backgroundPosition: '100% 0%', transform: 'rotate(2.4deg) scale(1.06)' }} />
         </div>
 
         {/* Beat 3 */}
@@ -339,7 +339,7 @@ const _MemoryStory = function MemoryStory() {
           transform: 'translate3d(0, calc((1 - var(--beat-three, 0)) * 4vh), 0)',
           willChange: 'opacity, transform',
         }}>
-          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.png")', backgroundSize: '200% 200%', backgroundPosition: '0% 100%', transform: 'rotate(-1.4deg) scale(1.06)' }} />
+          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.webp")', backgroundSize: '200% 200%', backgroundPosition: '0% 100%', transform: 'rotate(-1.4deg) scale(1.06)' }} />
           <div className="beat-copy" style={{ ...beatCopyBase, right: '8vw', top: '23vh', textAlign: 'right' }}>
             <p className="meta" style={beatCopyLabel}>03:27 AM // Shoreline</p>
             <p className="whisper-type" style={beatCopyText}>We stayed because leaving was already happening.</p>
@@ -358,7 +358,7 @@ const _MemoryStory = function MemoryStory() {
             <p className="meta" style={beatCopyLabel}>04:12 AM // Trace</p>
             <p className="whisper-type" style={beatCopyText}>Some faces become light before they become memory.</p>
           </div>
-          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.png")', backgroundSize: '200% 200%', backgroundPosition: '100% 100%', transform: 'rotate(2deg) scale(1.06)' }} />
+          <div className="beat-frame" style={{ ...beatFrameStyle, backgroundImage: 'url("/assets/nightlife leaks.webp")', backgroundSize: '200% 200%', backgroundPosition: '100% 100%', transform: 'rotate(2deg) scale(1.06)' }} />
         </div>
       </div>
 

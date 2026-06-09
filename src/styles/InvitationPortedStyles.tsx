@@ -158,7 +158,7 @@ export const AirFrame = styled.span<{ $x: string, $y: string, $delay: string }>`
   position: absolute;
   inset: -5vh -5vw;
   opacity: 0;
-  background-image: url("/assets/urban nightscape through blurred glass.png");
+  background-image: url("/assets/urban nightscape through blurred glass.webp");
   background-size: 300% 300%;
   background-position: ${props => props.$x} ${props => props.$y};
   filter: blur(10px) saturate(1.28) contrast(1.16) brightness(0.82);

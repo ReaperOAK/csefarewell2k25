@@ -80,7 +80,7 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
           inset: 0,
           zIndex: -2,
           pointerEvents: 'none',
-          backgroundImage: 'linear-gradient(180deg, rgba(1, 1, 2, 0.18), rgba(1, 1, 2, 0.42) 48%, rgba(1, 1, 2, 0.74)), radial-gradient(ellipse at 50% 52%, transparent 0 38%, rgba(1, 1, 2, 0.62) 86%), url("/assets/ibiza memories.png")',
+          backgroundImage: 'linear-gradient(180deg, rgba(1, 1, 2, 0.18), rgba(1, 1, 2, 0.42) 48%, rgba(1, 1, 2, 0.74)), radial-gradient(ellipse at 50% 52%, transparent 0 38%, rgba(1, 1, 2, 0.62) 86%), url("/assets/ibiza memories.webp")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'saturate(0.94) contrast(1.08) brightness(0.7)',

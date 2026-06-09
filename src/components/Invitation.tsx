@@ -227,7 +227,7 @@ const Invitation: React.FC = () => {
     );
   }
 
-  const defaultPhoto = '/fp/skull.png';
+  const defaultPhoto = '/fp/skull.webp';
   const encodedPhotoUrl = encodeImageUrl(invitee?.photoUrl || defaultPhoto);
   const name = invitee ? invitee.name : 'Distinguished Guest';
 
