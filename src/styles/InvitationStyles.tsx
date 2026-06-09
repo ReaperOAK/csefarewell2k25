@@ -111,11 +111,11 @@ export const HexagonMask = styled.div`
   transform: scale(1.03);
 `;
 
-export const Portrait = styled(motion.div)<{ photoUrl: string }>`
+export const Portrait = styled(motion.div)<{ $photoUrl: string }>`
   position: relative;
   width: 94%;
   height: 94%;
-  background-image: ${props => `url(${props.photoUrl})`};
+  background-image: ${props => `url(${props.$photoUrl})`};
   background-size: cover;
   background-position: center;
   clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);

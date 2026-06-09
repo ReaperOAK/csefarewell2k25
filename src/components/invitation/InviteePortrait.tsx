@@ -20,7 +20,7 @@ const InviteePortrait: React.FC<InviteePortraitProps> = ({ photoUrl, defaultPhot
     >
       <HexagonMask />
       <Portrait 
-        photoUrl={encodedPhotoUrl || encodedDefaultPhoto}
+        $photoUrl={encodedPhotoUrl || encodedDefaultPhoto}
         onError={(e: React.SyntheticEvent<HTMLDivElement>) => {
           const target = e.target as HTMLDivElement;
           target.style.backgroundImage = `url(${encodedDefaultPhoto})`;

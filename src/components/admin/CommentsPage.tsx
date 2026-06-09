@@ -85,11 +85,11 @@ const CommentCard = styled(motion.div)`
   align-items: flex-start;
 `;
 
-const CommentPhoto = styled.div<{ photoUrl: string }>`
+const CommentPhoto = styled.div<{ $photoUrl: string }>`
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-image: ${props => `url(${props.photoUrl})`};
+  background-image: ${props => `url(${props.$photoUrl})`};
   background-size: cover;
   background-position: center;
   margin-right: 1.2rem;
@@ -355,7 +355,7 @@ const CommentsPage: React.FC<CommentsPageProps> = ({ invitees, loading }) => {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
-                  <CommentPhoto photoUrl={encodedPhotoUrl} />
+                  <CommentPhoto $photoUrl={encodedPhotoUrl} />
                   <CommentContent>
                     <CommentHeader>
                       <CommentName>{invitee.name}</CommentName>

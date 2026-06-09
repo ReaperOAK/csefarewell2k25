@@ -5,8 +5,8 @@ import '../index.css';
 import './global-styles.css';
 
 export const metadata: Metadata = {
-  title: 'OBLIVION - Gothic Masquerade Farewell',
-  description: 'OBLIVION - A Gothic Masquerade Farewell by CSE Juniors',
+  title: 'IBIZA - Farewell 2k26',
+  description: 'IBIZA - A Beach Rave Party Farewell by CSE Juniors',
   icons: {
     icon: '/favicon.ico',
     apple: '/logo192.png',

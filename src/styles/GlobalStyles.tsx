@@ -8,6 +8,9 @@ const GlobalStyle = createGlobalStyle`
     --gold: #D4AF37;
     --crimson: #8B0000;
     --text: #EEEEEE;
+    --success: #4CAF50;
+    --error: #F44336;
+    --warning: #FF9800;
     --text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     --border-color: rgba(212, 175, 55, 0.3);
     touch-action: pan-y;
@@ -83,12 +86,18 @@ const GlobalStyle = createGlobalStyle`
     padding: 10px 20px;
     font-family: 'Montserrat', sans-serif;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     outline: none;
     
     &:hover {
       background-color: rgba(212, 175, 55, 0.2);
       transform: scale(1.05);
+    }
+    
+    &:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.3);
     }
     
     &:disabled {
@@ -104,10 +113,12 @@ const GlobalStyle = createGlobalStyle`
     padding: 10px;
     font-family: 'Montserrat', sans-serif;
     width: 100%;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
     
     &:focus {
       outline: none;
       border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
     }
   }
   
