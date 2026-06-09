@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 import { testEmailSend } from '../../utils/emailUtils';
 import emailjs from '@emailjs/browser';
 
-// EmailJS configuration constants
-const EMAILJS_SERVICE_ID = 'ReaperOAK';
-const EMAILJS_TEMPLATE_ID = 'ReaperOAK';
-const EMAILJS_PUBLIC_KEY = 'wsCefJMospSDh5hqJ';
+// EmailJS configuration constants from environment variables
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'ReaperOAK';
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'ReaperOAK';
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'wsCefJMospSDh5hqJ';
 
 const Container = styled.div`
   background-color: rgba(10, 10, 10, 0.6);
@@ -161,9 +161,9 @@ const EmailTemplateTest: React.FC = () => {
       
       // Create a test template parameters object
       const testParams = {
-        email: "test@example.com",
-        name: "Test User",
-        link: `${window.location.origin}/invitation/test-id`,
+        to_email: "test@example.com",
+        to_name: "Test User",
+        invitation_link: `${window.location.origin}/invitation/test-id`,
       };
       
       setDebugInfo({
@@ -239,8 +239,8 @@ const EmailTemplateTest: React.FC = () => {
       <div style={{ marginTop: '1rem', color: '#888' }}>
         <p>Tips to fix email issues:</p>
         <ul>
-          <li>Verify EmailJS service ID (ReaperOAK) and template ID (ReaperOAK) are correct</li>
-          <li>Make sure your EmailJS template has the variable names: email, name, link, photo, message</li>
+          <li>Verify EmailJS environment variables are set correctly in your .env file</li>
+          <li>Make sure your EmailJS template has the variable names: <b>to_email, to_name, invitation_link</b></li>
           <li>Check EmailJS dashboard for any error messages</li>
           <li>Ensure your EmailJS account is activated and has available email quota</li>
         </ul>

@@ -19,9 +19,9 @@ export const createEmailParams = (invitee: Invitee, customMessage?: string): Rec
   
   // Create the template parameters object with all required fields
   return {
-    email: invitee.email || '',
-    name: invitee.name,
-    link: invitationLink,
+    to_email: invitee.email || '',
+    to_name: invitee.name,
+    invitation_link: invitationLink,
   };
 };
 
@@ -47,7 +47,7 @@ export const validateTemplate = async (): Promise<boolean> => {
     console.log('Template validation parameters:', params);
     
     // Check if all required parameters are present
-    const requiredParams = ['email', 'name', 'link'];
+    const requiredParams = ['to_email', 'to_name', 'invitation_link'];
     
     const missingParams = requiredParams.filter(param => !params[param]);
     
