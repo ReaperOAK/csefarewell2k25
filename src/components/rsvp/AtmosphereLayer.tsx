@@ -120,7 +120,7 @@ const _AtmosphereLayer = function AtmosphereLayer({ filmBurnRef }: { filmBurnRef
           width: '82vw',
           height: '34vh',
           borderRadius: '50%',
-          filter: 'blur(42px)',
+          filter: 'blur(34px)',
           opacity: 0.42,
           background: 'linear-gradient(90deg, transparent, rgba(232, 106, 36, 0.38), rgba(42, 104, 114, 0.18), transparent)',
         }} />
@@ -131,7 +131,7 @@ const _AtmosphereLayer = function AtmosphereLayer({ filmBurnRef }: { filmBurnRef
           width: '56vw',
           height: '42vh',
           borderRadius: '50%',
-          filter: 'blur(42px)',
+          filter: 'blur(34px)',
           opacity: 0.42,
           background: 'radial-gradient(circle, rgba(232, 106, 36, 0.62), transparent 64%)',
         }} />
@@ -142,7 +142,7 @@ const _AtmosphereLayer = function AtmosphereLayer({ filmBurnRef }: { filmBurnRef
           width: '54vw',
           height: '54vh',
           borderRadius: '50%',
-          filter: 'blur(42px)',
+          filter: 'blur(34px)',
           opacity: 0.42,
           background: 'radial-gradient(circle, rgba(68, 35, 121, 0.36), transparent 66%)',
         }} />
@@ -173,30 +173,30 @@ const _AtmosphereLayer = function AtmosphereLayer({ filmBurnRef }: { filmBurnRef
       <div className="depth-fog" style={styles.depthFog} aria-hidden="true">
         <div className="fog distant" style={{
           position: 'absolute',
-          inset: '-30vh -30vw',
+          inset: '-14vh -14vw',
           opacity: 'calc(0.28 + var(--phase-light, 0) * 0.1)' as any,
-          filter: 'blur(80px)',
+          filter: 'blur(48px)',
           background: 'radial-gradient(ellipse at 35% 34%, rgba(42, 104, 114, 0.23), transparent 54%), radial-gradient(ellipse at 68% 56%, rgba(232, 106, 36, 0.12), transparent 58%)',
         }} />
         <div className="fog ambient" style={{
           position: 'absolute',
-          inset: '-30vh -30vw',
+          inset: '-14vh -14vw',
           opacity: 'calc(0.22 + var(--phase-light, 0) * 0.16)' as any,
-          filter: 'blur(58px)',
+          filter: 'blur(40px)',
           background: 'radial-gradient(ellipse at 50% 50%, rgba(90, 52, 118, 0.2), transparent 60%)',
         }} />
         <div className="fog humidity" style={{
           position: 'absolute',
-          inset: '-30vh -30vw',
+          inset: '-14vh -14vw',
           opacity: 'calc(0.2 + var(--phase-light, 0) * 0.12)' as any,
-          filter: 'blur(28px)',
+          filter: 'blur(24px)',
           background: 'linear-gradient(116deg, transparent 0%, rgba(248, 243, 235, 0.06) 36%, transparent 58%), radial-gradient(ellipse at 80% 20%, rgba(42, 104, 114, 0.16), transparent 48%)',
         }} />
         <div className="fog foreground" style={{
           position: 'absolute',
-          inset: '-30vh -30vw',
+          inset: '-14vh -14vw',
           opacity: 'calc(0.12 + var(--phase-light, 0) * 0.08)' as any,
-          filter: 'blur(18px)',
+          filter: 'blur(16px)',
           background: 'radial-gradient(ellipse at 10% 88%, rgba(248, 243, 235, 0.1), transparent 38%), radial-gradient(ellipse at 92% 78%, rgba(232, 106, 36, 0.1), transparent 42%)',
         }} />
       </div>

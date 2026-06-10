@@ -67,7 +67,7 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
         zIndex: 30,
         display: 'grid',
         placeItems: 'center',
-        padding: '7vw',
+        padding: 'clamp(1rem, 4vh, 3.5rem) clamp(1.2rem, 7vw, 6rem)',
         overflow: 'hidden',
         isolation: 'isolate',
         opacity: 'var(--rsvp-opacity, 0)',
@@ -102,7 +102,7 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
         style={{
           position: 'relative',
           zIndex: 1,
-          width: 'min(620px, 100%)',
+          width: 'min(820px, 100%)',
           textAlign: 'center',
         }}
       >
@@ -124,7 +124,7 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
           id="rsvp-title"
           style={{
             color: 'rgba(248, 243, 235, 0.78)',
-            fontSize: 'clamp(2.5rem, 7vw, 5.8rem)',
+            fontSize: 'min(clamp(2rem, 4.6vw, 4.2rem), 7.2vh)',
             textShadow: '0 0 42px rgba(248, 243, 235, 0.1)',
             fontFamily: "'Playfair Display', serif",
             fontStyle: 'italic',
@@ -138,7 +138,7 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
         {submitted ? (
           <p
             style={{
-              marginTop: 'clamp(2.8rem, 8vh, 5rem)',
+              marginTop: 'clamp(1.4rem, 4.5vh, 3rem)',
               color: 'rgba(248, 243, 235, 0.8)',
               fontFamily: "'Playfair Display', serif",
               fontSize: 'clamp(1.5rem, 4vw, 3rem)',
@@ -151,13 +151,13 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
           <form
             className="memory-form interactable"
             onSubmit={handleSubmit}
-            style={{ marginTop: 'clamp(2.8rem, 8vh, 5rem)' }}
+            style={{ marginTop: 'clamp(1.4rem, 4.5vh, 3rem)' }}
           >
             <div
               className="field interactable"
               style={{
                 position: 'relative',
-                marginBottom: 'clamp(2rem, 7vh, 4.5rem)',
+                marginBottom: 'clamp(1.2rem, 3.8vh, 2.6rem)',
               }}
             >
               <label htmlFor="guestName" className="sr-only" style={{
@@ -186,13 +186,13 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
                 onBlur={() => document.body.classList.remove('rsvp-quiet')}
                 style={{
                   width: '100%',
-                  minHeight: '74px',
+                  minHeight: 'clamp(50px, 7vh, 64px)',
                   border: 0,
                   borderBottom: '1px solid rgba(248, 243, 235, 0.18)',
                   background: 'transparent',
                   color: '#f8f3eb',
                   fontFamily: "'Playfair Display', serif",
-                  fontSize: 'clamp(2rem, 5vw, 4.2rem)',
+                  fontSize: 'clamp(1.6rem, 3.4vw, 2.8rem)',
                   fontStyle: 'italic',
                   textAlign: 'center',
                   outline: 'none',
@@ -206,7 +206,7 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
               className="field interactable"
               style={{
                 position: 'relative',
-                marginBottom: 'clamp(2rem, 7vh, 4.5rem)',
+                marginBottom: 'clamp(1.2rem, 3.8vh, 2.6rem)',
               }}
             >
               <label htmlFor="studentId" className="sr-only" style={{
@@ -234,13 +234,13 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
                 onBlur={() => document.body.classList.remove('rsvp-quiet')}
                 style={{
                   width: '100%',
-                  minHeight: '74px',
+                  minHeight: 'clamp(50px, 7vh, 64px)',
                   border: 0,
                   borderBottom: '1px solid rgba(248, 243, 235, 0.18)',
                   background: 'transparent',
                   color: '#f8f3eb',
                   fontFamily: "'Playfair Display', serif",
-                  fontSize: 'clamp(2rem, 5vw, 4.2rem)',
+                  fontSize: 'clamp(1.6rem, 3.4vw, 2.8rem)',
                   fontStyle: 'italic',
                   textAlign: 'center',
                   outline: 'none',
@@ -263,7 +263,7 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
               style={{
                 position: 'relative',
                 width: 'min(420px, 100%)',
-                minHeight: '64px',
+                minHeight: 'clamp(52px, 7vh, 64px)',
                 border: '1px solid rgba(248, 243, 235, 0.2)',
                 background: 'transparent',
                 color: submitting ? 'rgba(248, 243, 235, 0.3)' : 'rgba(248, 243, 235, 0.62)',
@@ -291,7 +291,7 @@ export function RSVPSection({ filmBurnRef }: RSVPSectionProps) {
 
         <p
           style={{
-            marginTop: 'clamp(4rem, 12vh, 8rem)',
+            marginTop: 'clamp(1.6rem, 4vh, 3rem)',
             color: 'rgba(248, 243, 235, 0.25)',
             lineHeight: 1.8,
             fontSize: '0.68rem',

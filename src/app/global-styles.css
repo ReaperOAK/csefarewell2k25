@@ -347,6 +347,59 @@ body.rsvp-quiet .depth-fog {
   contain: layout style paint;
 }
 
+/* ── GPU layer promotion for continuously-animated blurred atmosphere ──
+   These layers run infinite transform keyframes while carrying large blur()
+   filters. Without promotion the browser re-rasterizes the (expensive) blurred
+   texture every frame, which was the dominant source of scroll jitter (ablation
+   showed ~22fps with animations on vs ~60fps with them off). Promoting them to
+   their own compositor layer rasterizes the blur once and animates the cheap
+   transform on the GPU.
+
+   Only the heaviest layers (the two full-bleed photo washes + the two largest
+   blur fog planes) are promoted — every promoted full-viewport layer costs
+   ~w*h*4 bytes of compositor memory, so promoting *all* atmosphere layers blows
+   the tile-memory budget on large viewports. Scoped to pointer-fine because the
+   mobile budget below disables these animations entirely. The `.perf-lite`
+   runtime tier (see RSVPGateExperience) releases these on weak GPUs. */
+@media (hover: hover) and (pointer: fine) {
+  body:not(.perf-lite) .projected-crowd,
+  body:not(.perf-lite) .air-texture,
+  body:not(.perf-lite) .fog.distant,
+  body:not(.perf-lite) .fog.ambient {
+    will-change: transform;
+  }
+}
+
+/* ── Runtime adaptive quality tier ──
+   RSVPGateExperience samples frame timing shortly after the experience opens.
+   If the device can't hold a smooth frame rate (weak GPU, very large viewport,
+   software compositing) it adds `body.perf-lite`, which sheds the most
+   expensive ambient layers and freezes the remaining infinite animations.
+   This keeps scrolling smooth everywhere while leaving full fidelity on
+   capable hardware. */
+body.perf-lite .fog.humidity,
+body.perf-lite .fog.foreground,
+body.perf-lite .lens-streak,
+body.perf-lite .air-texture {
+  display: none !important;
+}
+
+body.perf-lite .fog.distant { filter: blur(34px) !important; }
+body.perf-lite .fog.ambient { filter: blur(28px) !important; }
+
+body.perf-lite .projected-crowd,
+body.perf-lite .fog.distant,
+body.perf-lite .fog.ambient,
+body.perf-lite .projection.shore,
+body.perf-lite .projection.sodium,
+body.perf-lite .projection.indigo,
+body.perf-lite .grain {
+  animation: none !important;
+  will-change: auto !important;
+}
+
+body.perf-lite .grain { opacity: 0.05 !important; }
+
 /* ── Touch-friendly defaults ── */
 
 @media (pointer: coarse) {
@@ -406,7 +459,7 @@ body.rsvp-quiet .depth-fog {
   }
 
   .rsvp-plane {
-    padding: 3vw !important;
+    padding: clamp(1rem, 3.5vh, 3rem) 3vw !important;
   }
 }
 
@@ -626,7 +679,7 @@ body.rsvp-quiet .depth-fog {
   }
 
   .rsvp-plane {
-    padding: 5vw !important;
+    padding: clamp(1.5rem, 4vh, 4rem) 5vw !important;
   }
 
   .phase-word {
@@ -672,6 +725,85 @@ body.rsvp-quiet .depth-fog {
   .memory-beat.two .beat-copy { top: 35vh !important; }
   .memory-beat.three .beat-copy { top: 18vh !important; }
   .memory-beat.four .beat-copy { top: 20vh !important; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   MOBILE PERFORMANCE BUDGET
+
+   The desktop experience stacks ~10 full-screen fixed layers with large blurs
+   (up to 80px) and mix-blend-mode, plus a dozen infinite keyframe animations.
+   On phone GPUs those recomposite every scroll frame and cause jitter. Below we
+   strip the expensive *ambience* on small / touch screens while keeping the
+   scroll-driven narrative (hero, beats, copy, RSVP) fully intact — those are
+   driven by CSS vars from scroll position, not by these layers/animations.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Kill perpetually-running ambient animations on any touch device. These only
+   animate large blurred layers and never stop, so they tax the GPU even when
+   the page is idle. The narrative reveals are scroll-linked and unaffected. */
+@media (hover: none), (pointer: coarse) {
+  html { scroll-behavior: auto; }
+
+  .projected-crowd,
+  .air-texture,
+  .grain,
+  .projection.shore,
+  .projection.sodium,
+  .projection.indigo,
+  .practical-lights,
+  .lens-streak,
+  .fog.distant,
+  .fog.ambient,
+  .fog.humidity,
+  .fog.foreground,
+  .projection-image {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 780px) {
+  /* The heaviest fixed compositing layers — pure atmosphere. Removing them on
+     phones is the single biggest win and barely changes the look behind the
+     darkening gradients that sit on top. */
+  .depth-fog,
+  .light-engine,
+  .air-texture,
+  .halation,
+  .transition-plane {
+    display: none !important;
+  }
+
+  /* Keep the hero/ambient crowd but make it a cheap static wash. */
+  .projected-crowd {
+    filter: saturate(0.86) contrast(1.2) brightness(0.62) !important;
+    animation: none !important;
+  }
+
+  /* Grain is a full-screen blended SVG-noise repaint — dim it and freeze it. */
+  .grain {
+    opacity: 0.06 !important;
+    animation: none !important;
+  }
+
+  /* Cap per-fragment blur so each projection image composites cheaply, and drop
+     their decorative blend overlay + idle drift. */
+  .projection-image {
+    filter: saturate(0.9) brightness(0.56) blur(3px) !important;
+    will-change: opacity !important;
+    animation: none !important;
+  }
+  .projection-image::after { display: none !important; }
+
+  .beat-frame { filter: saturate(1.06) contrast(1.12) brightness(0.66) !important; }
+
+  /* Gate entry: replace the 9-tile 3D spin/exposure storm with a flat,
+     cheap-to-paint mosaic. */
+  .intro-tile {
+    animation: none !important;
+    opacity: 0.5 !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
 }
 
 /* ── Reduced Motion ── */

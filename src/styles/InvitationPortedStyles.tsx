@@ -125,6 +125,10 @@ export const Shell = styled.div<{ $attending: boolean | null }>`
     mix-blend-mode: screen;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     animation: ${grainShift} 900ms steps(2) infinite;
+
+    @media (hover: none), (pointer: coarse) {
+      animation: none;
+    }
   }
 `;
 
@@ -169,6 +173,13 @@ export const AirFrame = styled.span<{ $x: string, $y: string, $delay: string }>`
     ${airFrameDrift} 18s ease-in-out infinite alternate;
   animation-delay: ${props => props.$delay}, ${props => props.$delay};
   will-change: transform;
+
+  /* Freeze these blurred color-dodge layers on touch devices — they recomposite
+     every frame and tax phone GPUs for little visible gain. */
+  @media (hover: none), (pointer: coarse) {
+    animation: none;
+    opacity: 0.16;
+  }
 `;
 
 export const AmbientLights = styled.div`
@@ -185,6 +196,11 @@ export const AmbientLights = styled.div`
     filter: blur(42px);
     opacity: 0.42;
     transform: translate3d(0, 0, 0);
+  }
+
+  /* Stop the large blur(42px) glows from animating on touch devices. */
+  @media (hover: none), (pointer: coarse) {
+    span { animation: none !important; }
   }
 `;
 
