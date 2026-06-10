@@ -124,11 +124,24 @@ const Invitation: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const updateScroll = () => {
+    // rAF-throttle the scroll/resize work: reading scrollHeight on every scroll
+    // event forces a synchronous layout (jank). Batching to one read per frame
+    // keeps scrolling smooth.
+    let scrollPending = false;
+
+    const flushScroll = () => {
+      scrollPending = false;
       const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const scroll = (window.scrollY / maxScroll).toFixed(4);
       if (shellRef.current) {
         shellRef.current.style.setProperty('--scroll', scroll);
+      }
+    };
+
+    const scheduleScroll = () => {
+      if (!scrollPending) {
+        scrollPending = true;
+        requestAnimationFrame(flushScroll);
       }
     };
 
@@ -145,14 +158,14 @@ const Invitation: React.FC = () => {
       }
     };
 
-    window.addEventListener('scroll', updateScroll, { passive: true });
-    window.addEventListener('resize', updateScroll);
+    window.addEventListener('scroll', scheduleScroll, { passive: true });
+    window.addEventListener('resize', scheduleScroll);
     document.addEventListener('mousemove', handleMouseMove, { passive: true });
-    updateScroll();
+    flushScroll();
 
     return () => {
-      window.removeEventListener('scroll', updateScroll);
-      window.removeEventListener('resize', updateScroll);
+      window.removeEventListener('scroll', scheduleScroll);
+      window.removeEventListener('resize', scheduleScroll);
       document.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
@@ -278,7 +291,7 @@ const Invitation: React.FC = () => {
           <HeroCopy>
             <Eyebrow>Personal Farewell Invitation</Eyebrow>
             <Eyebrow className="event-title">Ibiza // The Final Memory</Eyebrow>
-            <InviteName id="invitee-name">{name}</InviteName>
+            <InviteName id="invitee-name" $len={name.length}>{name}</InviteName>
             <HeroLine>One last tide, one last song, one last night with your name in it.</HeroLine>
             <HeroNote>
               A warm beach-rave farewell for the people who made the noise feel like home.
