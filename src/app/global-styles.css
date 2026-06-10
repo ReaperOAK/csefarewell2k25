@@ -796,13 +796,17 @@ body.perf-lite .grain { opacity: 0.05 !important; }
 
   .beat-frame { filter: saturate(1.06) contrast(1.12) brightness(0.66) !important; }
 
-  /* Gate entry: replace the 9-tile 3D spin/exposure storm with a flat,
-     cheap-to-paint mosaic. */
+  /* Gate entry: keep the photographic flash (memory fragments cutting in/out)
+     but drop the expensive 3D spin (rotateX/Y/Z + perspective re-rasters every
+     step). singlePhotoCut drives the opacity cut; tileExposure drives the
+     brightness flash. This is a static, pre-scroll screen so the cost is fine,
+     and it restores the flashing mosaic on mobile. */
   .intro-tile {
-    animation: none !important;
-    opacity: 0.5 !important;
+    animation: singlePhotoCut 1620ms steps(1) infinite,
+               tileExposure 1620ms steps(1) infinite !important;
+    animation-delay: var(--delay, 0ms) !important;
     transform: none !important;
-    will-change: auto !important;
+    will-change: opacity, filter !important;
   }
 }
 
