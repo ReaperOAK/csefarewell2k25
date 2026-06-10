@@ -196,11 +196,16 @@ export const AmbientLights = styled.div`
     filter: blur(42px);
     opacity: 0.42;
     transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
   }
 
-  /* Stop the large blur(42px) glows from animating on touch devices. */
+  /* Stop the large blur(42px) glows from animating on touch devices, and
+     release the compositor layer so phones don't pay the GPU memory. */
   @media (hover: none), (pointer: coarse) {
-    span { animation: none !important; }
+    span {
+      animation: none !important;
+      will-change: auto;
+    }
   }
 `;
 
@@ -320,17 +325,40 @@ export const Eyebrow = styled.p`
   }
 `;
 
-export const InviteName = styled.h1`
+/* Name scales down by length so long / multi-word names stay balanced, and
+   wraps (never overflows) thanks to overflow-wrap + the grid cell's min-width:0.
+   $len is the character count of the rendered name. */
+const inviteNameSize = (len: number) => {
+  if (len <= 8) return css`font-size: clamp(4.2rem, 13vw, 11rem);`;
+  if (len <= 12) return css`font-size: clamp(3.4rem, 10.5vw, 8.6rem);`;
+  if (len <= 18) return css`font-size: clamp(2.7rem, 8vw, 6.2rem);`;
+  if (len <= 26) return css`font-size: clamp(2.2rem, 6.4vw, 4.8rem);`;
+  return css`font-size: clamp(1.85rem, 5.2vw, 3.8rem);`;
+};
+
+const inviteNameSizeMobile = (len: number) => {
+  if (len <= 8) return css`font-size: clamp(3.6rem, 22vw, 6.6rem);`;
+  if (len <= 12) return css`font-size: clamp(3rem, 17vw, 5.4rem);`;
+  if (len <= 18) return css`font-size: clamp(2.3rem, 13vw, 4.2rem);`;
+  if (len <= 26) return css`font-size: clamp(1.95rem, 10.5vw, 3.4rem);`;
+  return css`font-size: clamp(1.7rem, 8.8vw, 2.8rem);`;
+};
+
+export const InviteName = styled.h1<{ $len: number }>`
   font-family: Oswald, sans-serif;
-  font-size: clamp(4.6rem, 14vw, 12rem);
   font-weight: 500;
   letter-spacing: 0;
-  line-height: 0.82;
+  line-height: 0.86;
   text-transform: uppercase;
   text-shadow: 0 0 42px rgba(232, 106, 36, 0.14);
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  ${props => inviteNameSize(props.$len)}
 
   @media (max-width: 560px) {
-    font-size: clamp(4.4rem, 26vw, 7.5rem);
+    ${props => inviteNameSizeMobile(props.$len)}
   }
 `;
 
@@ -459,7 +487,11 @@ export const PortraitFrame = styled.figure`
   }
 `;
 
-export const InviteePhoto = styled.img`
+export const InviteePhoto = styled.img.attrs({
+  loading: 'eager' as const,
+  decoding: 'async' as const,
+  fetchPriority: 'high' as const,
+})`
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -473,8 +505,11 @@ export const PortraitCaption = styled.figcaption`
   z-index: 3;
   right: 1.2rem;
   bottom: 1.1rem;
+  left: 1.2rem;
   color: rgba(248, 243, 235, 0.78);
   text-align: right;
+  overflow-wrap: break-word;
+  word-break: break-word;
 `;
 
 export const ContentSection = styled.section`
