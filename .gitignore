@@ -7,6 +7,9 @@
 
 # testing
 /coverage
+.playwright-mcp/
+# Responsive/perf verification screenshots
+/sweep-*.png
 
 # production
 /build
