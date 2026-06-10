@@ -158,6 +158,16 @@ const Invitation: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // The custom cursor is hidden on touch devices (CSS @media max-width:860px /
+    // no pointer), so skip its RAF loop there entirely — no reason to run a
+    // per-frame animation for an invisible element on phones.
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(hover: none), (pointer: coarse)').matches
+    ) {
+      return;
+    }
+
     const renderCursor = () => {
       auraPos.current.x += (mousePos.current.x - auraPos.current.x) * 0.14;
       auraPos.current.y += (mousePos.current.y - auraPos.current.y) * 0.14;

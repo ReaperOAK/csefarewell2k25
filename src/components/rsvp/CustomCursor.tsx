@@ -16,6 +16,17 @@ export function CustomCursor() {
   const initializedRef = useRef(false);
 
   useEffect(() => {
+    // Touch / no-cursor devices: the dot+aura are hidden via CSS and there's no
+    // pointer to track. Bailing out here stops a perpetual RAF loop that would
+    // otherwise call getBoundingClientRect() on every fragment each frame —
+    // the single biggest source of scroll jitter on mobile.
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(hover: none), (pointer: coarse)').matches
+    ) {
+      return;
+    }
+
     const root = document.documentElement;
 
     // Initialize mouse position once
@@ -38,12 +49,27 @@ export function CustomCursor() {
     const observer = new MutationObserver(cacheFragments);
     observer.observe(document.body, { childList: true, subtree: true });
 
+    // Idle control: the loop reads getBoundingClientRect() on every fragment
+    // each frame, so we stop it once the aura has settled and the pointer has
+    // been still for a moment, and wake it again on the next mouse move. This
+    // eliminates continuous per-frame layout reads while the user isn't moving.
+    let running = false;
+    let lastMoveAt = 0;
+    const ensureRunning = () => {
+      if (!running) {
+        running = true;
+        rafRef.current = requestAnimationFrame(render);
+      }
+    };
+
     // Mouse move handler — updates CSS vars for halation gradient
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current.x = e.clientX;
       mouseRef.current.y = e.clientY;
+      lastMoveAt = performance.now();
       root.style.setProperty('--cursor-x', `${e.clientX}px`);
       root.style.setProperty('--cursor-y', `${e.clientY}px`);
+      ensureRunning();
     };
 
     // RAF render loop — positions cursor elements and updates fragment magnetism
@@ -86,6 +112,15 @@ export function CustomCursor() {
         el.style.setProperty('--s', (1 + pull * 0.018).toFixed(3));
       }
 
+      // Stop once the aura has caught up to the pointer and movement has been
+      // idle for >700ms — the next mouse move restarts the loop.
+      const settled =
+        Math.abs(mx - ax) < 0.5 && Math.abs(my - ay) < 0.5;
+      if (settled && performance.now() - lastMoveAt > 700) {
+        running = false;
+        return;
+      }
+
       rafRef.current = requestAnimationFrame(render);
     };
 
@@ -111,7 +146,7 @@ export function CustomCursor() {
     document.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.addEventListener('mouseover', handleMouseOver, { passive: true });
     document.addEventListener('mouseout', handleMouseOut, { passive: true });
-    rafRef.current = requestAnimationFrame(render);
+    ensureRunning();
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
