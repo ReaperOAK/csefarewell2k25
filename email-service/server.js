@@ -10,7 +10,7 @@ const {
   GMAIL_APP_PASSWORD,
   EMAIL_API_TOKEN,
   ALLOWED_ORIGINS = '',
-  SITE_BASE_URL = 'https://ibiza2k26.stcet.ac.in',
+  SITE_BASE_URL = 'https://ibiza.vercel.app/',
   FROM_NAME = 'IBIZA — Farewell 2k26',
   PORT = 8080,
 } = process.env;
