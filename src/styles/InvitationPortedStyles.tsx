@@ -590,23 +590,6 @@ export const DetailRow = styled.div`
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(248, 243, 235, 0.12);
 
-  &:nth-child(3) {
-    grid-template-columns: 1fr;
-    gap: 0.65rem;
-    padding: 0.5rem 0 1.6rem;
-    margin: 0.25rem 0 0.4rem;
-    
-    .detail-value {
-      color: var(--cream);
-      font-size: clamp(2.4rem, 6vw, 5rem);
-      line-height: 0.9;
-      text-shadow: 0 0 34px rgba(232, 106, 36, 0.14);
-      @media (max-width: 560px) {
-        font-size: clamp(2.5rem, 14vw, 4.2rem);
-      }
-    }
-  }
-
   &:last-child {
     border-bottom: 0;
     padding-bottom: 0;
