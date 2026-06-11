@@ -22,7 +22,7 @@ const HAIRLINE = 'rgba(248,243,235,0.12)';
 // Event facts — keep in sync with the on-site invitation card.
 const EVENT = {
   date: '16th June 2026',
-  time: '7:30 PM onwards',
+  time: '2:00 PM onwards',
   venue: 'STCET',
   theme: 'Beach Rave Party',
 };
