@@ -338,11 +338,11 @@ const Invitation: React.FC = () => {
               </DetailRow>
               <DetailRow>
                 <DetailLabel>Time</DetailLabel>
-                <DetailValue>7:30 PM onwards</DetailValue>
+                <DetailValue>2:00 PM onwards</DetailValue>
               </DetailRow>
               <DetailRow>
-                <DetailLabel>Dress Code</DetailLabel>
-                <DetailValue>Black, linen, shimmer</DetailValue>
+                <DetailLabel>Theme</DetailLabel>
+                <DetailValue>Beach Rave Party</DetailValue>
               </DetailRow>
             </DetailList>
           </EventDetailsGrid>
